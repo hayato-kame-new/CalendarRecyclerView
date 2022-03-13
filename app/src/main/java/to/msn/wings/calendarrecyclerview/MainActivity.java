@@ -36,16 +36,18 @@ public class MainActivity extends AppCompatActivity {
         List<Date> dates =  dateManager.getDays();
         int count = dates.size();
 
+        SimpleDateFormat format = new SimpleDateFormat("d");  // "dd" だと　　01  02 となってしまう
+
 
         ArrayList<CalendarCellItem> data = new ArrayList<>();
         for (int i = 0; i < dates.size(); i++) {
             CalendarCellItem item = new CalendarCellItem();
             item.setId((new Random()).nextLong());
             Date date = dates.get(i);
-            SimpleDateFormat format = new SimpleDateFormat("dd");
+
             String display = format.format(date);
 
-             item.setDateText(display);
+             item.setDateText(display);  // セットします
              data.add(item);
         }
 
@@ -71,8 +73,9 @@ public class MainActivity extends AppCompatActivity {
 
 
         RecyclerView rv = findViewById(R.id.rv);
-        rv.setHasFixedSize(true);
+        rv.setHasFixedSize(true);  // パフォーマンス向上
 
+        // グリッド状にカードを配置する 7つづつ
         GridLayoutManager manager = new GridLayoutManager(this, SPAN_COUNT);
         rv.setLayoutManager(manager);
 
