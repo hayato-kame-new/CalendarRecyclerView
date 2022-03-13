@@ -1,12 +1,16 @@
 package to.msn.wings.calendarrecyclerview;
+import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 /**
  * CakendarCellviewHolder型　の　RecyclerView.Adapterアダプタを継承すること
@@ -16,10 +20,13 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarCellViewHolder
     // フィールド
     private ArrayList<CalendarCellItem> data;
 
+
     // コンストラクタ
     public CalendarAdapter(ArrayList<CalendarCellItem> data) {
         this.data = data;
     }
+
+
 
     /**
      * 3つのメソッドをオーバーライドすべき
@@ -48,4 +55,10 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarCellViewHolder
        // return 0;
         return this.data.size();
     }
+
+
+
+
+
+
 }
