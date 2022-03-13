@@ -1,11 +1,13 @@
 package to.msn.wings.calendarrecyclerview;
 import android.content.Context;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
@@ -47,6 +49,33 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarCellViewHolder
     public void onBindViewHolder(@NonNull CalendarCellViewHolder holder, int position) {
 
         holder.dateText.setText(this.data.get(position).getDateText());
+
+
+        // holder.view は　CardViewです
+        CardView cardView = holder.view.findViewById(R.id.cardView);
+
+        for(int i = 0; i < data.size(); i++) {
+            if (position == (i*7 )) {  // 日曜日
+                cardView.setCardBackgroundColor(null);
+                cardView.setCardBackgroundColor(Color.parseColor("#FF0800"));
+            }
+            if (position == (i*7 + 6 )) {  // 土曜日
+                cardView.setCardBackgroundColor(null);
+                cardView.setCardBackgroundColor(Color.parseColor("#0067c0"));
+            }
+            // 本日ならば、印をつける
+
+
+        }
+
+
+        //        CardView cardView = findViewById(R.id.cardView);
+//        // 通し番号が   i*7 + 1  の時に、赤のカードにする
+//        for (CalendarCellItem item : data) {
+//            if (item.getId() ==  (0*7 + 1)) {
+//                cardView.setCardBackgroundColor(pinkSunday);
+//            }
+//        }
 
     }
 

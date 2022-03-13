@@ -13,11 +13,12 @@ public class DateManager {
     Calendar mCalendar;
 
     /**
-     * コンストラクタ
+     * 現在を取得するコンストラクタ
      */
     public DateManager(){
         mCalendar = Calendar.getInstance();
     }
+
 
     // 当月の要素を取得
     public List<Date> getDays() {
@@ -76,13 +77,13 @@ public class DateManager {
     }
 
     //翌月へ
-    public void nextMonth(){
-        mCalendar.add(Calendar.MONTH, 1);
-    }
+//    public void nextMonth(){
+//        mCalendar.add(Calendar.MONTH, 1);
+//    }
 
     //前月へ
-    public void prevMonth(){
-        mCalendar.add(Calendar.MONTH, -1);
-    }
+//    public void prevMonth(){
+//        mCalendar.add(Calendar.MONTH, -1);
+//    }
 
 }

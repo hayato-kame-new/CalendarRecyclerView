@@ -1,9 +1,13 @@
 package to.msn.wings.calendarrecyclerview;
 
+import static to.msn.wings.calendarrecyclerview.R.color.pinkSunday;
+
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -27,12 +31,15 @@ public class MainActivity extends AppCompatActivity {
     private int SPAN_COUNT = 7;
 
 
+
+    @SuppressLint("ResourceAsColor")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         dateManager = new DateManager();
+        // getDays()で、現在の月の日にちオブジェクトを取得する
         List<Date> dates =  dateManager.getDays();
         int count = dates.size();
 
@@ -42,12 +49,15 @@ public class MainActivity extends AppCompatActivity {
         ArrayList<CalendarCellItem> data = new ArrayList<>();
         for (int i = 0; i < dates.size(); i++) {
             CalendarCellItem item = new CalendarCellItem();
-            item.setId((new Random()).nextLong());
+            // item.setId((new Random()).nextLong());
+
+            item.setId(i + 1);  // 1から順に通し番号をふる
             Date date = dates.get(i);
 
             String display = format.format(date);
 
              item.setDateText(display);  // セットします
+
              data.add(item);
         }
 
@@ -59,6 +69,7 @@ public class MainActivity extends AppCompatActivity {
         prevButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                //現在の月を＋１した月の1日を指定して、該当の月の情報をとる
 
             }
         });
