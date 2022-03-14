@@ -12,28 +12,29 @@ public class DateManager {
     //フィールド
     Calendar mCalendar;
 
-    /**
-     * 現在を取得するコンストラクタ
-     */
+
     public DateManager(){
-        mCalendar = Calendar.getInstance();
+       // mCalendar = Calendar.getInstance();
     }
 
 
     /**
-     * 当月よ要素を取得する 引数
+     * 引数なしだと今月要素を取得する MainActivityで使う
      * @return
      */
     public List<Date> getDays() {
-
+        // コンストラクタではなく、ここで現在を取得するようにした　　変更
+        mCalendar = Calendar.getInstance();
         // 現在
         Date startDate = mCalendar.getTime();
 
-        // グリッドに表示するマスの合計   getWeeks() はインスタンスメソッドです 下で定義してる
-        int count = getWeeks() * 7;
+        // グリッドに表示するマスの合計
+        int count = mCalendar.getActualMaximum(Calendar.WEEK_OF_MONTH) * 7;
+        // int count = getWeeks() * 7;
 
-        //当月のカレンダーに表示される前月分の日数を計算
+        //今月のカレンダーに表示される前月分の日数を計算
         mCalendar.set(Calendar.DATE, 1);  // 今月の1日をセットする
+        // 1日の曜日を取得して、それから -1すれば 前の月の最後の日の曜日が取得できる
         int dayOfWeek = mCalendar.get(Calendar.DAY_OF_WEEK) - 1;  // dayOfWeekは曜日 日曜日は  0
 
          // カレンダーに載せる日曜日の日付を取得してる
@@ -46,32 +47,60 @@ public class DateManager {
             // mCalendarに1日をプラスしていき、リストに加える
             mCalendar.add(Calendar.DATE, 1);
         }
-
         // このループで、記載する日付Date型の入った リストができてる
-
         //状態を復元 本日の日付に戻してる
         mCalendar.setTime(startDate);
-
         return days;
-
     }
 
-//    public List<Date> getDays(int month) {
-//
-//
-//    }
+    /**
+     * 引数で渡された指定の日付の月の 要素を取得します
+     * 引数には、Date型オブジェクトが渡されます。 指定の月の最初の土曜日の日付が入ってます
+     * @param date
+     * @return
+     */
+    public List<Date> getDays(Date date){
+        // 指定の日付は引数から取得できる
+
+        // コンストラクタではなく、ここで現在を取得するようにした　　変更
+        mCalendar = Calendar.getInstance();
+        mCalendar.setTime(date);  // 指定の日付にする
+        // 指定の日付の月のグリッドに表示するマスの合計
+        int count = mCalendar.getActualMaximum(Calendar.WEEK_OF_MONTH) * 7;
+        // さらに、1日の日付にする 計算するために
+        // 指定をした月のカレンダーに表示される前月分の日数を計算するため
+        mCalendar.set(Calendar.DATE, 1);  // 1日をセットする
+
+        // 1日の曜日を取得して、それから -1すれば 前の月の最後の日の曜日が取得できる
+        int dayOfWeek = mCalendar.get(Calendar.DAY_OF_WEEK) - 1;  // dayOfWeekは曜日 日曜日は  0
+
+        // カレンダーに載せる日曜日の日付を取得してる
+        mCalendar.add(Calendar.DATE, -dayOfWeek);  // 日曜日にする 0にするため -dayOnWeek 火曜日だったら -2すると日曜になる
+
+        List<Date> days = new ArrayList<>();
+
+        for (int i = 0; i < count; i ++){
+            days.add(mCalendar.getTime());  // mCalendarは、今、カレンダーに載せる最初の日曜日になってる
+            // mCalendarに1日をプラスしていき、リストに加える
+            mCalendar.add(Calendar.DATE, 1);
+        }
+        // このループで、記載する日付Date型の入った リストができてる
+        //状態を復元 引数で 指定された日付に戻してる
+        mCalendar.setTime(date);  // ちょっと確認する
+        return days;
+    }
 
 
     //当月かどうか確認
-    public boolean isCurrentMonth(Date date){
-        SimpleDateFormat format = new SimpleDateFormat("yyyy.MM", Locale.US);
-        String currentMonth = format.format(mCalendar.getTime());
-        if (currentMonth.equals(format.format(date))){
-            return true;
-        }else {
-            return false;
-        }
-    }
+//    public boolean isCurrentMonth(Date date){
+//        SimpleDateFormat format = new SimpleDateFormat("yyyy.MM", Locale.US);
+//        String currentMonth = format.format(mCalendar.getTime());
+//        if (currentMonth.equals(format.format(date))){
+//            return true;
+//        }else {
+//            return false;
+//        }
+//    }
 
 
 
@@ -79,9 +108,9 @@ public class DateManager {
      * 週の数を取得する
      * @return
      */
-    public int getWeeks() {
-        return mCalendar.getActualMaximum(Calendar.WEEK_OF_MONTH);
-    }
+//    public int getWeeks() {
+//        return mCalendar.getActualMaximum(Calendar.WEEK_OF_MONTH);
+//    }
 
 
     //曜日を取得

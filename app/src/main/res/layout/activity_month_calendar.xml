@@ -24,7 +24,7 @@
         app:layout_constraintEnd_toStartOf="@+id/nextButton"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        tools:layout_editor_absoluteY="27dp" />
+        app:layout_constraintTop_toBottomOf="@+id/titleText" />
 
     <Button
         android:id="@+id/nextButton"
@@ -34,7 +34,7 @@
         app:layout_constraintEnd_toStartOf="@+id/currentButton"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/prevButton"
-        tools:layout_editor_absoluteY="27dp" />
+        app:layout_constraintTop_toBottomOf="@+id/titleText" />
 
     <Button
         android:id="@+id/currentButton"
@@ -46,7 +46,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/nextButton"
-        tools:layout_editor_absoluteY="27dp" />
+        app:layout_constraintTop_toBottomOf="@+id/titleText" />
 
     <LinearLayout
         android:id="@+id/linearLayout"

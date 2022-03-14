@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -40,15 +41,16 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         dateManager = new DateManager();
-        // getDays(int month)で、現在の月の日にちオブジェクトを取得する 今月だと 引数なしのgetDays()　を呼び出す
+        // getDays()で、現在の月の日にちオブジェクトを取得する 今月だと 引数なしのgetDays()　を呼び出す
         // 今月を取得する
         List<Date> dates =  dateManager.getDays();
+        // countいらない？？？
         int count = dates.size();
 
         titleText = findViewById(R.id.titleText);
         // 最初の土曜日は、その月に必ずなってるから
         Date firstSaturdayDate = dates.get(6);
-        SimpleDateFormat format = new SimpleDateFormat("yyyy年 MM月 カレンダー");
+        SimpleDateFormat format = new SimpleDateFormat("今月のカレンダー yyyy年 MM月");
         String title = format.format(firstSaturdayDate);
         titleText.setText(title);
 
@@ -82,17 +84,20 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 // MainActivityで今、表示をしている月の情報を取得する MainActivityでは、初期の画面 今月のカレンダーを表示するので
-               //  アクティビティを新たに生成し、アクティビティにMainActivityの firstSaturdayDateの情報を渡す
+               //  アクティビティを新たに生成し、
+                //  新しいアクティビティにMainActivityの firstSaturdayDateの情報から、１ヶ月前にした情報を渡す
+                // Date型の計算を行いたい場合には、Calendar型に一度変換し、計算を行います。
+                Calendar calendar = Calendar.getInstance();
+                calendar.setTime(firstSaturdayDate);
+                calendar.add(Calendar.MONTH, -1);  // -1 をして ひと月前に
+                Date date = new Date();
+                // これで1月前の最初の土曜日の日付が取得できている
+                date = calendar.getTime();
 
+                Intent intent = new Intent(MainActivity.this, MonthCalendarActivity.class);
 
-
-
-            // Date型の計算を行いたい場合には、Calendar型に一度変換し、計算を行います。
-//            Calendar calendar = Calendar.getInstance();
-//            calendar.setTime(date);  //
-//            calendar.add(Calendar.MONTH, 2);
-
-
+                intent.putExtra("prevButtonDate", date);  // 1月前の最初の土曜日の日付を送る Date型情報を渡します
+                startActivity(intent);
 
 
             }
@@ -103,6 +108,18 @@ public class MainActivity extends AppCompatActivity {
         nextButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Calendar calendar = Calendar.getInstance();
+                calendar.setTime(firstSaturdayDate);
+                calendar.add(Calendar.MONTH, 1);  // +1 してる ひと月先に
+                Date date = new Date();
+                // これで1月先の最初の土曜日の日付が取得できている
+                date = calendar.getTime();
+
+                Intent intent = new Intent(MainActivity.this, MonthCalendarActivity.class);
+
+                intent.putExtra("nextButtonDate", date);  // 1月先の最初の土曜日の日付を送ってる Date型情報を渡します
+                startActivity(intent);
+
 
             }
         });
