@@ -68,14 +68,9 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarCellViewHolder
 
         }
 
+//        TextView titleText = holder.view.findViewById(R.id.titleText);
+//        titleText.setText();
 
-        //        CardView cardView = findViewById(R.id.cardView);
-//        // 通し番号が   i*7 + 1  の時に、赤のカードにする
-//        for (CalendarCellItem item : data) {
-//            if (item.getId() ==  (0*7 + 1)) {
-//                cardView.setCardBackgroundColor(pinkSunday);
-//            }
-//        }
 
     }
 

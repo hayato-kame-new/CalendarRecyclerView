@@ -16,6 +16,7 @@ import android.widget.TextView;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Random;
@@ -39,13 +40,24 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         dateManager = new DateManager();
-        // getDays()で、現在の月の日にちオブジェクトを取得する
+        // getDays(int month)で、現在の月の日にちオブジェクトを取得する 今月だと 引数なしのgetDays()　を呼び出す
+        // 今月を取得する
         List<Date> dates =  dateManager.getDays();
         int count = dates.size();
 
-        SimpleDateFormat format = new SimpleDateFormat("d");  // "dd" だと　　01  02 となってしまう
+        titleText = findViewById(R.id.titleText);
+        // 最初の土曜日は、その月に必ずなってるから
+        Date firstSaturdayDate = dates.get(6);
+        SimpleDateFormat format = new SimpleDateFormat("yyyy年 MM月 カレンダー");
+        String title = format.format(firstSaturdayDate);
+        titleText.setText(title);
 
+        // フォーマットし直し
+         format = new SimpleDateFormat("d");  // "dd" だと　　01  02 となってしまう
 
+        /**
+         * 表示だけのリスト
+         */
         ArrayList<CalendarCellItem> data = new ArrayList<>();
         for (int i = 0; i < dates.size(); i++) {
             CalendarCellItem item = new CalendarCellItem();
@@ -64,15 +76,29 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-        titleText = findViewById(R.id.titleText);
+        // 表示してる月よりも１つ前の月を表示するためのボタン
         prevButton = findViewById(R.id.prevButton);
         prevButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //現在の月を＋１した月の1日を指定して、該当の月の情報をとる
+                // MainActivityで今、表示をしている月の情報を取得する MainActivityでは、初期の画面 今月のカレンダーを表示するので
+               //  アクティビティを新たに生成し、アクティビティにMainActivityの firstSaturdayDateの情報を渡す
+
+
+
+
+            // Date型の計算を行いたい場合には、Calendar型に一度変換し、計算を行います。
+//            Calendar calendar = Calendar.getInstance();
+//            calendar.setTime(date);  //
+//            calendar.add(Calendar.MONTH, 2);
+
+
+
 
             }
         });
+
+        // 次の月を表示するためのボタン
         nextButton = findViewById(R.id.nextButton);
         nextButton.setOnClickListener(new View.OnClickListener() {
             @Override
