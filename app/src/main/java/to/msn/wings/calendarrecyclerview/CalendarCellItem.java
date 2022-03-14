@@ -6,6 +6,9 @@ public class CalendarCellItem {
 
     private String dateText = null;
 
+    // 追加  textViewToday
+    private String textViewToday = null;
+
 
      // ゲッター セッター
     public long getId() {
@@ -16,11 +19,19 @@ public class CalendarCellItem {
         return dateText;
     }
 
+    public String getTextViewToday() {
+        return textViewToday;
+    }
+
     public void setId(long id) {
         this.id = id;
     }
 
     public void setDateText(String dateText) {
         this.dateText = dateText;
+    }
+
+    public void setTextViewToday(String textViewToday) {
+        this.textViewToday = textViewToday;
     }
 }

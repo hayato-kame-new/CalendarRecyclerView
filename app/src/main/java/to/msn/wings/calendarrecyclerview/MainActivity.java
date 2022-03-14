@@ -40,13 +40,16 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+
         dateManager = new DateManager();
         // getDays()で、現在の月の日にちオブジェクトを取得する 今月だと 引数なしのgetDays()　を呼び出す
         // 今月を取得する
         List<Date> dates =  dateManager.getDays();
         // countいらない？？？
-        int count = dates.size();
+       //  int count = dates.size();
 
+
+        // タイトルのテキストを設定する
         titleText = findViewById(R.id.titleText);
         // 最初の土曜日は、その月に必ずなってるから
         Date firstSaturdayDate = dates.get(6);
@@ -57,8 +60,11 @@ public class MainActivity extends AppCompatActivity {
         // フォーマットし直し
          format = new SimpleDateFormat("d");  // "dd" だと　　01  02 となってしまう
 
+        // 本日
+        Calendar calendar = Calendar.getInstance();
+        Date dateObjToday = calendar.getTime();
         /**
-         * 表示だけのリスト
+         * 表示だけのテキストのリスト
          */
         ArrayList<CalendarCellItem> data = new ArrayList<>();
         for (int i = 0; i < dates.size(); i++) {
@@ -71,6 +77,15 @@ public class MainActivity extends AppCompatActivity {
             String display = format.format(date);
 
              item.setDateText(display);  // セットします
+
+            // Dateクラスでは、compareToメソッドを使って日付の比較をします  compareToメソッドの戻り値は、
+            // メソッドの呼び出し元の値が、引数と等しい場合は0
+            // メソッドの呼び出し元の値が、引数より前の場合は-1
+            // メソッドの呼び出し元の値が、引数より後の場合は1
+            // 0 か 1 か　-1 を返すので if 使う時に 0だったらというふうに書くので 注意
+            if (date.compareTo(dateObjToday) == 0) {
+                item.setTextViewToday("●");
+            }
 
              data.add(item);
         }

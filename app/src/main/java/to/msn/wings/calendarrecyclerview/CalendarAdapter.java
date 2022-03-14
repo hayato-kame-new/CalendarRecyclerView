@@ -1,6 +1,7 @@
 package to.msn.wings.calendarrecyclerview;
 import android.content.Context;
 import android.graphics.Color;
+import android.graphics.Paint;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -49,22 +50,26 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarCellViewHolder
     public void onBindViewHolder(@NonNull CalendarCellViewHolder holder, int position) {
 
         holder.dateText.setText(this.data.get(position).getDateText());
-
+        holder.textViewToday.setText(this.data.get(position).getTextViewToday());  // 追加
 
         // holder.view は　CardViewです
         CardView cardView = holder.view.findViewById(R.id.cardView);
+        TextView dateText = holder.view.findViewById(R.id.dateText);
+
 
         for(int i = 0; i < data.size(); i++) {
             if (position == (i*7 )) {  // 日曜日
                 cardView.setCardBackgroundColor(null);
                 cardView.setCardBackgroundColor(Color.parseColor("#FF0800"));
+                dateText.setTextColor(Color.parseColor("#FFFFFF"));
             }
             if (position == (i*7 + 6 )) {  // 土曜日
                 cardView.setCardBackgroundColor(null);
                 cardView.setCardBackgroundColor(Color.parseColor("#0067c0"));
+                dateText.setTextColor(Color.parseColor("#FFFFFF"));
             }
-            // 本日ならば、印をつける
-
+           // 下線もつけられます
+           //  dateText.setPaintFlags(Paint.UNDERLINE_TEXT_FLAG);
 
         }
 
