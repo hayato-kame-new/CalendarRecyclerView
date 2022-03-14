@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
@@ -43,7 +44,23 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarCellViewHolder
         // return null;
         View v = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.calendar_cell, parent, false);
+
+
+        // CardViewにリスナーをつけたい時には、この onCreateViewHolderメソッドに書く
+
+        CardView cardView = v.findViewById(R.id.cardView);
+        cardView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                Toast.makeText(v.getContext(), "長押ししますとトーストが出る", Toast.LENGTH_SHORT).show();
+
+                return false;
+            }
+        });
+
+
         return new CalendarCellViewHolder(v);
+
     }
 
     @Override
