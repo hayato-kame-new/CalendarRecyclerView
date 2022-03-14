@@ -37,7 +37,7 @@
         app:layout_constraintTop_toBottomOf="@+id/titleText" />
 
     <Button
-        android:id="@+id/currentButton"
+        android:id="@+id/currentMonthButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="今月のカレンダーへ戻る"

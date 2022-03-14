@@ -6,18 +6,20 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
 public class MonthCalendarActivity extends AppCompatActivity {
 
     private TextView titleText;
-    private Button prevButton, nextButton;
+    private Button prevButton, nextButton, currentMonthButton;
     private CalendarAdapter calendarAdapter;
     private RecyclerView recyclerView;
     DateManager dateManager;
@@ -77,6 +79,83 @@ public class MonthCalendarActivity extends AppCompatActivity {
 
             data.add(item);
         }
+
+        // 最初の土曜日は、その月に必ずなってるから
+        Date firstSaturdayDate = dates.get(6);
+
+
+        // 表示してる月よりも１つ前の月を表示するためのボタン
+        prevButton = findViewById(R.id.prevButton);
+        prevButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // MainActivityで今、表示をしている月の情報を取得する MainActivityでは、初期の画面 今月のカレンダーを表示するので
+                //  アクティビティを新たに生成し、
+                //  新しいアクティビティにMainActivityの firstSaturdayDateの情報から、１ヶ月前にした情報を渡す
+                // Date型の計算を行いたい場合には、Calendar型に一度変換し、計算を行います。
+                Calendar calendar = Calendar.getInstance();
+                calendar.setTime(firstSaturdayDate);
+                calendar.add(Calendar.MONTH, -1);  // -1 をして ひと月前に
+                Date date = new Date();
+                // これで1月前の最初の土曜日の日付が取得できている
+                date = calendar.getTime();
+
+                Intent intent = new Intent(MonthCalendarActivity.this, MonthCalendarActivity.class);
+
+                intent.putExtra("prevButtonDate", date);  // 1月前の最初の土曜日の日付を送る Date型情報を渡します
+                startActivity(intent);
+
+
+            }
+        });
+
+        // 次の月を表示するためのボタン
+        nextButton = findViewById(R.id.nextButton);
+        nextButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Calendar calendar = Calendar.getInstance();
+                calendar.setTime(firstSaturdayDate);
+                calendar.add(Calendar.MONTH, 1);  // +1 してる ひと月先に
+                Date date = new Date();
+                // これで1月先の最初の土曜日の日付が取得できている
+                date = calendar.getTime();
+
+                Intent intent = new Intent(MonthCalendarActivity.this, MonthCalendarActivity.class);
+
+                intent.putExtra("nextButtonDate", date);  // 1月先の最初の土曜日の日付を送ってる Date型情報を渡します
+                startActivity(intent);
+
+
+            }
+        });
+
+        //  今月の表示に戻る MainActivityに戻る
+        currentMonthButton = findViewById(R.id.currentMonthButton);
+        currentMonthButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // MainActivityで今、表示をしている月の情報を取得する MainActivityでは、初期の画面 今月のカレンダーを表示するので
+                //  アクティビティを新たに生成し、
+                //  新しいアクティビティにMainActivityの firstSaturdayDateの情報から、１ヶ月前にした情報を渡す
+                // Date型の計算を行いたい場合には、Calendar型に一度変換し、計算を行います。
+//                Calendar calendar = Calendar.getInstance();
+//                calendar.setTime(firstSaturdayDate);
+//                calendar.add(Calendar.MONTH, -1);  // -1 をして ひと月前に
+//                Date date = new Date();
+//                // これで1月前の最初の土曜日の日付が取得できている
+//                date = calendar.getTime();
+
+                Intent intent = new Intent(MonthCalendarActivity.this, MainActivity.class);
+
+             //  intent.putExtra("prevButtonDate", date);  // 1月前の最初の土曜日の日付を送る Date型情報を渡します
+                startActivity(intent);
+
+
+            }
+        });
+
+
 
         // マニフェストファイルによって、activity_month_calendar.xmlとの紐付けができてるので、
         // idとかもこのまま使える メインレイアウトと同じだけど問題なく使える
