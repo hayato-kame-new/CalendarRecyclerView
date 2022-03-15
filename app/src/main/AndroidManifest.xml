@@ -10,6 +10,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.CalendarRecyclerView">
         <activity
+            android:name=".TimeScheduleActivity"
+            android:exported="false" />
+        <activity
             android:name=".PreAndNextMonthCalendarActivity"
             android:exported="false" />
         <activity

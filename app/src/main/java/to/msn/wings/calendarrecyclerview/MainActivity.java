@@ -1,7 +1,5 @@
 package to.msn.wings.calendarrecyclerview;
 
-import static to.msn.wings.calendarrecyclerview.R.color.pinkSunday;
-
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -117,8 +115,7 @@ public class MainActivity extends AppCompatActivity {
 //                intent.putExtra("prevButtonDate", date);  // 1月前の最初の土曜日の日付を送る Date型情報を渡します
 //                startActivity(intent);
 //
-//                Activity parentActivity = getActivity();  // 自分自身が所属するアクティビティを終了させます
-//                parentActivity.finish();
+
 //
 //            }
 //        });
