@@ -11,6 +11,7 @@
         <entry key="app/src/main/res/layout/fragment_current_month.xml" value="0.1933876811594203" />
         <entry key="app/src/main/res/layout/fragment_pre_and_next_month_calendar.xml" value="0.1933876811594203" />
         <entry key="app/src/main/res/layout/fragment_time_schedule.xml" value="0.25" />
+        <entry key="app/src/main/res/layout/time_schedule_list_item.xml" value="0.25" />
       </map>
     </option>
   </component>
