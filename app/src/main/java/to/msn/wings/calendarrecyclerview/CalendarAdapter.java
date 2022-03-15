@@ -13,6 +13,7 @@ import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -34,6 +35,7 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarCellViewHolder
 
     /**
      * 3つのメソッドをオーバーライドすべき
+     *カードビューにリスななどをつけたい時にこのonCreateViewHolderに書く
      * @param parent
      * @param viewType
      * @return
@@ -72,6 +74,8 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarCellViewHolder
         // holder.view は　CardViewです
         CardView cardView = holder.view.findViewById(R.id.cardView);
         TextView dateText = holder.view.findViewById(R.id.dateText);
+
+
 
 
         for(int i = 0; i < data.size(); i++) {
