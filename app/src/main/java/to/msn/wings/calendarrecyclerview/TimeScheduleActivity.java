@@ -4,6 +4,9 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
 
+/**
+ * TimeScheduleFragmentをこのアクティビティの上に乗せますので このままでいい
+ */
 public class TimeScheduleActivity extends AppCompatActivity {
 
     @Override

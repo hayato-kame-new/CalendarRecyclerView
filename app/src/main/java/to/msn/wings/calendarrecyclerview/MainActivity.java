@@ -6,12 +6,15 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -21,7 +24,7 @@ import java.util.List;
 import java.util.Random;
 
 /**
- * メインアクティビティの上にCurrentMonthFragmentが乗っています
+ * メインアクティビティの上にCurrentMonthFragmentが乗っています そこで、データベースにも接続してデータ取得します
  */
 public class MainActivity extends AppCompatActivity {
 
@@ -40,6 +43,16 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+
+        TimeScheduleDatabaseHelper helper = new TimeScheduleDatabaseHelper(this);
+
+        // データベースを取得する
+        try (SQLiteDatabase db = helper.getWritableDatabase()) {
+            Toast.makeText(this, "接続しました", Toast.LENGTH_SHORT).show();
+            // ここにデータベースの処理を書く
+
+        }
 
 //
 //        dateManager = new DateManager();
