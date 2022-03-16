@@ -27,7 +27,9 @@ public class TimeScheduleListAdapter extends RecyclerView.Adapter<TimeScheduleLi
 
     /**
      * 自分で作った個々のリストアイテムのレイアウトをインフレートする
-     * カードビューにリスナーをつけたい時にはこのonCreateViewHolderに書く
+     *
+     *  カードビューにリスナーをつけたい時にはこのonCreateViewHolderに書くか、下のonBindViewHolerに書く
+     *       トースト表示ならこのメソッド内に書いてもいいが、
      *
      * @param parent
      * @param viewType
@@ -41,7 +43,7 @@ public class TimeScheduleListAdapter extends RecyclerView.Adapter<TimeScheduleLi
         // 個々のリストアイテムのレイアウトファイルでインフレートしたビューのインスタンスを生成して
         View v = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.time_schedule_list_item, parent, false);
-        // CardViewにリスナーをつけたい時には、この onCreateViewHolderメソッドに書く
+
 
 
         // 最後に ビューを ビューホルダーにセットして ビューホルダーのインスタンスをリターンする
@@ -57,9 +59,12 @@ public class TimeScheduleListAdapter extends RecyclerView.Adapter<TimeScheduleLi
     public void onBindViewHolder(@NonNull TimeScheduleListHolder holder, int position) {
 
         // 開始時間 ~ 終了時間 を表示するので
-        String text = this.data.get(position).getStartTime() + " ~ " + this.data.get(position).getEndTime();
-        holder.time.setText(text);
+        String timeText = this.data.get(position).getStartTime() + " ~ " + this.data.get(position).getEndTime();
+        holder.time.setText(timeText);
         holder.time.setTextColor(Integer.parseInt("green"));
+
+        String dateText = this.data.get(position).getDate();
+        holder.date.setText(dateText);
 
         // スケジュールのタイトル
         String title = this.data.get(position).getScheduleTitle();
