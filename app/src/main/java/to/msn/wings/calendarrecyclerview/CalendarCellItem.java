@@ -8,9 +8,11 @@ public class CalendarCellItem {
 
     // 追加  textViewToday
     private String textViewToday = null;
+    // 追加 非表示のTextViewにする
+    private String textViewGone = null;
 
 
-     // ゲッター セッター
+    // ゲッター セッター
     public long getId() {
         return id;
     }
@@ -23,6 +25,10 @@ public class CalendarCellItem {
         return textViewToday;
     }
 
+    public String getTextViewGone() {
+        return textViewGone;
+    }
+
     public void setId(long id) {
         this.id = id;
     }
@@ -33,5 +39,9 @@ public class CalendarCellItem {
 
     public void setTextViewToday(String textViewToday) {
         this.textViewToday = textViewToday;
+    }
+
+    public void setTextViewGone(String textViewGone) {
+        this.textViewGone = textViewGone;
     }
 }

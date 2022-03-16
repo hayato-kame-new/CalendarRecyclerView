@@ -18,6 +18,8 @@ public class CalendarCellViewHolder extends RecyclerView.ViewHolder {
 
     TextView textViewToday;
 
+    TextView textViewGone;  // 非表示する
+
     /**
      * コンストラクタ
      * @param itemView
@@ -27,5 +29,6 @@ public class CalendarCellViewHolder extends RecyclerView.ViewHolder {
         this.view = itemView;
         this.dateText = view.findViewById(R.id.dateText);
         this.textViewToday = view.findViewById(R.id.textViewToday);
+        this.textViewGone = view.findViewById(R.id.textViewGone);  // 非表示にする
     }
 }

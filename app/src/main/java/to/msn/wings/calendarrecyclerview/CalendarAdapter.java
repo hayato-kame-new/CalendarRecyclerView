@@ -61,7 +61,7 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarCellViewHolder
                 Context context = view.getContext();
                 Intent intent = new Intent(context, TimeScheduleActivity.class);
                 TextView date = view.findViewById(R.id.date);
-                // nullだとエラーになるので注意してください  落ちます
+                // nullだとエラーになるので注意してください  落ちます nullにはならないはずです
 //                String dateText =  date.getText().toString();
 //
 //               intent.putExtra("date",dateText);
@@ -70,7 +70,7 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarCellViewHolder
         } );
 
  // これはOK
-        CardView cardView = v.findViewById(R.id.cardView);
+    //    CardView cardView = v.findViewById(R.id.cardView);
 //        cardView.setOnLongClickListener(new View.OnLongClickListener() {  // 長押し
 //            @Override
 //            public boolean onLongClick(View view) {
@@ -113,13 +113,16 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarCellViewHolder
 
         holder.dateText.setText(this.data.get(position).getDateText());
         holder.textViewToday.setText(this.data.get(position).getTextViewToday());  // 追加
-
-
+        // 追加 これは非表示したい
+        holder.textViewGone.setText(this.data.get(position).getTextViewGone());
 
         // holder.view は　CardViewです
         CardView cardView = holder.view.findViewById(R.id.cardView);
         TextView dateText = holder.view.findViewById(R.id.dateText);
         TextView textViewToday = holder.view.findViewById(R.id.textViewToday);
+        TextView textViewGone = holder.view.findViewById(R.id.textViewGone);
+        // textViewGone を非表示としたい  大切
+        //  textViewGone.setVisibility(View.GONE);  // これで表示しない
 
         for(int i = 0; i < data.size(); i++) {
             if (position == (i*7 )) {  // 日曜日

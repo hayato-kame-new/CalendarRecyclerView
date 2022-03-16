@@ -21,21 +21,24 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="○月カレンダーへ戻る"
-        app:layout_constraintEnd_toStartOf="@+id/currentMonButton"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintHorizontal_chainStyle="spread"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/titleText" />
+        app:layout_constraintBottom_toBottomOf="@+id/currentMonButton"
+        app:layout_constraintEnd_toEndOf="parent" />
 
     <Button
         android:id="@+id/currentMonButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="今月のカレンダーに戻る"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/returnMonButton"
+        app:layout_constraintEnd_toStartOf="@+id/returnMonButton"
         app:layout_constraintTop_toBottomOf="@+id/titleText" />
+
+    <Button
+        android:id="@+id/addButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="新規スケジュール登録"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/currentMonButton" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv"
@@ -43,7 +46,9 @@
         android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/returnMonButton" />
+        app:layout_constraintTop_toBottomOf="@+id/addButton"
+        app:layout_constraintVertical_bias="1.0" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
