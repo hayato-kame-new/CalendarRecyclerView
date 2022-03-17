@@ -18,7 +18,7 @@ public class CalendarCellViewHolder extends RecyclerView.ViewHolder {
 
     TextView textViewToday;
 
-    TextView textViewGone;  // 非表示する
+    TextView textViewGone;  // 非表示するアダプターのクラスで
 
     /**
      * コンストラクタ

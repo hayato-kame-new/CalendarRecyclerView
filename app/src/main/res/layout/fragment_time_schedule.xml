@@ -16,20 +16,27 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <TextView
+        android:id="@+id/day_today"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text=""
+        app:layout_constraintEnd_toStartOf="@+id/titleText" />
+
     <Button
         android:id="@+id/returnMonButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="○月カレンダーへ戻る"
-        app:layout_constraintBottom_toBottomOf="@+id/currentMonButton"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintEnd_toStartOf="@+id/currentMonButton"
+        app:layout_constraintTop_toBottomOf="@+id/titleText" />
 
     <Button
         android:id="@+id/currentMonButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="今月のカレンダーに戻る"
-        app:layout_constraintEnd_toStartOf="@+id/returnMonButton"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/titleText" />
 
     <Button

@@ -17,6 +17,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import org.w3c.dom.Text;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -42,7 +44,7 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarCellViewHolder
 
     /**
      * レイアウトファイルをインフレートする
-     *  カードビューにリスナーをつけたい時にはこのonCreateViewHolderに書くか、下のonBindViewHolerに書く
+     *  カードビューにリスナーをつけたい時にはこのonCreateViewHolderに書く
      *  トースト表示ならこのメソッド内に書いてもいいが、
      * @param parent
      * @param viewType
@@ -58,13 +60,21 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarCellViewHolder
         v.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Context context = view.getContext();
+                Context context = view.getContext();  // MainActivity が取得できてる
                 Intent intent = new Intent(context, TimeScheduleActivity.class);
-                TextView date = view.findViewById(R.id.date);
-                // nullだとエラーになるので注意してください  落ちます nullにはならないはずです
-//                String dateText =  date.getText().toString();
+                // 文字列になった 日付の情報を intentに putExtraする
+
+                TextView textViewGone = view.findViewById(R.id.textViewGone);
+                String scheduleDayText = textViewGone.getText().toString();  //  "2022/03/16"  などが取れる
 //
-//               intent.putExtra("date",dateText);
+                intent.putExtra("scheduleDayText" , scheduleDayText ); //  "2022/03/16"  日付の文字列情報を送るのにセットする
+
+                // nullだとエラーになるので注意してください  落ちます nullにはならないはずです
+
+                TextView textViewToday = view.findViewById(R.id.textViewToday);
+                String todayString = textViewToday.getText().toString();
+                intent.putExtra("todayString" , todayString );
+
                 context.startActivity(intent);
             }
         } );
