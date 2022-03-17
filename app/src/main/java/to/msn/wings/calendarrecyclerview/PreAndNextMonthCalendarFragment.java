@@ -127,7 +127,7 @@ public class PreAndNextMonthCalendarFragment extends Fragment {
                 intent.putExtra("prevButtonDate", date);  // 1月前の最初の土曜日の日付を送る Date型情報を渡します
                 startActivity(intent);
 
-
+                //またこの所属する同じアクティビティを使うから、自分自身が所属するアクティビティを終了させてない
             }
         });
 
@@ -148,6 +148,7 @@ public class PreAndNextMonthCalendarFragment extends Fragment {
 
                 intent.putExtra("nextButtonDate", date);  // 1月先の最初の土曜日の日付を送ってる Date型情報を渡します
                 startActivity(intent);
+                //またこの所属する同じアクティビティを使うから、自分自身が所属するアクティビティを終了させてない
 
 
             }

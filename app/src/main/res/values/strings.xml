@@ -1,5 +1,7 @@
 <resources>
-    <string name="app_name">CalendarRecyclerView</string>
+    <string name="app_name">カレンダー</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="tvScheTitle">スケジュール件名</string>
+    <string name="tvScheMemo">スケジュールメモ</string>
 </resources>

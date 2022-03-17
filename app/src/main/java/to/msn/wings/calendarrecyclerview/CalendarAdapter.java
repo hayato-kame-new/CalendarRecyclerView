@@ -131,8 +131,10 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarCellViewHolder
         TextView dateText = holder.view.findViewById(R.id.dateText);
         TextView textViewToday = holder.view.findViewById(R.id.textViewToday);
         TextView textViewGone = holder.view.findViewById(R.id.textViewGone);
-        // textViewGone を非表示としたい  大切
-        //  textViewGone.setVisibility(View.GONE);  // これで表示しない
+        // textViewGone を非表示としたい  大切  View.VISIBLE・・・表示
+        // View.INVISIBLE・・・非表示（非表示にしたスペースは詰めない）
+        // View.GONE・・・非表示（非表示にしたスペースを詰める）
+        //  textViewGone.setVisibility(View.GONE);  // これで表示しない なおかつ 非表示にしたスペースを詰める
 
         for(int i = 0; i < data.size(); i++) {
             if (position == (i*7 )) {  // 日曜日
