@@ -100,10 +100,13 @@ public class TimeScheduleFragment extends Fragment {
             @Override
             public void onClick(View view) {
 
-
                 // 画面遷移する
-                // フラグメントを乗せてるサブのアクティビティを終わらせてください
-
+                //  今月の表示に戻る MainActivityに戻る  自分自身が所属するアクティビティを終了させます
+                Intent intent = new Intent(parentActivity, MainActivity.class);
+                startActivity(intent);
+                // 自分自身が所属するアクティビティを終了させます
+                Activity parentActivity = getActivity();
+                parentActivity.finish();
             }
         });
 

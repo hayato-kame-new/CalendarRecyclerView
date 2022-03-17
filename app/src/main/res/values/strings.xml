@@ -1,7 +1,82 @@
 <resources>
     <string name="app_name">カレンダー</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+
+
+
     <string name="tvScheTitle">スケジュール件名</string>
     <string name="tvScheMemo">スケジュールメモ</string>
+    <string name="startHour">時間</string>
+    <string name="startMinutes">分</string>
+
+    <string name="endHour">時間</string>
+    <string name="endMinutes">分</string>
+    <string name="textViewStart">開始時間</string>
+    <string name="textViewEnd">終了時間</string>
+
+    <string-array name="spinnerStartHour">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+        <item>7</item>
+        <item>8</item>
+        <item>9</item>
+        <item>10</item>
+        <item>11</item>
+        <item>12</item>
+        <item>13</item>
+        <item>14</item>
+        <item>15</item>
+        <item>16</item>
+        <item>17</item>
+        <item>18</item>
+        <item>19</item>
+        <item>20</item>
+        <item>21</item>
+        <item>22</item>
+        <item>23</item>
+    </string-array>
+
+    <string-array name="spinnerEndHour">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+        <item>7</item>
+        <item>8</item>
+        <item>9</item>
+        <item>10</item>
+        <item>11</item>
+        <item>12</item>
+        <item>13</item>
+        <item>14</item>
+        <item>15</item>
+        <item>16</item>
+        <item>17</item>
+        <item>18</item>
+        <item>19</item>
+        <item>20</item>
+        <item>21</item>
+        <item>22</item>
+        <item>23</item>
+    </string-array>
+
+    <string-array name="spinnerStartMinutes">
+        <item>00</item>
+        <item>30</item>
+    </string-array>
+
+    <string-array name="spinnerEndMinutes">
+        <item>00</item>
+        <item>30</item>
+    </string-array>
+
+
 </resources>

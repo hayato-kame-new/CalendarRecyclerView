@@ -32,7 +32,7 @@ public class TimeScheduleDatabaseHelper extends SQLiteOpenHelper {
         //なので、AutoIncrement を使用する場合は、少々注意する必要があります。AutoIncrementはつけないことをおすすめする
         if (sqLiteDatabase != null) {
             sqLiteDatabase.execSQL("CREATE TABLE timeschedule (" + "_id INTEGER PRIMARY KEY , scheduledate DATE NOT NULL," +
-                    " starttime DATETIME NOT NULL, endtime DATETIME NOT NULL, scheduletitle TEXT NOT NULL, schedulememo TEXT)");
+                    " starttime DATETIME NOT NULL, endtime DATETIME , scheduletitle TEXT NOT NULL, schedulememo TEXT)");
         }
 
     }
