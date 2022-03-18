@@ -43,14 +43,14 @@ public class TimeScheduleFragment extends Fragment {
         Bundle extras = intent.getExtras();
         String scheduleDayText ="";
         String todayString = "";
-        Date date = null;  // 文字列から　Date型へ変換する  リスナーの匿名クラス(無名クラス インナークラス)で使用するので 後で、finalをつけて定数にする
+        Date date = null;  // 文字列から　Date型へ変換するため  リスナーの匿名クラス(無名クラス インナークラス)で使用するので 後で、finalをつけて定数にする
 
         if(extras != null) {
             scheduleDayText = intent.getStringExtra("scheduleDayText");
             todayString = intent.getStringExtra("todayString");
             if (scheduleDayText != null && scheduleDayText != "") {
                 try {
-                    date = new SimpleDateFormat("yyyy/MM/dd").parse(scheduleDayText);
+                    date = new SimpleDateFormat("yyyy/MM/dd").parse(scheduleDayText); // 文字列から　Date型へ変換する
 
                 } catch (ParseException e) {
                     e.printStackTrace();
@@ -75,7 +75,7 @@ public class TimeScheduleFragment extends Fragment {
         int month = Integer.parseInt(scheduleDayText.substring(5, 7));
       returnMonButton.setText(year + "年" + month + "月のカレンダーへ戻る");
 
-      // 本日
+      // 現在を取得して
         LocalDate localdateToday = LocalDate.now();
 // returnMonButton は、今月ならば 非表示にしています
       if (year == localdateToday.getYear() && month == localdateToday.getMonthValue()) {
@@ -113,7 +113,7 @@ public class TimeScheduleFragment extends Fragment {
 
         // タイムスケジュールを新規登録するボタンにリスナーをつける
         addButton = view.findViewById(R.id.addButton);
-        final Date FINALDATE = date;
+        final Date FINALDATE = date;  // 内部クラスで使うので final  定数にする
         addButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -127,6 +127,8 @@ public class TimeScheduleFragment extends Fragment {
                 Intent intent = new Intent(parentActivity, ScheduleFormActivity.class); // 新しくintentオブジェクトを作る
 
                 intent.putExtra("date", FINALDATE);  // 日付を送ってる Date型情報を渡します インナークラスで使うので finalにしてる
+                intent.putExtra("action", "add");  // 新規ということもわかるようにデータを送る キーが "action"  値が String型の "add"
+
                 startActivity(intent);
 
                 // 小さいスマホサイズなら、画面遷移ありなので 現在のフラグメントを乗せてるサブのアクティビティを終わらせてください

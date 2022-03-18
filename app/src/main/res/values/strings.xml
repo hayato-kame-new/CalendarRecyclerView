@@ -1,8 +1,9 @@
 <resources>
     <string name="app_name">カレンダー</string>
 
-
-
+    <string name="tvFormTitleDefault">スケジュール登録画面</string>
+    <string name="tvFormTitleAdd">新規-スケジュール登録画面</string>
+    <string name="tvFormTitleEdit">編集-スケジュール登録画面</string>
 
     <string name="tvScheTitle">スケジュール件名</string>
     <string name="tvScheMemo">スケジュールメモ</string>
@@ -77,6 +78,8 @@
         <item>00</item>
         <item>30</item>
     </string-array>
+
+    <string name="saveButton">保存</string>
 
 
 </resources>

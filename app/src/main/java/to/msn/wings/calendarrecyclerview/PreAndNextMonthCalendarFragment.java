@@ -173,7 +173,7 @@ public class PreAndNextMonthCalendarFragment extends Fragment {
               //  Intent intent = new Intent(PreAndNextMonthCalendarActivity.this, MainActivity.class);
                 Intent intent = new Intent(parentActivity, MainActivity.class);
 
-                //  intent.putExtra("prevButtonDate", date);  // 1月前の最初の土曜日の日付を送る Date型情報を渡します
+
                 startActivity(intent);
 
                 // 自分自身が所属するアクティビティを終了させます

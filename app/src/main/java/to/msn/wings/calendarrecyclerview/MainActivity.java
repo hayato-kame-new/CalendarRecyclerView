@@ -36,12 +36,12 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        TimeScheduleDatabaseHelper helper = new TimeScheduleDatabaseHelper(this);
-
+         helper = new TimeScheduleDatabaseHelper(MainActivity.this);  // onDestroy()で helperを解放すること
+        // MainActivityの上に乗せた CurrentMonthFragmentで、既存のデータを表示させるので、SELECT文で取得する
         // データベースを取得する try-catch-resources構文なのでfinallyを書かなくても必ず close()処理をしてくれます！！
         try (SQLiteDatabase db = helper.getWritableDatabase()) {
             Toast.makeText(this, "接続しました", Toast.LENGTH_SHORT).show();
-            // ここにデータベースの処理を書く
+            // ここにデータベースの処理を書く SELECT文で取得する CurrentMonthFragmentで表示
 
         }
 
