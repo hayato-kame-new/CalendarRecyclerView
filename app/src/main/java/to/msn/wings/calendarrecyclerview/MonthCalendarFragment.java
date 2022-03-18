@@ -15,12 +15,13 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-public class PreAndNextMonthCalendarFragment extends Fragment {
+public class MonthCalendarFragment extends Fragment {
 
 
     private TextView titleText;
@@ -40,18 +41,21 @@ public class PreAndNextMonthCalendarFragment extends Fragment {
 
         Activity parentActivity = getActivity();
 
-        View view = inflater.inflate(R.layout.fragment_pre_and_next_month_calendar, container, false);
+        View view = inflater.inflate(R.layout.fragment_month_calendar, container, false);
 
         Intent intent = parentActivity.getIntent();
 
         Date prevButtonDate = null;
         Date nextButtonDate = null;
+        Date specifyDate = null;  // ScheduleFormから遷移してきた時 指定する月は現在の月ジャない時にだけここにくる
         Bundle extras = intent.getExtras();
         if(extras != null) {
             //  null かどうかのチェックが必要です どっちのボタンから遷移してきたのか  どっちかは nullになるので
              prevButtonDate = (Date)intent.getSerializableExtra("prevButtonDate");  // nullが入ってるかもしれないです
             //  null かどうかのチェックが必要です どっちのボタンから遷移してきたのか どっちかは nullになるので
              nextButtonDate = (Date)intent.getSerializableExtra("nextButtonDate");  // nullが入ってるかもしれないです
+            // null かどうかのチェックが必要です
+            specifyDate = (Date)intent.getSerializableExtra("specifyDate");
         }
 
         //  null かどうかのチェックが必要です どっちのボタンから遷移してきたのか  どっちかは nullになるので
@@ -59,8 +63,11 @@ public class PreAndNextMonthCalendarFragment extends Fragment {
         //  null かどうかのチェックが必要です どっちのボタンから遷移してきたのか どっちかは nullになるので
     //     Date nextButtonDate = (Date)intent.getSerializableExtra("nextButtonDate");
 
-        dateManager = new DateManager();
 
+
+
+
+        dateManager = new DateManager();
 
         List<Date> dates = null;
 
@@ -77,6 +84,9 @@ public class PreAndNextMonthCalendarFragment extends Fragment {
             title = format.format(nextButtonDate);
             dates = dateManager.getDays(nextButtonDate); //引数ありのgetDays(Date date)　を呼び出す
 
+        } else if (specifyDate != null) {  // 指定の日付のカレンダーを表示するならば、指定の日付が現在の月ではないなら、このフラグメントで表示します
+            title = format.format(specifyDate);
+            dates = dateManager.getDays(specifyDate);  //引数ありのgetDays(Date date)　を呼び出す
         }
         titleText.setText(title);
 
@@ -122,7 +132,7 @@ public class PreAndNextMonthCalendarFragment extends Fragment {
                 date = calendar.getTime();
 
               //  Intent intent = new Intent(PreAndNextMonthCalendarActivity.this, PreAndNextMonthCalendarActivity.class);
-                Intent intent = new Intent(parentActivity, PreAndNextMonthCalendarActivity.class);
+                Intent intent = new Intent(parentActivity, MonthCalendarActivity.class);
 
                 intent.putExtra("prevButtonDate", date);  // 1月前の最初の土曜日の日付を送る Date型情報を渡します
                 startActivity(intent);
@@ -144,7 +154,7 @@ public class PreAndNextMonthCalendarFragment extends Fragment {
                 date = calendar.getTime();
 
               //   Intent intent = new Intent(PreAndNextMonthCalendarActivity.this, PreAndNextMonthCalendarActivity.class);
-                Intent intent = new Intent(parentActivity, PreAndNextMonthCalendarActivity.class);
+                Intent intent = new Intent(parentActivity, MonthCalendarActivity.class);
 
                 intent.putExtra("nextButtonDate", date);  // 1月先の最初の土曜日の日付を送ってる Date型情報を渡します
                 startActivity(intent);

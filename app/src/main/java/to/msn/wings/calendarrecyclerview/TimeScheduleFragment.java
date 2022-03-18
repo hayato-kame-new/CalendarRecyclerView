@@ -44,7 +44,7 @@ public class TimeScheduleFragment extends Fragment {
         String scheduleDayText ="";
         String todayString = "";
         Date date = null;  // 文字列から　Date型へ変換するため  リスナーの匿名クラス(無名クラス インナークラス)で使用するので 後で、finalをつけて定数にする
-
+        // インナークラスで使うために final で定数に
         if(extras != null) {
             scheduleDayText = intent.getStringExtra("scheduleDayText");
             todayString = intent.getStringExtra("todayString");
@@ -57,7 +57,8 @@ public class TimeScheduleFragment extends Fragment {
                 }
             }
         }
-
+// インナークラスで使うために final で定数に
+        final Date DATE = date;
         currentMonButton = view.findViewById(R.id.currentMonButton);
 
         day = view.findViewById(R.id.titleText); // fragment_time_schedule.xmlの idが titleTextのもの
@@ -91,6 +92,16 @@ public class TimeScheduleFragment extends Fragment {
 
                 // 画面遷移する
                 // フラグメントを乗せてるサブのアクティビティを終わらせてください
+                // インナークラスなので 定数 DATEを使う
+
+                Intent intent = new Intent(parentActivity, MonthCalendarActivity.class);
+                // 指定した年と月のカレンダーを表示するために Date型情報を渡します
+                intent.putExtra("specifyDate", DATE);  //  Date型情報を渡します
+                startActivity(intent);
+
+                // 最後に 自分自身が所属するアクティビティを終了させます
+                Activity parentActivity = getActivity();
+                parentActivity.finish();
 
             }
         });

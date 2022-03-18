@@ -80,9 +80,8 @@ public class ScheduleFormFragment extends Fragment {
         // 現在を取得して
         LocalDate localdateToday = LocalDate.now();
         if (year == localdateToday.getYear() && month == localdateToday.getMonthValue()) {
-            // 後で、コメントアウトじゃなくする
-            // ここ！！　後でコメント外してください！！！！！
-          //  returnMonButton.setVisibility(View.GONE); // これで表示しない なおかつ 非表示にしたスペースを詰める
+
+            returnMonButton.setVisibility(View.GONE); // これで表示しない なおかつ 非表示にしたスペースを詰める
         }
 
         spinnerStartHour = view.findViewById(R.id.spinnerStartHour);
@@ -102,6 +101,10 @@ public class ScheduleFormFragment extends Fragment {
             public void onClick(View view) {
                 // インナークラスなので 定数 DATEを使う
 
+                Intent intent = new Intent(parentActivity, MonthCalendarActivity.class);
+                // 指定した年と月のカレンダーを表示するために Date型情報を渡します
+                intent.putExtra("specifyDate", DATE);  //  Date型情報を渡します
+                startActivity(intent);
 
                // 最後に 自分自身が所属するアクティビティを終了させます
                 Activity parentActivity = getActivity();

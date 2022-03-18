@@ -6,7 +6,7 @@
 
     <fragment
         android:id="@+id/preAndNextFragment"
-        android:name="to.msn.wings.calendarrecyclerview.PreAndNextMonthCalendarFragment"
+        android:name="to.msn.wings.calendarrecyclerview.MonthCalendarFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
 

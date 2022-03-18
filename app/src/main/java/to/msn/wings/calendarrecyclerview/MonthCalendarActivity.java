@@ -1,25 +1,13 @@
 package to.msn.wings.calendarrecyclerview;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
-import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
-import android.widget.Button;
-import android.widget.TextView;
-
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
 
 /**
  * この第二画面のアクティビティの上に、PreAndNextCalendarFragment
  */
-public class PreAndNextMonthCalendarActivity extends AppCompatActivity {
+public class MonthCalendarActivity extends AppCompatActivity {
 
 //    private TextView titleText;
 //    private Button prevButton, nextButton, currentMonthButton;
@@ -32,7 +20,7 @@ public class PreAndNextMonthCalendarActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_pre_and_next_month_calendar);
+        setContentView(R.layout.activity_month_calendar);
 
 
 

@@ -16,7 +16,7 @@
             android:name=".TimeScheduleActivity"
             android:exported="false" />
         <activity
-            android:name=".PreAndNextMonthCalendarActivity"
+            android:name=".MonthCalendarActivity"
             android:exported="false" />
         <activity
             android:name=".MainActivity"
