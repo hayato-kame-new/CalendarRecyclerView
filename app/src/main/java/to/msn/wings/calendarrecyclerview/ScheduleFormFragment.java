@@ -1,7 +1,10 @@
 package to.msn.wings.calendarrecyclerview;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteStatement;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -18,7 +21,6 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import com.google.android.material.navigation.NavigationBarView;
 import android.widget.Button;
 import android.widget.Toast;
 
@@ -38,8 +40,10 @@ public class ScheduleFormFragment extends Fragment {
     Spinner _spinnerStartHour, _spinnerStartMinutes, _spinnerEndHour, _spinnerEndMinutes;
     EditText _editTextScheTitle, _editTextScheMemo;
     CalendarView _calendarView;
+    Button _saveButton;  //  import android.widget.Button;
 
-
+     private TimeScheduleDatabaseHelper helper;
+    private SQLiteDatabase db;
 
 
     @Override
@@ -95,6 +99,10 @@ public class ScheduleFormFragment extends Fragment {
         _spinnerStartMinutes = view.findViewById(R.id.spinnerStartMinutes);
         _spinnerEndHour = view.findViewById(R.id.spinnerEndHour);
         _spinnerEndMinutes = view.findViewById(R.id.spinnerEndMinutes);
+        _editTextScheTitle = view.findViewById(R.id.editTextScheTitle);
+        _editTextScheMemo = view.findViewById(R.id.editTextScheMemo);
+        _saveButton = view.findViewById(R.id.saveButton);
+
 
         // スピナー３つは android:entries="@array/spinnerStartHour"を書く スピナー1つは動的にリストを作る
 
@@ -285,33 +293,56 @@ public class ScheduleFormFragment extends Fragment {
             }
         });
 
+        // Title は　何か書いてもらわないとだめなので、保存ボタンクリックした時にチェックする
+        String etTitle = _editTextScheTitle.getText().toString();  // 何も書いてないと ""空文字になってる
+        String etMemo = _editTextScheMemo.getText().toString(); // 何も書いてないと ""空文字になってる
+
+
         // 取得した日付 sqlDateArray[0]
         java.sql.Date insertDate = sqlDateArray[0];
+        // SQLiteならば テキストにして "2022-03-18" にしてデータベースに保存する
+        String insertDateStr = new SimpleDateFormat("yyyy-MM-dd").format(insertDate);
 
-        Integer startH = null;
-        Integer startM = null;
-        // 取得した 文字列の時間をintへ変換する  フラグメント立ち上げの時には START_HOUR_STR_ARRAY[0] には ""空文字が入ってるのでエラー
-        if (!(START_HOUR_STR_ARRAY[0].equals("") || START_MINUTES_STR_ARRAY[0].equals(""))) {
+        String insertStartTime = "";
+        //  SQLiteならばテキストにして保存するので
+        if (!(START_HOUR_STR_ARRAY[0].equals("") || START_MINUTES_STR_ARRAY[0].equals(""))) {  // フラグメント作成時の時""だから
+            String paddingStr = str.format("%2s", START_HOUR_STR_ARRAY[0]).replace(" ", "0");
 
-             startH = Integer.parseInt(START_HOUR_STR_ARRAY[0]);
-             startM = Integer.parseInt(START_MINUTES_STR_ARRAY[0]);
-        }
-        // 終了は "選択しない"　が入ってる時もある 終了時間が ”選択しない” ならば 終了分も "選択しない" になっているはず 終了は null許可するから
-        Integer endH = null;
-        Integer endM = null;
-        if ( !END_HOUR_STR_ARRAY[0].equals("選択しない") && !END_HOUR_STR_ARRAY[0].equals("")) {
-            // "00" か　"30" が選択されてるならば
-            endH = Integer.parseInt(END_HOUR_STR_ARRAY[0]);
-            endM = Integer.parseInt(END_HOUR_STR_ARRAY[0]);
+            insertStartTime = paddingStr + ":" + START_MINUTES_STR_ARRAY[0];
         }
 
-//        "CREATE TABLE timeschedule (" + "_id INTEGER PRIMARY KEY , scheduledate DATE NOT NULL," +
-//                " starttime DATETIME NOT NULL, endtime DATETIME , scheduletitle TEXT NOT NULL, schedulememo TEXT)"
-        if (startH != null && startM != null  && endH != null && endM != null) {
-
-            LocalTime starttime = LocalTime.of(startH, startM);  // 選択しないなら nullなのでここで落ちる
-            LocalTime endtime = LocalTime.of(endH, endM);
+        String insertEndTime = "";
+        if ( !END_HOUR_STR_ARRAY[0].equals("選択しない") && !END_HOUR_STR_ARRAY[0].equals(""))  {
+            insertEndTime = END_HOUR_STR_ARRAY[0] + END_HOUR_STR_ARRAY[0];
         }
+
+
+//        Integer startH = null;
+//        Integer startM = null;
+//        // 取得した 文字列の時間をintへ変換する  フラグメント立ち上げの時には START_HOUR_STR_ARRAY[0] には ""空文字が入ってるのでエラー
+//        if (!(START_HOUR_STR_ARRAY[0].equals("") || START_MINUTES_STR_ARRAY[0].equals(""))) {
+//
+//             startH = Integer.parseInt(START_HOUR_STR_ARRAY[0]);
+//             startM = Integer.parseInt(START_MINUTES_STR_ARRAY[0]);
+//        }
+//        // 終了は "選択しない"　が入ってる時もある 終了時間が ”選択しない” ならば 終了分も "選択しない" になっているはず 終了は null許可するから
+//        Integer endH = null;
+//        Integer endM = null;
+//        if ( !END_HOUR_STR_ARRAY[0].equals("選択しない") && !END_HOUR_STR_ARRAY[0].equals("")) {
+//            // "00" か　"30" が選択されてるならば
+//            endH = Integer.parseInt(END_HOUR_STR_ARRAY[0]);
+//            endM = Integer.parseInt(END_HOUR_STR_ARRAY[0]);
+//        }
+//
+//        LocalTime starttime = null;
+//        LocalTime endtime = null;
+//        if (startH != null && startM != null  && endH != null && endM != null) {
+//
+//            starttime = LocalTime.of(startH, startM);  // 選択しないなら nullなのでここで落ちる
+//             endtime = LocalTime.of(endH, endM);
+//        }
+      // SQLiteならばテキストにして保存する
+
 
 
         // 保存ボタンにリスナーをつけて　ボタンを押した時に、データベースに登録します あり得ないが入力されたときにはToastを表示させたい。
@@ -320,6 +351,45 @@ public class ScheduleFormFragment extends Fragment {
         //                    " starttime DATETIME NOT NULL, endtime DATETIME , scheduletitle TEXT NOT NULL, schedulememo TEXT)"
 
         // 保存ボタンないで、登録したらば、所属するアクティビティを終了させ、その月のカレンダーを表示させて、トーストを表示して遷移して終わり
+
+        String finalInsertStartTime = insertStartTime;
+        String finalInsertEndTime = insertEndTime;
+        _saveButton.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View view) {
+                // _id　は　主キーで autoincrement をつけないけど自動採番するらしい insetの時に書かない 自動採番する
+                // SQLite3では、「CREATE TABLE」の際に「AUTO INCREMENT」を指定する必要はありません。つけない方がいいらしい
+                //もし主キーを連番のIDにしたい場合、INTEGERで「PRIMARY KEY」を指定するようにします。
+
+                // まず、入力チェック タイトルは ""空文字じゃだめ
+
+
+                helper = new TimeScheduleDatabaseHelper(getActivity());  // onDestroy()で helperを解放すること
+                // MainActivityの上に乗せた CurrentMonthFragmentで、既存のデータを表示させるので、SELECT文で取得する
+                // データベースを取得する try-catch-resources構文なのでfinallyを書かなくても必ず close()処理をしてくれます！！
+                db = helper.getWritableDatabase();
+
+
+
+                String sqlInsert = "INSERT INTO timeschedule (scheduledate, starttime, endtime, scheduletitle, schedulememo) VALUES (?,?,?,?)";
+
+
+
+                SQLiteStatement stmt = db.compileStatement(sqlInsert);
+                stmt.bindString(1, insertDateStr);
+                stmt.bindString(2, finalInsertStartTime);
+                stmt.bindString(3, finalInsertEndTime);
+                stmt.bindString(4, etTitle);
+                stmt.bindString(5, etMemo);
+
+                stmt.executeInsert();
+
+                // intent発行して遷移して　所属するアクティビティを終了させます
+
+            }
+        });
+
 
         // 最後ビューをreturnする
         return view;

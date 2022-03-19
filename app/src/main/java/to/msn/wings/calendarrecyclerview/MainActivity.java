@@ -52,4 +52,6 @@ public class MainActivity extends AppCompatActivity {
         helper.close();  // アクティビティの消滅の前に DBヘルパーオブジェクトの解放をすること
         super.onDestroy();
     }
+
+
 }

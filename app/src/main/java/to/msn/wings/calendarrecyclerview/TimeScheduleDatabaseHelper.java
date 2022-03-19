@@ -24,15 +24,16 @@ public class TimeScheduleDatabaseHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
 
-        // SQLiteでは、列が INTEGER型 かつ PRIMARY KEY（主キー）の場合に、AutoIncrement を指定をすることができます。しかし、
-        // SQLiteで AutoIncrement を使用する主な用途は、
-        // ROWIDの選択アルゴリズムを増加のみにしたい 場合で、この制約をつける必要がない場合は、AutoIncrement を使用する必要はないと思います
-        // AutoIncrement を使用すると、自動採番で削除されたROWIDが再利用されないため、一度頭打ちになるとそれ以上データが登録出来ないということも起こり得ます。
-        //
-        //なので、AutoIncrement を使用する場合は、少々注意する必要があります。AutoIncrementはつけないことをおすすめする
+        // SQLiteでは、列が INTEGER型 かつ PRIMARY KEY（主キー）の場合に、AutoIncrement を指定をすることができますが。つけない方がいいらしい
+        // SQLite3では、「CREATE TABLE」の際に「AUTO INCREMENT」を指定する必要はありません。つけない方がいいらしい
+        //もし主キーを連番のIDにしたい場合、INTEGERで「PRIMARY KEY」を指定するようにします。
         if (sqLiteDatabase != null) {
-            sqLiteDatabase.execSQL("CREATE TABLE timeschedule (" + "_id INTEGER PRIMARY KEY , scheduledate DATE NOT NULL," +
-                    " starttime DATETIME NOT NULL, endtime DATETIME , scheduletitle TEXT NOT NULL, schedulememo TEXT)");
+//            sqLiteDatabase.execSQL("CREATE TABLE timeschedule (" + "_id INTEGER PRIMARY KEY  , scheduledate DATE NOT NULL," +
+//                    " starttime DATETIME NOT NULL, endtime DATETIME , scheduletitle TEXT NOT NULL, schedulememo TEXT)");
+
+            sqLiteDatabase.execSQL("CREATE TABLE timeschedule (" + "_id INTEGER PRIMARY KEY  , scheduledate TEXT NOT NULL," +
+                    " starttime TEXT NOT NULL, endtime TEXT , scheduletitle TEXT NOT NULL, schedulememo TEXT)");
+
         }
 
     }
