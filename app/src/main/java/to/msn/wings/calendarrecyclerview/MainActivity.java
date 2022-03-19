@@ -28,7 +28,11 @@ import java.util.Random;
  */
 public class MainActivity extends AppCompatActivity {
 
-    private TimeScheduleDatabaseHelper helper;
+
+    // public で staticな　フィールドにすれば、他のフラグメントなどでも使い回しできる？？？？？？
+    // ???????
+    // private TimeScheduleDatabaseHelper helper;
+    public static TimeScheduleDatabaseHelper helper;  // 変更してみたけど　??????
 
     @SuppressLint("ResourceAsColor")
     @Override
@@ -36,6 +40,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        // ここに書かないで、フラグメントに書いた方がいい そして、フラグメントを遷移して時に、helper解放させる
+        // ちなみに　バックキーで戻ることのできる、MainActivityは　メインのスレッドでもあるので サブアクティビティのような終了finish()はさせません
          helper = new TimeScheduleDatabaseHelper(MainActivity.this);  // onDestroy()で helperを解放すること
         // MainActivityの上に乗せた CurrentMonthFragmentで、既存のデータを表示させるので、SELECT文で取得する
         // データベースを取得する try-catch-resources構文なのでfinallyを書かなくても必ず close()処理をしてくれます！！
@@ -49,6 +55,8 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
+
+        // ここで解放じゃなくて、フラグメント移動した時に解放したほうがいいのかも
         helper.close();  // アクティビティの消滅の前に DBヘルパーオブジェクトの解放をすること
         super.onDestroy();
     }

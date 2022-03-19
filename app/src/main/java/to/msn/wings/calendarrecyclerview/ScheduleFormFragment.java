@@ -293,15 +293,12 @@ public class ScheduleFormFragment extends Fragment {
             }
         });
 
-        // Title は　何か書いてもらわないとだめなので、保存ボタンクリックした時にチェックする
-        String etTitle = _editTextScheTitle.getText().toString();  // 何も書いてないと ""空文字になってる
-        String etMemo = _editTextScheMemo.getText().toString(); // 何も書いてないと ""空文字になってる
 
 
         // 取得した日付 sqlDateArray[0]
         java.sql.Date insertDate = sqlDateArray[0];
         // SQLiteならば テキストにして "2022-03-18" にしてデータベースに保存する
-        String insertDateStr = new SimpleDateFormat("yyyy-MM-dd").format(insertDate);
+        final String insertDateStr = new SimpleDateFormat("yyyy-MM-dd").format(insertDate);
 
         String insertStartTime = "";
         //  SQLiteならばテキストにして保存するので
@@ -352,8 +349,8 @@ public class ScheduleFormFragment extends Fragment {
 
         // 保存ボタンないで、登録したらば、所属するアクティビティを終了させ、その月のカレンダーを表示させて、トーストを表示して遷移して終わり
 
-        String finalInsertStartTime = insertStartTime;
-        String finalInsertEndTime = insertEndTime;
+         final String finalInsertStartTime = insertStartTime;
+         final String finalInsertEndTime = insertEndTime;
         _saveButton.setOnClickListener(new View.OnClickListener() {
 
             @Override
@@ -364,20 +361,29 @@ public class ScheduleFormFragment extends Fragment {
 
                 // まず、入力チェック タイトルは ""空文字じゃだめ
 
+                // public で static　な　フィールドにしてみたので  ???????? ここ変更してみたが
+              //  helper = new TimeScheduleDatabaseHelper(getActivity());  // onDestroy()で helperを解放すること????
 
-                helper = new TimeScheduleDatabaseHelper(getActivity());  // onDestroy()で helperを解放すること
+
                 // MainActivityの上に乗せた CurrentMonthFragmentで、既存のデータを表示させるので、SELECT文で取得する
                 // データベースを取得する try-catch-resources構文なのでfinallyを書かなくても必ず close()処理をしてくれます！！
-                db = helper.getWritableDatabase();
+                // db = helper.getWritableDatabase();
 
-
+                // Title は　何か書いてもらわないとだめなので、保存ボタンクリックした時にチェックする
+                 String etTitle = _editTextScheTitle.getText().toString();  // 何も書いてないと ""空文字になってる
+                 String etMemo = _editTextScheMemo.getText().toString(); // 何も書いてないと ""空文字になってる
+                // ?????????これでいいのかな
+                db = MainActivity.helper.getWritableDatabase();  // これにしてみた使い回しするから
 
                 String sqlInsert = "INSERT INTO timeschedule (scheduledate, starttime, endtime, scheduletitle, schedulememo) VALUES (?,?,?,?)";
-
+                String s = sqlDateArray[0].toString();
+                Toast.makeText(getActivity(),  " 日にちが" + insertDateStr + " 開始時間が" + finalInsertStartTime + "です 終了時間は　" + finalInsertEndTime + " です" , Toast.LENGTH_LONG).show();
+                Toast.makeText(getActivity(),  "タイトルは　" + etTitle + " です　メモは　" + etMemo + " です　", Toast.LENGTH_LONG).show();
 
 
                 SQLiteStatement stmt = db.compileStatement(sqlInsert);
-                stmt.bindString(1, insertDateStr);
+
+                 stmt.bindString(1, insertDateStr);
                 stmt.bindString(2, finalInsertStartTime);
                 stmt.bindString(3, finalInsertEndTime);
                 stmt.bindString(4, etTitle);
