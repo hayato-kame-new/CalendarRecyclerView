@@ -296,23 +296,23 @@ public class ScheduleFormFragment extends Fragment {
 
 
         // 取得した日付 sqlDateArray[0]
-        java.sql.Date insertDate = sqlDateArray[0];
-        // SQLiteならば テキストにして "2022-03-18" にしてデータベースに保存する
-        final String insertDateStr = new SimpleDateFormat("yyyy-MM-dd").format(insertDate);
-
-        String insertStartTime = "";
-        //  SQLiteならばテキストにして保存するので
-        if (!(START_HOUR_STR_ARRAY[0].equals("") || START_MINUTES_STR_ARRAY[0].equals(""))) {  // フラグメント作成時の時""だから
-            String paddingStr = str.format("%2s", START_HOUR_STR_ARRAY[0]).replace(" ", "0");
-
-            insertStartTime = paddingStr + ":" + START_MINUTES_STR_ARRAY[0];
-        }
-
-        String insertEndTime = "";
-        if ( !END_HOUR_STR_ARRAY[0].equals("選択しない") && !END_HOUR_STR_ARRAY[0].equals(""))  {
-            insertEndTime = END_HOUR_STR_ARRAY[0] + END_HOUR_STR_ARRAY[0];
-        }
-
+//        java.sql.Date insertDate = sqlDateArray[0];
+//        // SQLiteならば テキストにして "2022-03-18" にしてデータベースに保存する
+//        final String insertDateStr = new SimpleDateFormat("yyyy-MM-dd").format(insertDate);
+//
+//        String insertStartTime = "";
+//        //  SQLiteならばテキストにして保存するので
+//        if (!(START_HOUR_STR_ARRAY[0].equals("") || START_MINUTES_STR_ARRAY[0].equals(""))) {  // フラグメント作成時の時""だから
+//            String paddingStr = str.format("%2s", START_HOUR_STR_ARRAY[0]).replace(" ", "0");
+//
+//            insertStartTime = paddingStr + ":" + START_MINUTES_STR_ARRAY[0];
+//        }
+//
+//        String insertEndTime = "";
+//        if ( !END_HOUR_STR_ARRAY[0].equals("選択しない") && !END_HOUR_STR_ARRAY[0].equals(""))  {
+//            insertEndTime = END_HOUR_STR_ARRAY[0] + END_HOUR_STR_ARRAY[0];
+//        }
+//
 
 //        Integer startH = null;
 //        Integer startM = null;
@@ -349,8 +349,7 @@ public class ScheduleFormFragment extends Fragment {
 
         // 保存ボタンないで、登録したらば、所属するアクティビティを終了させ、その月のカレンダーを表示させて、トーストを表示して遷移して終わり
 
-         final String finalInsertStartTime = insertStartTime;
-         final String finalInsertEndTime = insertEndTime;
+
         _saveButton.setOnClickListener(new View.OnClickListener() {
 
             @Override
@@ -363,8 +362,21 @@ public class ScheduleFormFragment extends Fragment {
 
                 // public で static　な　フィールドにしてみたので  ???????? ここ変更してみたが
               //  helper = new TimeScheduleDatabaseHelper(getActivity());  // onDestroy()で helperを解放すること????
+                Date dt = sqlDateArray[0];  // "2022-03-19"
+                String strDate = new SimpleDateFormat("yyyy-MM-dd").format(dt);
+                String  sh = START_HOUR_STR_ARRAY[0];  // "0"
+                String paddingStr = sh.format("%2s", START_HOUR_STR_ARRAY[0]).replace(" ", "0");
+                String sm = START_MINUTES_STR_ARRAY[0]; // "00"
+                String eh = END_HOUR_STR_ARRAY[0]; // "選択しない"
+                String em = END_MINUTES_STR_ARRAY[0]; // "選択しない"
+                Toast.makeText(getActivity(),  " 日にちが" + sqlDateArray[0] + " 開始時間が" + START_HOUR_STR_ARRAY[0] + ":" + START_MINUTES_STR_ARRAY[0] + "です 終了時間は　" + END_HOUR_STR_ARRAY[0] + ":" + END_MINUTES_STR_ARRAY[0] + " です" , Toast.LENGTH_LONG).show();
 
 
+                String insertST = paddingStr + ":" + sm;
+                String insertET = "";
+                if (!END_HOUR_STR_ARRAY[0].equals("選択しない")) {
+                    insertET = eh + ":" + em;
+                }
                 // MainActivityの上に乗せた CurrentMonthFragmentで、既存のデータを表示させるので、SELECT文で取得する
                 // データベースを取得する try-catch-resources構文なのでfinallyを書かなくても必ず close()処理をしてくれます！！
                 // db = helper.getWritableDatabase();
@@ -372,26 +384,30 @@ public class ScheduleFormFragment extends Fragment {
                 // Title は　何か書いてもらわないとだめなので、保存ボタンクリックした時にチェックする
                  String etTitle = _editTextScheTitle.getText().toString();  // 何も書いてないと ""空文字になってる
                  String etMemo = _editTextScheMemo.getText().toString(); // 何も書いてないと ""空文字になってる
+                Toast.makeText(getActivity(),  "タイトルは　" + etTitle + " です　メモは　" + etMemo + " です　", Toast.LENGTH_LONG).show();
+
                 // ?????????これでいいのかな
                 db = MainActivity.helper.getWritableDatabase();  // これにしてみた使い回しするから
 
-                String sqlInsert = "INSERT INTO timeschedule (scheduledate, starttime, endtime, scheduletitle, schedulememo) VALUES (?,?,?,?)";
-                String s = sqlDateArray[0].toString();
-                Toast.makeText(getActivity(),  " 日にちが" + insertDateStr + " 開始時間が" + finalInsertStartTime + "です 終了時間は　" + finalInsertEndTime + " です" , Toast.LENGTH_LONG).show();
-                Toast.makeText(getActivity(),  "タイトルは　" + etTitle + " です　メモは　" + etMemo + " です　", Toast.LENGTH_LONG).show();
+                String sqlInsert = "INSERT INTO timeschedule (scheduledate, starttime, endtime, scheduletitle, schedulememo) VALUES (?,?,?,?,?)";
+
+//                Toast.makeText(getActivity(),  " 日にちが" + insertDateStr + " 開始時間が" + finalInsertStartTime + "です 終了時間は　" + finalInsertEndTime + " です" , Toast.LENGTH_LONG).show();
+//                Toast.makeText(getActivity(),  "タイトルは　" + etTitle + " です　メモは　" + etMemo + " です　", Toast.LENGTH_LONG).show();
 
 
                 SQLiteStatement stmt = db.compileStatement(sqlInsert);
-
-                 stmt.bindString(1, insertDateStr);
-                stmt.bindString(2, finalInsertStartTime);
-                stmt.bindString(3, finalInsertEndTime);
                 stmt.bindString(4, etTitle);
                 stmt.bindString(5, etMemo);
+                 stmt.bindString(1, strDate);
+                stmt.bindString(2, insertST);
+                stmt.bindString(3, insertET);
+//                stmt.bindString(4, etTitle);
+//                stmt.bindString(5, etMemo);
 
                 stmt.executeInsert();
 
                 // intent発行して遷移して　所属するアクティビティを終了させます
+
 
             }
         });
