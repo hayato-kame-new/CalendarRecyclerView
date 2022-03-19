@@ -75,10 +75,7 @@
         <item>30</item>
     </string-array>
 
-    <string-array name="spinnerEndMinutes">
-        <item>00</item>
-        <item>30</item>
-    </string-array>
+
 
     <string name="saveButton">保存</string>
 

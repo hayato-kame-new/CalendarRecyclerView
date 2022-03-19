@@ -24,8 +24,10 @@ import android.widget.Toast;
 
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 public class ScheduleFormFragment extends Fragment {
 
@@ -88,6 +90,29 @@ public class ScheduleFormFragment extends Fragment {
             _returnMonButton.setVisibility(View.GONE); // これで表示しない なおかつ 非表示にしたスペースを詰める
         }
 
+        _spinnerStartHour = view.findViewById(R.id.spinnerStartHour);
+        _spinnerStartMinutes = view.findViewById(R.id.spinnerStartMinutes);
+        _spinnerEndHour = view.findViewById(R.id.spinnerEndHour);
+        _spinnerEndMinutes = view.findViewById(R.id.spinnerEndMinutes);
+        // xmlファイルで android:entries="@array/spinnerStartHour"を書くやり方もある こっちでもできる
+        // ４つも書くと多くなるので 今回は android:entries="@array/spinnerStartHour"を書く
+//        ArrayAdapter<CharSequence> adapterSH = ArrayAdapter.createFromResource(parentActivity,
+//                R.array.spinnerStartHour, android.R.layout.simple_spinner_item);
+//        adapterSH.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+//        spinnerStartHour.setAdapter(adapterSH);
+
+
+        // _spinnerEndMinutes には　動的にリストを作る これだけは
+        List<String> endM = new ArrayList<>();
+        endM.add("選択しない");
+        endM.add("00");
+        endM.add("30");
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(parentActivity, android.R.layout.simple_spinner_item, endM);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        _spinnerEndMinutes.setAdapter(adapter);
+
+
+
 
 
         // 遷移してくる前に表示していた　カレンダーの年と月に戻るために、
@@ -130,7 +155,7 @@ public class ScheduleFormFragment extends Fragment {
 
         java.sql.Date setDaySql = new java.sql.Date(setL);
         // 初期値は、遷移してきた時に選択してあった日付にしておくので
-         final java.sql.Date[] sqlDateArray = {setDaySql};  // 配列の中身なら書き換え可能だから 配列にする
+        final java.sql.Date[] sqlDateArray = {setDaySql};  // 配列の中身なら書き換え可能だから 配列にする
         // new 以降は　無名クラス 匿名クラスなので　　その中で使うなら　定数にするのでDATEを使う
         _calendarView.setOnDateChangeListener(new CalendarView.OnDateChangeListener() {  //  CalendarViewで日にちが選択された時に呼び出されるリスナークラス
             @Override   // 注意  引数の　monthは　The month that was set [0-11]
@@ -151,23 +176,18 @@ public class ScheduleFormFragment extends Fragment {
         });
 
 
-        _spinnerStartHour = view.findViewById(R.id.spinnerStartHour);
-        _spinnerStartMinutes = view.findViewById(R.id.spinnerStartMinutes);
-        _spinnerEndHour = view.findViewById(R.id.spinnerEndHour);
-        _spinnerEndMinutes = view.findViewById(R.id.spinnerEndMinutes);
-        // xmlファイルで android:entries="@array/spinnerStartHour"を書くやり方もある こっちでもできる
-        // ４つも書くと多くなるので 今回は android:entries="@array/spinnerStartHour"を書く
-//        ArrayAdapter<CharSequence> adapterSH = ArrayAdapter.createFromResource(parentActivity,
-//                R.array.spinnerStartHour, android.R.layout.simple_spinner_item);
-//        adapterSH.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-//        spinnerStartHour.setAdapter(adapterSH);
 
+        // 開始時間を表す文字列の定数　インナークラスで使うから final で定数化しておく必要がある。また、配列にすると、要素を書き換えるようにできる
+        final String[] START_HOUR_STR_ARRAY = {""};    // データベースに入れるために 後で int型にする
         _spinnerStartHour.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                Toast.makeText(getActivity(), "データベースに登録する日付は" + sqlDateArray[0].toString(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), "データベースに登録する日付は " + sqlDateArray[0].toString(), Toast.LENGTH_SHORT).show();
 
+                START_HOUR_STR_ARRAY[0] = (String) adapterView.getItemAtPosition(i);  // 選択されたアイテムを　親のアダプタービューから ポジションを指定して取得する
+                Toast.makeText(getActivity(), "あなたが選んだ開始時間は " + START_HOUR_STR_ARRAY[0] + " 時です", Toast.LENGTH_SHORT).show();
             }
+
 
             /**
              * onNothingSelectedメソッドは既に選択された項目をクリックした時に呼び出され、
@@ -181,10 +201,13 @@ public class ScheduleFormFragment extends Fragment {
         });
 
 
+        // 開始の分を表す文字列の定数　インナークラスで使うから final で定数化しておく必要がある。また、配列にすると、要素を書き換えるようにできる
+        final String[] START_MINUTES_STR_ARRAY = {""};    // データベースに入れるために 後で int型にする
         _spinnerStartMinutes.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-
+                START_MINUTES_STR_ARRAY[0] = (String) adapterView.getItemAtPosition(i);  // 選択されたアイテムを　親のアダプタービューから ポジションを指定して取得する
+                Toast.makeText(getActivity(), "あなたが選んだ開始 分は " + START_MINUTES_STR_ARRAY[0] + " 分です", Toast.LENGTH_SHORT).show();
             }
 
             /**
@@ -198,23 +221,30 @@ public class ScheduleFormFragment extends Fragment {
             }
         });
 
+
         // 選択しない もある NOT NULL　制約をつけない
+        // 終了時間を表す文字列の定数　インナークラスで使うから final で定数化しておく必要がある。また、配列にすると、要素を書き換えるようにできる
+        final String[] END_HOUR_STR_ARRAY = {""};    // データベースに入れるために 後で int型にする
         _spinnerEndHour.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 // もし、選択しないを選んだ時にはnullにするように書く、 分の _spinnerEndMinutes　をリセットして nullへ変更にしてから 見えなくする処理を書く
                //  分の _spinnerEndMinutesをすでに選択しているかもしれないから
-                if ( i == 0) {  // ポジションが 0番目のアイテムを View.INVISIBLEにする
+                if ( i == 0) {
+                    // ポジションが 0番目のアイテム(つまり、選択しない)を 選択している時には、下の、終了の分を 見えなくする View.INVISIBLEにする
                     // SpinnerはView.GONEにしてしまうとonItemSelectedイベントが発動しないので注意
-                    _spinnerEndMinutes.setVisibility(View.INVISIBLE);  // 場所はそのまま確保したままで 見えなくする
-                  //    _spinnerEndMinutes.setSelected(false); // これ何??
-                    // 選択しない時には、 下の分 にも nullとしたいのだが
+                    _spinnerEndMinutes.setVisibility(View.INVISIBLE);  // 分を 入力させないため 場所はそのまま確保したままで 見えなくする
 
-//                    String str = _spinnerEndMinutes.getSelectedItem().toString(); // getSelectedItem()の戻り値は Object型だから
-//                    Toast.makeText(getActivity(), str, Toast.LENGTH_SHORT).show(); // 確認
+                    _spinnerEndMinutes.setSelection(0);  // "選択しない" にしておく
+                    Object spinnerEndMinutesObject = _spinnerEndMinutes.getSelectedItem();
+                    Object obj = spinnerEndMinutesObject;
 
                 } else {
                     _spinnerEndMinutes.setVisibility(View.VISIBLE);
+
+                    // そして、選択しないをアダプターから削除しておき 選択済みを "00"にしておく
+                    adapter.remove("選択しない");
+                    _spinnerEndMinutes.setSelection(0);  // "00" にしておく
 
                 }
 
@@ -231,10 +261,25 @@ public class ScheduleFormFragment extends Fragment {
             }
         });
 
+        // _spinnerEndMinutes には　動的にリストを作る これだけは
         // 選択しない もある NOT NULL　制約をつけない
         _spinnerEndMinutes.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+
+                if ( i == 0) {
+                    // ポジションが 0番目のアイテム(つまり、選択しない)を 選択している時には、自分自身の終了の分を 見えなくする View.INVISIBLEにする
+                    // SpinnerはView.GONEにしてしまうとonItemSelectedイベントが発動しないので注意
+                  //   _spinnerEndMinutes.setVisibility(View.INVISIBLE);  // 分を 入力させないため 場所はそのまま確保したままで 見えなくする
+                  //   adapterView.removeViewAt(i);
+//                    _spinnerEndMinutes.setSelection(0);  // "選択しない" にしておく
+//                    Object spinnerEndMinutesObject = _spinnerEndMinutes.getSelectedItem();
+//                    Object obj = spinnerEndMinutesObject;
+
+                } else {
+                    _spinnerEndMinutes.setVisibility(View.VISIBLE);
+
+                }
 
             }
 
