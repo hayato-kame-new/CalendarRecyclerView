@@ -66,7 +66,6 @@ public class MonthCalendarFragment extends Fragment {
 
 
 
-
         dateManager = new DateManager();
 
         List<Date> dates = null;
@@ -89,6 +88,9 @@ public class MonthCalendarFragment extends Fragment {
             dates = dateManager.getDays(specifyDate);  //引数ありのgetDays(Date date)　を呼び出す
         }
         titleText.setText(title);
+
+
+
 
 // フォーマットし直し
         format = new SimpleDateFormat("d");  // "dd" だと　　01  02 となってしまう
@@ -165,7 +167,7 @@ public class MonthCalendarFragment extends Fragment {
         });
 
         //  今月の表示に戻る MainActivityに戻る  自分自身が所属するアクティビティを終了させます
-        currentMonthButton = view.findViewById(R.id.currentMonthButton);
+         currentMonthButton = view.findViewById(R.id.currentMonthButton);
         currentMonthButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

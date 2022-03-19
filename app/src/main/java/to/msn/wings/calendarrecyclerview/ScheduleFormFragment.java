@@ -293,60 +293,6 @@ public class ScheduleFormFragment extends Fragment {
             }
         });
 
-
-
-        // 取得した日付 sqlDateArray[0]
-//        java.sql.Date insertDate = sqlDateArray[0];
-//        // SQLiteならば テキストにして "2022-03-18" にしてデータベースに保存する
-//        final String insertDateStr = new SimpleDateFormat("yyyy-MM-dd").format(insertDate);
-//
-//        String insertStartTime = "";
-//        //  SQLiteならばテキストにして保存するので
-//        if (!(START_HOUR_STR_ARRAY[0].equals("") || START_MINUTES_STR_ARRAY[0].equals(""))) {  // フラグメント作成時の時""だから
-//            String paddingStr = str.format("%2s", START_HOUR_STR_ARRAY[0]).replace(" ", "0");
-//
-//            insertStartTime = paddingStr + ":" + START_MINUTES_STR_ARRAY[0];
-//        }
-//
-//        String insertEndTime = "";
-//        if ( !END_HOUR_STR_ARRAY[0].equals("選択しない") && !END_HOUR_STR_ARRAY[0].equals(""))  {
-//            insertEndTime = END_HOUR_STR_ARRAY[0] + END_HOUR_STR_ARRAY[0];
-//        }
-//
-
-//        Integer startH = null;
-//        Integer startM = null;
-//        // 取得した 文字列の時間をintへ変換する  フラグメント立ち上げの時には START_HOUR_STR_ARRAY[0] には ""空文字が入ってるのでエラー
-//        if (!(START_HOUR_STR_ARRAY[0].equals("") || START_MINUTES_STR_ARRAY[0].equals(""))) {
-//
-//             startH = Integer.parseInt(START_HOUR_STR_ARRAY[0]);
-//             startM = Integer.parseInt(START_MINUTES_STR_ARRAY[0]);
-//        }
-//        // 終了は "選択しない"　が入ってる時もある 終了時間が ”選択しない” ならば 終了分も "選択しない" になっているはず 終了は null許可するから
-//        Integer endH = null;
-//        Integer endM = null;
-//        if ( !END_HOUR_STR_ARRAY[0].equals("選択しない") && !END_HOUR_STR_ARRAY[0].equals("")) {
-//            // "00" か　"30" が選択されてるならば
-//            endH = Integer.parseInt(END_HOUR_STR_ARRAY[0]);
-//            endM = Integer.parseInt(END_HOUR_STR_ARRAY[0]);
-//        }
-//
-//        LocalTime starttime = null;
-//        LocalTime endtime = null;
-//        if (startH != null && startM != null  && endH != null && endM != null) {
-//
-//            starttime = LocalTime.of(startH, startM);  // 選択しないなら nullなのでここで落ちる
-//             endtime = LocalTime.of(endH, endM);
-//        }
-      // SQLiteならばテキストにして保存する
-
-
-
-        // 保存ボタンにリスナーをつけて　ボタンを押した時に、データベースに登録します あり得ないが入力されたときにはToastを表示させたい。
-        //  スタート時間が、終了時間よりも後ろだった場合に再入力を促します 入力チェックをします 保存ボタンを押した時に入力チェックを行う
-        // "CREATE TABLE timeschedule (" + "_id INTEGER PRIMARY KEY , scheduledate DATE NOT NULL," +
-        //                    " starttime DATETIME NOT NULL, endtime DATETIME , scheduletitle TEXT NOT NULL, schedulememo TEXT)"
-
         // 保存ボタンないで、登録したらば、所属するアクティビティを終了させ、その月のカレンダーを表示させて、トーストを表示して遷移して終わり
 
 
@@ -360,10 +306,8 @@ public class ScheduleFormFragment extends Fragment {
 
                 // まず、入力チェック タイトルは ""空文字じゃだめ
 
-                // public で static　な　フィールドにしてみたので  ???????? ここ変更してみたが
-              //  helper = new TimeScheduleDatabaseHelper(getActivity());  // onDestroy()で helperを解放すること????
-                Date dt = sqlDateArray[0];  // "2022-03-19"
-                String strDate = new SimpleDateFormat("yyyy-MM-dd").format(dt);
+                Date date = sqlDateArray[0];  // "2022-03-19"
+                String strDate = new SimpleDateFormat("yyyy-MM-dd").format(date);
                 String  sh = START_HOUR_STR_ARRAY[0];  // "0"
                 String paddingStr = sh.format("%2s", START_HOUR_STR_ARRAY[0]).replace(" ", "0");
                 String sm = START_MINUTES_STR_ARRAY[0]; // "00"
@@ -377,22 +321,17 @@ public class ScheduleFormFragment extends Fragment {
                 if (!END_HOUR_STR_ARRAY[0].equals("選択しない")) {
                     insertET = eh + ":" + em;
                 }
-                // MainActivityの上に乗せた CurrentMonthFragmentで、既存のデータを表示させるので、SELECT文で取得する
-                // データベースを取得する try-catch-resources構文なのでfinallyを書かなくても必ず close()処理をしてくれます！！
-                // db = helper.getWritableDatabase();
+
 
                 // Title は　何か書いてもらわないとだめなので、保存ボタンクリックした時にチェックする
                  String etTitle = _editTextScheTitle.getText().toString();  // 何も書いてないと ""空文字になってる
                  String etMemo = _editTextScheMemo.getText().toString(); // 何も書いてないと ""空文字になってる
                 Toast.makeText(getActivity(),  "タイトルは　" + etTitle + " です　メモは　" + etMemo + " です　", Toast.LENGTH_LONG).show();
 
-                // ?????????これでいいのかな
-                db = MainActivity.helper.getWritableDatabase();  // これにしてみた使い回しするから
+// データベースを取得する try-catch-resources構文にすること finallyを書かなくても必ず close()処理をしてくれます！！
+                db = MainActivity.helper.getWritableDatabase();
 
                 String sqlInsert = "INSERT INTO timeschedule (scheduledate, starttime, endtime, scheduletitle, schedulememo) VALUES (?,?,?,?,?)";
-
-//                Toast.makeText(getActivity(),  " 日にちが" + insertDateStr + " 開始時間が" + finalInsertStartTime + "です 終了時間は　" + finalInsertEndTime + " です" , Toast.LENGTH_LONG).show();
-//                Toast.makeText(getActivity(),  "タイトルは　" + etTitle + " です　メモは　" + etMemo + " です　", Toast.LENGTH_LONG).show();
 
 
                 SQLiteStatement stmt = db.compileStatement(sqlInsert);
@@ -401,12 +340,35 @@ public class ScheduleFormFragment extends Fragment {
                  stmt.bindString(1, strDate);
                 stmt.bindString(2, insertST);
                 stmt.bindString(3, insertET);
-//                stmt.bindString(4, etTitle);
-//                stmt.bindString(5, etMemo);
+
 
                 stmt.executeInsert();
 
-                // intent発行して遷移して　所属するアクティビティを終了させます
+
+                Toast.makeText(getActivity(),  "スケジュールを新規登録しました", Toast.LENGTH_LONG).show();
+
+                // スケジュールを挿入した年月が、現在の年月なら MainActivityへ　それ以外の月ならMonthCalendarActivityへ遷移する "2022-03-19"
+                int year = Integer.parseInt(strDate.substring(0, 4));
+                int month = Integer.parseInt(strDate.substring(5, 7));
+                // 現在を取得して
+                LocalDate localdateToday = LocalDate.now();
+                Intent intent = null;
+                if (year == localdateToday.getYear() && month == localdateToday.getMonthValue()) {
+                   //  returnMonButton.setVisibility(View.GONE); // これで表示しない なおかつ 非表示にしたスペースを詰める
+                     intent = new Intent(parentActivity, MainActivity.class);
+                } else {
+                     intent = new Intent(parentActivity, MonthCalendarActivity.class);
+                    intent.putExtra("specifyDate", DATE);  //  Date型情報を渡します
+                }
+
+               //  Intent intent = new Intent(parentActivity, MonthCalendarActivity.class);
+                // 指定した年と月のカレンダーを表示するために Date型情報を渡します
+                // intent.putExtra("specifyDate", DATE);  //  Date型情報を渡します
+                startActivity(intent);
+
+                // 最後に 自分自身が所属するアクティビティを終了させます
+                Activity parentActivity = getActivity();
+                parentActivity.finish();
 
 
             }
