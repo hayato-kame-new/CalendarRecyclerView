@@ -10,6 +10,8 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -102,7 +104,41 @@ public class ScheduleFormFragment extends Fragment {
         _editTextScheTitle = view.findViewById(R.id.editTextScheTitle);
         _editTextScheMemo = view.findViewById(R.id.editTextScheMemo);
         _saveButton = view.findViewById(R.id.saveButton);
+        _currentMonButton = view.findViewById(R.id.currentMonButton);
+        _calendarView = view.findViewById(R.id.calendarView);
 
+
+        // 最初の状態では　　""になってる
+        if (_editTextScheTitle.getText().toString().isEmpty() || _editTextScheTitle.getText().toString().equals("")) {  // 何も入力しないと　　""　空文字が入ってくる
+            _editTextScheTitle.setError("スケジュールのタイトルに文字を入力してください");
+            // _editTextScheTitle.getText().toString().equals("") が true　だったら、保存ボタンは押せないようにする
+            _saveButton.setEnabled(false);  // 保存ボタン押せない 新規登録画面では　最初は押せないようになってる ""になってるから
+        } else {
+            _saveButton.setEnabled(true);  // 編集などで、すでに入っていたら保存ボタン押せます
+        }
+
+
+        // イベントリスナー タイトルのEditTextに何か入力をしたら、保存ボタンが押せるようになる
+        _editTextScheTitle.addTextChangedListener(new TextWatcher() {
+
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                String word = editable.toString();
+                if(!word.equals("")) {
+                    _saveButton.setEnabled(true);  // 保存ボタン押せます
+                }
+            }
+        });
 
         // スピナー３つは android:entries="@array/spinnerStartHour"を書く スピナー1つは動的にリストを作る
 
@@ -137,7 +173,7 @@ public class ScheduleFormFragment extends Fragment {
             }
         });
 
-        _currentMonButton = view.findViewById(R.id.currentMonButton);
+
         //  現在(今月)のカレンダーの表示へ遷移する MainActivityに戻る  自分自身が所属するアクティビティを終了させます
         _currentMonButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -154,7 +190,6 @@ public class ScheduleFormFragment extends Fragment {
         });
 
         // CalendarViewに日時を設定します。
-        _calendarView = view.findViewById(R.id.calendarView);
         _calendarView.setDate(DATE.getTime());  // 引数には long型
         long setL = _calendarView.getDate();
 
@@ -173,9 +208,9 @@ public class ScheduleFormFragment extends Fragment {
 
                 c.set(Calendar.DAY_OF_MONTH, dayOfMonth);
                 java.util.Date utilDate = c.getTime();
-                java.sql.Date sqlDate = new java.sql.Date(utilDate.getTime());
+                java.sql.Date sqlDate = new java.sql.Date(utilDate.getTime());  // 本当は変換必要なかった java.util.Date　のままで良かったです
                 sqlDateArray[0] = sqlDate;
-                Toast.makeText(view.getContext(), sqlDateArray[0].toString(), Toast.LENGTH_LONG).show();
+               // Toast.makeText(view.getContext(), sqlDateArray[0].toString(), Toast.LENGTH_LONG).show();
 
             }
         });
@@ -188,10 +223,10 @@ public class ScheduleFormFragment extends Fragment {
         _spinnerStartHour.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                Toast.makeText(getActivity(), "データベースに登録する日付は " + sqlDateArray[0].toString(), Toast.LENGTH_SHORT).show();
+             //   Toast.makeText(getActivity(), "データベースに登録する日付は " + sqlDateArray[0].toString(), Toast.LENGTH_SHORT).show();
 
                 START_HOUR_STR_ARRAY[0] = (String) adapterView.getItemAtPosition(i);  // 選択されたアイテムを　親のアダプタービューから ポジションを指定して取得する
-                Toast.makeText(getActivity(), "あなたが選んだ開始時間は " + START_HOUR_STR_ARRAY[0] + " 時です", Toast.LENGTH_SHORT).show();
+             //   Toast.makeText(getActivity(), "あなたが選んだ開始時間は " + START_HOUR_STR_ARRAY[0] + " 時です", Toast.LENGTH_SHORT).show();
             }
 
 
@@ -214,7 +249,7 @@ public class ScheduleFormFragment extends Fragment {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 START_MINUTES_STR_ARRAY[0] = (String) adapterView.getItemAtPosition(i);  // 選択されたアイテムを　親のアダプタービューから ポジションを指定して取得する
-                Toast.makeText(getActivity(), "あなたが選んだ開始 分は " + START_MINUTES_STR_ARRAY[0] + " 分です", Toast.LENGTH_SHORT).show();
+             //   Toast.makeText(getActivity(), "あなたが選んだ開始 分は " + START_MINUTES_STR_ARRAY[0] + " 分です", Toast.LENGTH_SHORT).show();
             }
 
             /**
@@ -253,7 +288,7 @@ public class ScheduleFormFragment extends Fragment {
                     _spinnerEndMinutes.setSelection(0);  // "00" にしておく
                 }
                 END_HOUR_STR_ARRAY[0] = (String) adapterView.getItemAtPosition(i);  // 選択されたアイテムを　親のアダプタービューから ポジションを指定して取得する
-                Toast.makeText(getActivity(), "あなたが選んだ終了時間 は " + END_HOUR_STR_ARRAY[0] + " 分です", Toast.LENGTH_SHORT).show();
+               //  Toast.makeText(getActivity(), "あなたが選んだ終了時間 は " + END_HOUR_STR_ARRAY[0] + " 分です", Toast.LENGTH_SHORT).show();
 
 
             }
@@ -268,6 +303,7 @@ public class ScheduleFormFragment extends Fragment {
 
             }
         });
+
 
         // _spinnerEndMinutes には　動的にリストを作っています 終了時間の内部クラスのリスナーの中でアイテムを削除しているから
         // 選択しない もある NOT NULL　制約をつけない
@@ -279,7 +315,7 @@ public class ScheduleFormFragment extends Fragment {
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                     // データベースに登録するため 情報を取得する
                 END_MINUTES_STR_ARRAY[0] = (String) adapterView.getItemAtPosition(i);  // 選択されたアイテムを　親のアダプタービューから ポジションを指定して取得する
-                Toast.makeText(getActivity(), "あなたが選んだ終了 分 は " + END_MINUTES_STR_ARRAY[0] + " 分です", Toast.LENGTH_SHORT).show();
+               //  Toast.makeText(getActivity(), "あなたが選んだ終了 分 は " + END_MINUTES_STR_ARRAY[0] + " 分です", Toast.LENGTH_SHORT).show();
             }
 
             /**
@@ -293,9 +329,8 @@ public class ScheduleFormFragment extends Fragment {
             }
         });
 
-        // 保存ボタンないで、登録したらば、所属するアクティビティを終了させ、その月のカレンダーを表示させて、トーストを表示して遷移して終わり
 
-
+        // 保存ボタン
         _saveButton.setOnClickListener(new View.OnClickListener() {
 
             @Override
@@ -304,35 +339,47 @@ public class ScheduleFormFragment extends Fragment {
                 // SQLite3では、「CREATE TABLE」の際に「AUTO INCREMENT」を指定する必要はありません。つけない方がいいらしい
                 //もし主キーを連番のIDにしたい場合、INTEGERで「PRIMARY KEY」を指定するようにします。
 
-                // まず、入力チェック タイトルは ""空文字じゃだめ
+                // まず、入力チェック タイトルは ""空文字じゃだめ  入力した時間の比較すること
+
+
 
                 Date date = sqlDateArray[0];  // "2022-03-19"
-                String strDate = new SimpleDateFormat("yyyy-MM-dd").format(date);
-                String  sh = START_HOUR_STR_ARRAY[0];  // "0"
-                String paddingStr = sh.format("%2s", START_HOUR_STR_ARRAY[0]).replace(" ", "0");
-                String sm = START_MINUTES_STR_ARRAY[0]; // "00"
-                String eh = END_HOUR_STR_ARRAY[0]; // "選択しない"
-                String em = END_MINUTES_STR_ARRAY[0]; // "選択しない"
-                Toast.makeText(getActivity(),  " 日にちが" + sqlDateArray[0] + " 開始時間が" + START_HOUR_STR_ARRAY[0] + ":" + START_MINUTES_STR_ARRAY[0] + "です 終了時間は　" + END_HOUR_STR_ARRAY[0] + ":" + END_MINUTES_STR_ARRAY[0] + " です" , Toast.LENGTH_LONG).show();
+                String strDate = new SimpleDateFormat("yyyy-MM-dd").format(date); // String型 にしてデータベースへ登録する
+                String  sh = START_HOUR_STR_ARRAY[0];  // "0" や　"1"　
+                String paddingStr = sh.format("%2s", START_HOUR_STR_ARRAY[0]).replace(" ", "0");  // "0" "1" "2" を　"00" "01" "02" へ成形してる
+                String sm = START_MINUTES_STR_ARRAY[0]; // "00" または　"30"　
+                String eh = END_HOUR_STR_ARRAY[0]; // "選択しない" が入ってくる可能性あり "0" や　"1"
+                String paddingStr2 = "";
+                if (!eh.equals("選択しない")) {
+                     paddingStr2 = sh.format("%2s", END_HOUR_STR_ARRAY[0]).replace(" ", "0");
+                }
+
+                String em = END_MINUTES_STR_ARRAY[0]; // "選択しない" が入ってくる可能性あり  "00" または　"30"
+            //    Toast.makeText(getActivity(),  " 日にちが" + sqlDateArray[0] + " 開始時間が" + START_HOUR_STR_ARRAY[0] + ":" + START_MINUTES_STR_ARRAY[0] + "です 終了時間は　" + END_HOUR_STR_ARRAY[0] + ":" + END_MINUTES_STR_ARRAY[0] + " です" , Toast.LENGTH_LONG).show();
 
 
                 String insertST = paddingStr + ":" + sm;
                 String insertET = "";
                 if (!END_HOUR_STR_ARRAY[0].equals("選択しない")) {
-                    insertET = eh + ":" + em;
+                    insertET = paddingStr2 + ":" + em;
                 }
 
 
-                // Title は　何か書いてもらわないとだめなので、保存ボタンクリックした時にチェックする
-                 String etTitle = _editTextScheTitle.getText().toString();  // 何も書いてないと ""空文字になってる
+
+                 String etTitle = _editTextScheTitle.getText().toString();
                  String etMemo = _editTextScheMemo.getText().toString(); // 何も書いてないと ""空文字になってる
-                Toast.makeText(getActivity(),  "タイトルは　" + etTitle + " です　メモは　" + etMemo + " です　", Toast.LENGTH_LONG).show();
+             //   Toast.makeText(getActivity(),  "タイトルは　" + etTitle + " です　メモは　" + etMemo + " です　", Toast.LENGTH_LONG).show();
+//                if (etTitle.isEmpty() || etTitle.equals("")) {  // 何も入力しないと　　""　空文字が入ってくる
+//                    _editTextScheTitle.setError("スケジュールのタイトルに文字を入力してください");
+//                }
+
 
 // データベースを取得する try-catch-resources構文にすること finallyを書かなくても必ず close()処理をしてくれます！！
-                db = MainActivity.helper.getWritableDatabase();
+                //  try-catch-resources構文にできない時には dbをクローズする処理を書くこと
+                // ここ
+                db = MainActivity.helper.getWritableDatabase();  // クラス名::フィールド名 で　１つしかない　静的フィールド（クラスフィールド　static)を呼び出して使いまわす
 
                 String sqlInsert = "INSERT INTO timeschedule (scheduledate, starttime, endtime, scheduletitle, schedulememo) VALUES (?,?,?,?,?)";
-
 
                 SQLiteStatement stmt = db.compileStatement(sqlInsert);
                 stmt.bindString(4, etTitle);
@@ -344,6 +391,9 @@ public class ScheduleFormFragment extends Fragment {
 
                 stmt.executeInsert();
 
+                // ここで db　をクローズする処理を書く　
+                // クラスフィールドのhelperは使い回しするのでまだ　ここで クローズしないで MainActivityの　コールバックメソッドのonDestory()で解放してます
+
 
                 Toast.makeText(getActivity(),  "スケジュールを新規登録しました", Toast.LENGTH_LONG).show();
 
@@ -354,16 +404,13 @@ public class ScheduleFormFragment extends Fragment {
                 LocalDate localdateToday = LocalDate.now();
                 Intent intent = null;
                 if (year == localdateToday.getYear() && month == localdateToday.getMonthValue()) {
-                   //  returnMonButton.setVisibility(View.GONE); // これで表示しない なおかつ 非表示にしたスペースを詰める
+
                      intent = new Intent(parentActivity, MainActivity.class);
                 } else {
                      intent = new Intent(parentActivity, MonthCalendarActivity.class);
                     intent.putExtra("specifyDate", DATE);  //  Date型情報を渡します
                 }
 
-               //  Intent intent = new Intent(parentActivity, MonthCalendarActivity.class);
-                // 指定した年と月のカレンダーを表示するために Date型情報を渡します
-                // intent.putExtra("specifyDate", DATE);  //  Date型情報を渡します
                 startActivity(intent);
 
                 // 最後に 自分自身が所属するアクティビティを終了させます

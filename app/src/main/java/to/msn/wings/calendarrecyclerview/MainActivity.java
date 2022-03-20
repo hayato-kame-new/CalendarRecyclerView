@@ -29,10 +29,10 @@ import java.util.Random;
 public class MainActivity extends AppCompatActivity {
 
 
-    // public で staticな　フィールドにすれば、他のフラグメントなどでも使い回しできる？？？？？？
-    // ???????
+    // public で staticな　フィールドにすれば、他のフラグメントなどでも使い回しできるらしい
     // private TimeScheduleDatabaseHelper helper;
-    public static TimeScheduleDatabaseHelper helper;  // 変更してみたけど　??????
+    // １つしかない　　他のアクティビティなどで呼び出せる クラス名::フィールド名 で呼び出せる
+    public static TimeScheduleDatabaseHelper helper;  // 変更してみた staticな　クラスフィールドに変更 静的フィールド　１つしかない　　他のアクティビティなどで呼び出せる
 
     @SuppressLint("ResourceAsColor")
     @Override
@@ -40,11 +40,12 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // ここに書かないで、フラグメントに書いた方がいい そして、フラグメントを遷移して時に、helper解放させる
+
         // ちなみに　バックキーで戻ることのできる、MainActivityは　メインのスレッドでもあるので サブアクティビティのような終了finish()はさせません
          helper = new TimeScheduleDatabaseHelper(MainActivity.this);  // onDestroy()で helperを解放すること
+
         // MainActivityの上に乗せた CurrentMonthFragmentで、既存のデータを表示させるので、SELECT文で取得する
-        // データベースを取得する try-catch-resources構文なのでfinallyを書かなくても必ず close()処理をしてくれます！！
+        // データベースを取得する try-catch-resources構文なのでfinallyを書かなくても必ず db を　close()処理をしてくれます！！
         try (SQLiteDatabase db = helper.getWritableDatabase()) {
             Toast.makeText(this, "接続しました", Toast.LENGTH_SHORT).show();
             // ここにデータベースの処理を書く SELECT文で取得する CurrentMonthFragmentで表示
