@@ -1,6 +1,7 @@
 package to.msn.wings.calendarrecyclerview;
 
 import android.view.View;
+import android.widget.TableLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -13,6 +14,7 @@ public class TimeScheduleListHolder extends RecyclerView.ViewHolder{
     TextView time;
     TextView scheduleTitle;
     TextView scheduleMemo;
+   //  TableLayout tableLayout; // 追加 違うこっちではない
 
     public TimeScheduleListHolder(@NonNull View itemView) {
         super(itemView);
@@ -21,5 +23,6 @@ public class TimeScheduleListHolder extends RecyclerView.ViewHolder{
         this.time = view.findViewById(R.id.time);
         this.scheduleTitle = view.findViewById(R.id.scheduleTitle);
         this.scheduleMemo = view.findViewById(R.id.scheduleMemo);
+      //   this.tableLayout = view.findViewById(R.id.tableLayout);
     }
 }

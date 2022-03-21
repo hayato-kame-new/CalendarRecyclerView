@@ -10,6 +10,7 @@ public class CalendarCellItem {
     private String textViewToday = null;
     // 追加 非表示のTextViewにする
     private String textViewGone = null;
+// 追加
 
 
     // ゲッター セッター
