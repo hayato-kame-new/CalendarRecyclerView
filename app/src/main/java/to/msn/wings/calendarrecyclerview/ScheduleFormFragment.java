@@ -46,8 +46,6 @@ public class ScheduleFormFragment extends Fragment {
     CalendarView _calendarView;
     Button _saveButton;  //  import android.widget.Button;
 
-    private SQLiteDatabase _db;
-
     // フラグ
     Map<String, Boolean> _buttonFlagMap = null;
 
@@ -402,21 +400,27 @@ public class ScheduleFormFragment extends Fragment {
                  String etMemo = _editTextScheMemo.getText().toString(); // 何も書いてないと ""空文字になってる
              //   Toast.makeText(getActivity(),  "タイトルは　" + etTitle + " です　メモは　" + etMemo + " です　", Toast.LENGTH_LONG).show();
 
-// データベースを取得する try-catch-resources構文にすること finallyを書かなくても必ず close()処理をしてくれます！！
-                //  try-catch-resources構文にできない時には dbをクローズする処理を書くこと
-                // ここ
-                _db = MainActivity.helper.getWritableDatabase();  // クラス名::フィールド名 で　１つしかない　静的フィールド（クラスフィールド　static)を呼び出して使いまわす
+                // データベースを取得する try-catch-resources構文 finallyを書かなくても必ず close()処理をしてくれます
+                TimeScheduleDatabaseHelper helper =  new TimeScheduleDatabaseHelper(parentActivity);
+                //          _db = MainActivity.helper.getWritableDatabase();  // クラス名::フィールド名 で　１つしかない　静的フィールド（クラスフィールド　static)を呼び出して使いまわす
 
-                String sqlInsert = "INSERT INTO timeschedule (scheduledate, starttime, endtime, scheduletitle, schedulememo) VALUES (?,?,?,?,?)";
+                try (SQLiteDatabase db = helper.getWritableDatabase()) {  // dbはきちんとクローズ自動でしてくれます
+            Toast.makeText(parentActivity, "接続しました", Toast.LENGTH_SHORT).show();
+            // ここにデータベースの処理を書く
 
-                SQLiteStatement stmt = _db.compileStatement(sqlInsert);
-                stmt.bindString(4, etTitle);
-                stmt.bindString(5, etMemo);
-                 stmt.bindString(1, strDate);
-                stmt.bindString(2, insertST);
-                stmt.bindString(3, insertET);
+                    String sqlInsert = "INSERT INTO timeschedule (scheduledate, starttime, endtime, scheduletitle, schedulememo) VALUES (?,?,?,?,?)";
 
-                stmt.executeInsert();
+                    SQLiteStatement stmt = db.compileStatement(sqlInsert);
+                    stmt.bindString(4, etTitle);
+                    stmt.bindString(5, etMemo);
+                    stmt.bindString(1, strDate);
+                    stmt.bindString(2, insertST);
+                    stmt.bindString(3, insertET);
+
+                    stmt.executeInsert();
+                }
+
+                helper.close();
 
                 // ここで db　をクローズする処理を書く　
                 // クラスフィールドのhelperは使い回しするのでまだ　ここで クローズしないで MainActivityの　コールバックメソッドのonDestory()で解放してます
