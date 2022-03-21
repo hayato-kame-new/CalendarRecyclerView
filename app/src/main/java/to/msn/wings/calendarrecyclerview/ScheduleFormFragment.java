@@ -420,7 +420,7 @@ public class ScheduleFormFragment extends Fragment {
                     stmt.executeInsert();
                 }
 
-                helper.close();
+                helper.close();  // ヘルパーを解放する
 
                 // ここで db　をクローズする処理を書く　
                 // クラスフィールドのhelperは使い回しするのでまだ　ここで クローズしないで MainActivityの　コールバックメソッドのonDestory()で解放してます
