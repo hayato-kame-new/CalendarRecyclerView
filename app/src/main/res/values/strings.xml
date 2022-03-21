@@ -43,7 +43,7 @@
     </string-array>
 
     <string-array name="spinnerEndHour">
-        <item>選択しない</item>
+
         <item>0</item>
         <item>1</item>
         <item>2</item>
@@ -71,6 +71,11 @@
     </string-array>
 
     <string-array name="spinnerStartMinutes">
+        <item>00</item>
+        <item>30</item>
+    </string-array>
+
+    <string-array name="spinnerEndMinutes">
         <item>00</item>
         <item>30</item>
     </string-array>

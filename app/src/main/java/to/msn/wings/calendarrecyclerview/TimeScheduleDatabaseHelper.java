@@ -32,7 +32,7 @@ public class TimeScheduleDatabaseHelper extends SQLiteOpenHelper {
 //                    " starttime DATETIME NOT NULL, endtime DATETIME , scheduletitle TEXT NOT NULL, schedulememo TEXT)");
 
             sqLiteDatabase.execSQL("CREATE TABLE timeschedule (_id INTEGER PRIMARY KEY  , scheduledate TEXT NOT NULL," +
-                    " starttime TEXT NOT NULL, endtime TEXT , scheduletitle TEXT NOT NULL, schedulememo TEXT)");
+                    " starttime TEXT NOT NULL, endtime TEXT NOT NULL, scheduletitle TEXT NOT NULL, schedulememo TEXT)");
 
         }
 

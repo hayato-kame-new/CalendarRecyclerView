@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteStatement;
+import android.graphics.Color;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -32,20 +33,26 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class ScheduleFormFragment extends Fragment {
 
 
-    TextView _formTitle;
+    TextView _formTitle, _textViewHourError, _textViewMinutesError;
     Button _returnMonButton, _currentMonButton;
     Spinner _spinnerStartHour, _spinnerStartMinutes, _spinnerEndHour, _spinnerEndMinutes;
     EditText _editTextScheTitle, _editTextScheMemo;
     CalendarView _calendarView;
     Button _saveButton;  //  import android.widget.Button;
 
-     private TimeScheduleDatabaseHelper helper;
-    private SQLiteDatabase db;
+
+    private SQLiteDatabase _db;
+
+    // フラグ
+    Map<String, Boolean> _buttonFlagMap = null;
+
 
 
     @Override
@@ -57,6 +64,13 @@ public class ScheduleFormFragment extends Fragment {
         Activity parentActivity = getActivity();
 
         View view = inflater.inflate(R.layout.fragment_schedule_form, container, false);
+
+// フラグMap  インスタンス生成
+        _buttonFlagMap = new HashMap<String, Boolean>();
+
+
+        _saveButton = view.findViewById(R.id.saveButton);
+         _saveButton.setEnabled(false);  // 新規なら最初は保存ボタン押せないようになってる  false
 
        //  所属するアクティビティから インテントを取得する
         Intent intent = parentActivity.getIntent();
@@ -103,57 +117,29 @@ public class ScheduleFormFragment extends Fragment {
         _spinnerEndMinutes = view.findViewById(R.id.spinnerEndMinutes);
         _editTextScheTitle = view.findViewById(R.id.editTextScheTitle);
         _editTextScheMemo = view.findViewById(R.id.editTextScheMemo);
-        _saveButton = view.findViewById(R.id.saveButton);
+
         _currentMonButton = view.findViewById(R.id.currentMonButton);
         _calendarView = view.findViewById(R.id.calendarView);
+        _textViewHourError = view.findViewById(R.id.textViewHourError);
+        _textViewMinutesError = view.findViewById(R.id.textViewMinutesError);
 
+        // スピナーの 　動的にリストを作るやりかた
+//        List<String> endMList = new ArrayList<>();
+//        endMList.add("00");
+//        endMList.add("30");
+//        ArrayAdapter<String> adapterEM = new ArrayAdapter<>(parentActivity, android.R.layout.simple_spinner_item, endMList);
+//        adapterEM.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+//        _spinnerEndMinutes.setAdapter(adapterEM);
 
-        // 最初の状態では　　""になってる
-        if (_editTextScheTitle.getText().toString().isEmpty() || _editTextScheTitle.getText().toString().equals("")) {  // 何も入力しないと　　""　空文字が入ってくる
+        // 新規ではの状態では　　""になってる  編集では必ず入ってる
+        if (_editTextScheTitle.getText().toString().isEmpty() || _editTextScheTitle.getText().toString().equals("")) {  // 新規の時最初は　""　空文字が入ってくる
             _editTextScheTitle.setError("スケジュールのタイトルに文字を入力してください");
-            // _editTextScheTitle.getText().toString().equals("") が true　だったら、保存ボタンは押せないようにする
-            _saveButton.setEnabled(false);  // 保存ボタン押せない 新規登録画面では　最初は押せないようになってる ""になってるから
-        } else {
-            _saveButton.setEnabled(true);  // 編集などで、すでに入っていたら保存ボタン押せます
+           // 保存ボタン押せない 新規登録画面では　最初は押せないようになってる ""になってるから
+            _buttonFlagMap.put("scheTitle", false );
+        } else {  // 編集
+
+            _buttonFlagMap.put("scheTitle", true );  // 編集では、最初は押せるようになってる
         }
-
-
-        // イベントリスナー タイトルのEditTextに何か入力をしたら、保存ボタンが押せるようになる
-        _editTextScheTitle.addTextChangedListener(new TextWatcher() {
-
-            @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable editable) {
-                String word = editable.toString();
-                if(!word.equals("")) {
-                    _saveButton.setEnabled(true);  // 保存ボタン押せます
-                }
-            }
-        });
-
-        // スピナー３つは android:entries="@array/spinnerStartHour"を書く スピナー1つは動的にリストを作る
-
-
-        // スピナーの _spinnerEndMinutes には　動的にリストを作る これだけは  内部クラスの中で、adapterから行を一つ削除するため 動的に作る
-        List<String> endMList = new ArrayList<>();
-        endMList.add("選択しない");
-        endMList.add("00");
-        endMList.add("30");
-        ArrayAdapter<String> adapterEM = new ArrayAdapter<>(parentActivity, android.R.layout.simple_spinner_item, endMList);
-        adapterEM.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        _spinnerEndMinutes.setAdapter(adapterEM);
-
-
-
 
 
         // 遷移してくる前に表示していた　カレンダーの年と月に戻るために、
@@ -167,7 +153,7 @@ public class ScheduleFormFragment extends Fragment {
                 intent.putExtra("specifyDate", DATE);  //  Date型情報を渡します
                 startActivity(intent);
 
-               // 最後に 自分自身が所属するアクティビティを終了させます
+                // 最後に 自分自身が所属するアクティビティを終了させます
                 Activity parentActivity = getActivity();
                 parentActivity.finish();
             }
@@ -189,6 +175,27 @@ public class ScheduleFormFragment extends Fragment {
             }
         });
 
+
+        // イベントリスナー タイトルのEditTextに何か入力をしたら、保存ボタンが押せるフラグMapに 値をtrueで登録
+        _editTextScheTitle.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            }
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            }
+            @Override
+            public void afterTextChanged(Editable editable) {
+                String word = editable.toString();
+                if(!word.equals("")) {
+                    _buttonFlagMap.put("scheTitle", true );  // ""空文字じゃなかったら 保存ボタンが押せる
+                }
+                // もし、Mapの値が全て trueならばボタンを押せるようにする　メソッド化する
+                changeSaveButton(_buttonFlagMap);
+            }
+        });
+
+
         // CalendarViewに日時を設定します。
         _calendarView.setDate(DATE.getTime());  // 引数には long型
         long setL = _calendarView.getDate();
@@ -201,7 +208,6 @@ public class ScheduleFormFragment extends Fragment {
             @Override   // 注意  引数の　monthは　The month that was set [0-11]
             public void onSelectedDayChange(@NonNull CalendarView calendarView, int year, int month, int dayOfMonth) {
                 // データベースへ新規登録するためにデータを取得します
-
                 Calendar c = Calendar.getInstance();  // 現在
                 c.set(Calendar.YEAR, year);
                 c.set(Calendar.MONTH, month ); // 月は0始まりだが、引数の monthも0始まりなので同じにして大丈夫です
@@ -211,25 +217,47 @@ public class ScheduleFormFragment extends Fragment {
                 java.sql.Date sqlDate = new java.sql.Date(utilDate.getTime());  // 本当は変換必要なかった java.util.Date　のままで良かったです
                 sqlDateArray[0] = sqlDate;
                // Toast.makeText(view.getContext(), sqlDateArray[0].toString(), Toast.LENGTH_LONG).show();
-
             }
         });
 
 
+
 // データベースへ登録するための フィールド 内部クラスで使うから final にしておく
         // 開始時間を表す文字列の定数　インナークラスで使うから final で定数化しておく必要がある。また、配列にすると、要素を書き換えるようにできる
-        final String[] START_HOUR_STR_ARRAY = {""};    // データベースに入れるために 後で int型にする
+        final String[] START_HOUR_STR_ARRAY = {""};
+        // 終了時間を表す文字列の定数　インナークラスで使うから final で定数化しておく必要がある。また、配列にすると、要素を書き換えるようにできる
+         final String[] END_HOUR_STR_ARRAY = {""};
 
         _spinnerStartHour.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
              //   Toast.makeText(getActivity(), "データベースに登録する日付は " + sqlDateArray[0].toString(), Toast.LENGTH_SHORT).show();
 
+                String select = (String)adapterView.getItemAtPosition(i);
+                // 開始時間の 入力チェック
+
+                // END_HOUR_STR_ARRAY[0]に 入力してから、その後に　この開始時間の_spinnerStartHourを選択し直す時もあるので
+                // END_HOUR_STR_ARRAY[0] が""空文字じゃなければ　　Integer.parseIntします
+
+                if (END_HOUR_STR_ARRAY[0].equals("選択しない") || END_HOUR_STR_ARRAY[0].equals("")) {
+                    //
+                    _buttonFlagMap.put("startHour", true );
+                } else if ( Integer.parseInt(select) > Integer.parseInt(END_HOUR_STR_ARRAY[0])) {
+                    _textViewHourError.setError("開始時間と終了時間を確認してください");
+                    _textViewHourError.setText("開始時間と終了時間を確認してください");
+
+                    // 保存ボタンは押せないようにする
+                    // _saveButton.setEnabled(false);
+                   // _canBeSaved = false;
+                    _buttonFlagMap.put("startHour", false );
+                }
                 START_HOUR_STR_ARRAY[0] = (String) adapterView.getItemAtPosition(i);  // 選択されたアイテムを　親のアダプタービューから ポジションを指定して取得する
              //   Toast.makeText(getActivity(), "あなたが選んだ開始時間は " + START_HOUR_STR_ARRAY[0] + " 時です", Toast.LENGTH_SHORT).show();
+
+                // ここでボタン変更するメソッドをよぶ
+
+
             }
-
-
             /**
              * onNothingSelectedメソッドは既に選択された項目をクリックした時に呼び出され、
              * その後onItemSelectedメソッドが呼び出されます。
@@ -237,19 +265,42 @@ public class ScheduleFormFragment extends Fragment {
              */
             @Override
             public void onNothingSelected(AdapterView<?> adapterView) {
-
             }
         });
 
 
         // 開始の分を表す文字列の定数　インナークラスで使うから final で定数化しておく必要がある。また、配列にすると、要素を書き換えるようにできる
-        final String[] START_MINUTES_STR_ARRAY = {""};    // データベースに入れるために 後で int型にする
+        final String[] START_MINUTES_STR_ARRAY = {""};
+        // 終了時間を表す文字列の定数　インナークラスで使うから final で定数化しておく必要がある。また、配列にすると、要素を書き換えるようにできる
+        final String[] END_MINUTES_STR_ARRAY = {""};
+
 
         _spinnerStartMinutes.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 START_MINUTES_STR_ARRAY[0] = (String) adapterView.getItemAtPosition(i);  // 選択されたアイテムを　親のアダプタービューから ポジションを指定して取得する
              //   Toast.makeText(getActivity(), "あなたが選んだ開始 分は " + START_MINUTES_STR_ARRAY[0] + " 分です", Toast.LENGTH_SHORT).show();
+
+//                if (END_HOUR_STR_ARRAY[0].equals("選択しない") || END_HOUR_STR_ARRAY[0].equals("")) {
+//                    //
+//                    _buttonFlag.put("startMinutes", true);
+//                } else if ()
+//
+//                if (!END_MINUTES_STR_ARRAY.equals("") && !END_MINUTES_STR_ARRAY.equals("指定しない")) {
+//                    if (Integer.parseInt(START_HOUR_STR_ARRAY[0]) == )
+//                }
+
+ //               if(s_hour == e_hour && s_minute > e_minute) {
+//            errMsgList.add("開始時間と終了時間を確認してください");
+//        }
+
+                // もし
+                _buttonFlagMap.put("startMinutes", false );
+                // リスナーの イベントハンドラのメソッドの最後で もしMapの値が全て trueならば ボタンを押せるメソッドをここで実行
+
+//                if (_canBeSaved) {
+//                    _saveButton.setEnabled(true);
+//                }
             }
 
             /**
@@ -264,33 +315,67 @@ public class ScheduleFormFragment extends Fragment {
         });
 
 
+//        if(s_hour > e_hour) {
+//            errMsgList.add("開始時間と終了時間を確認してください");
+//        }
+//        if(s_hour == e_hour && s_minute > e_minute) {
+//            errMsgList.add("開始時間と終了時間を確認してください");
+//        }
+
+
         // 選択しない もある NOT NULL　制約をつけない
         // 終了時間を表す文字列の定数　インナークラスで使うから final で定数化しておく必要がある。また、配列にすると、要素を書き換えるようにできる
-        final String[] END_HOUR_STR_ARRAY = {""};    // データベースに入れるために 後で int型にする
+       //  final String[] END_HOUR_STR_ARRAY = {""};
 
         _spinnerEndHour.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
 
-                if ( i == 0) {
-                    // ポジションが 0番目のアイテム(つまり、選択しない)を 選択している時には、下の、終了の分を 見えなくする View.INVISIBLEにする
-                    // SpinnerはView.GONEにしてしまうとonItemSelectedイベントが発動しないので注意
-                    _spinnerEndMinutes.setVisibility(View.INVISIBLE);  // 分を 入力させないため 場所はそのまま確保したままで 見えなくする
+//                if ( i == 0) {
+//                    // ポジションが 0番目のアイテム(つまり、選択しない)を 選択している時には、下の、終了の分を 見えなくする View.INVISIBLEにする
+//                    // SpinnerはView.GONEにしてしまうとonItemSelectedイベントが発動しないので注意
+//                    _spinnerEndMinutes.setVisibility(View.INVISIBLE);  // 分を 入力させないため 場所はそのまま確保したままで 見えなくする
+//
+//                    _spinnerEndMinutes.setSelection(0);  // 終了の時間が "選択しない”なので  終了の 分も "選択しない" にしておく
+//
+//                } else {
+//                    _spinnerEndMinutes.setVisibility(View.VISIBLE);  // 見えるようにする
+//
+//                    // 終了の分のアダプターから "選択しない" を削除しておき  終了の分の選択済みを "00"にしておく
+//                    adapterEM.remove("選択しない");
+//                    _spinnerEndMinutes.setSelection(0);  // "00" にしておく
+//                }
+                String select = (String)adapterView.getItemAtPosition(i);  // "選択しない"が入ってるかも
+                // 入力チェック
 
-                    _spinnerEndMinutes.setSelection(0);  // 終了の時間が "選択しない”なので  終了の 分も "選択しない" にしておく
-               //      Object spinnerEndMinutesObject = _spinnerEndMinutes.getSelectedItem();
-                //     Object obj = spinnerEndMinutesObject;
+                // 終了時間の 入力チェック
+                if (!select.equals("選択しない") && Integer.parseInt(START_HOUR_STR_ARRAY[0]) >  Integer.parseInt(select)) {
+                    // _spinnerEndHour.setError("開始時間と終了時間を確認してください ");  // スピンナーにエラー出せないのでカスタマイズする
+
+                    _textViewHourError.setError("開始時間と終了時間を確認してください");
+                    _textViewHourError.setText("開始時間と終了時間を確認してください");
+
+
+
+                   // 保存ボタンは押せないようにする
+                   //  _saveButton.setEnabled(false);
+                  //  _canBeSaved = false;
+                    _buttonFlagMap.put("endHour", false );
                 } else {
-                    _spinnerEndMinutes.setVisibility(View.VISIBLE);  // "00" か "30" ならば
-
-                    // 終了の分のアダプターから "選択しない" を削除しておき  終了の分の選択済みを "00"にしておく
-                    adapterEM.remove("選択しない");
-                    _spinnerEndMinutes.setSelection(0);  // "00" にしておく
+                    _textViewHourError.setError(null);  // エラー解除
+                    _textViewHourError.setText("");
+                    _buttonFlagMap.put("endHour", true );
                 }
-                END_HOUR_STR_ARRAY[0] = (String) adapterView.getItemAtPosition(i);  // 選択されたアイテムを　親のアダプタービューから ポジションを指定して取得する
+
+                    // "選択しない" も入ってるかも
+                END_HOUR_STR_ARRAY[0] = select;  // 選択されたアイテムを　親のアダプタービューから ポジションを指定して取得する
                //  Toast.makeText(getActivity(), "あなたが選んだ終了時間 は " + END_HOUR_STR_ARRAY[0] + " 分です", Toast.LENGTH_SHORT).show();
 
 
+                // リスナーの イベントハンドラのメソッドの最後で
+//                if (_canBeSaved) {
+//                    _saveButton.setEnabled(true);
+//                }
             }
 
             /**
@@ -308,7 +393,7 @@ public class ScheduleFormFragment extends Fragment {
         // _spinnerEndMinutes には　動的にリストを作っています 終了時間の内部クラスのリスナーの中でアイテムを削除しているから
         // 選択しない もある NOT NULL　制約をつけない
         // 終了時間を表す文字列の定数　インナークラスで使うから final で定数化しておく必要がある。また、配列にすると、要素を書き換えるようにできる
-        final String[] END_MINUTES_STR_ARRAY = {""};    // データベースに入れるために 後で int型にする
+       // final String[] END_MINUTES_STR_ARRAY = {""};
 
         _spinnerEndMinutes.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -316,6 +401,16 @@ public class ScheduleFormFragment extends Fragment {
                     // データベースに登録するため 情報を取得する
                 END_MINUTES_STR_ARRAY[0] = (String) adapterView.getItemAtPosition(i);  // 選択されたアイテムを　親のアダプタービューから ポジションを指定して取得する
                //  Toast.makeText(getActivity(), "あなたが選んだ終了 分 は " + END_MINUTES_STR_ARRAY[0] + " 分です", Toast.LENGTH_SHORT).show();
+
+
+
+
+
+                _buttonFlagMap.put("endMinutes", false );
+                // リスナーの イベントハンドラのメソッドの最後で
+//                if (_canBeSaved) {
+//                    _saveButton.setEnabled(true);
+//                }
             }
 
             /**
@@ -330,6 +425,8 @@ public class ScheduleFormFragment extends Fragment {
         });
 
 
+
+
         // 保存ボタン
         _saveButton.setOnClickListener(new View.OnClickListener() {
 
@@ -338,9 +435,6 @@ public class ScheduleFormFragment extends Fragment {
                 // _id　は　主キーで autoincrement をつけないけど自動採番するらしい insetの時に書かない 自動採番する
                 // SQLite3では、「CREATE TABLE」の際に「AUTO INCREMENT」を指定する必要はありません。つけない方がいいらしい
                 //もし主キーを連番のIDにしたい場合、INTEGERで「PRIMARY KEY」を指定するようにします。
-
-                // まず、入力チェック タイトルは ""空文字じゃだめ  入力した時間の比較すること
-
 
 
                 Date date = sqlDateArray[0];  // "2022-03-19"
@@ -369,19 +463,16 @@ public class ScheduleFormFragment extends Fragment {
                  String etTitle = _editTextScheTitle.getText().toString();
                  String etMemo = _editTextScheMemo.getText().toString(); // 何も書いてないと ""空文字になってる
              //   Toast.makeText(getActivity(),  "タイトルは　" + etTitle + " です　メモは　" + etMemo + " です　", Toast.LENGTH_LONG).show();
-//                if (etTitle.isEmpty() || etTitle.equals("")) {  // 何も入力しないと　　""　空文字が入ってくる
-//                    _editTextScheTitle.setError("スケジュールのタイトルに文字を入力してください");
-//                }
 
 
 // データベースを取得する try-catch-resources構文にすること finallyを書かなくても必ず close()処理をしてくれます！！
                 //  try-catch-resources構文にできない時には dbをクローズする処理を書くこと
                 // ここ
-                db = MainActivity.helper.getWritableDatabase();  // クラス名::フィールド名 で　１つしかない　静的フィールド（クラスフィールド　static)を呼び出して使いまわす
+                _db = MainActivity.helper.getWritableDatabase();  // クラス名::フィールド名 で　１つしかない　静的フィールド（クラスフィールド　static)を呼び出して使いまわす
 
                 String sqlInsert = "INSERT INTO timeschedule (scheduledate, starttime, endtime, scheduletitle, schedulememo) VALUES (?,?,?,?,?)";
 
-                SQLiteStatement stmt = db.compileStatement(sqlInsert);
+                SQLiteStatement stmt = _db.compileStatement(sqlInsert);
                 stmt.bindString(4, etTitle);
                 stmt.bindString(5, etMemo);
                  stmt.bindString(1, strDate);
@@ -425,4 +516,19 @@ public class ScheduleFormFragment extends Fragment {
         // 最後ビューをreturnする
         return view;
     }
+
+
+
+    // メソッドメンバ
+    public void changeSaveButton(Map<String, Boolean> map) {
+        for (Boolean val : map.values()) {
+            if (val == true) {
+                _saveButton.setEnabled(true);
+            } else {
+                _saveButton.setEnabled(false);
+            }
+        }
+    }
+
+
 }
