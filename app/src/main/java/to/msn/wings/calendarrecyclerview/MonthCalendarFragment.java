@@ -23,28 +23,23 @@ import java.util.List;
 
 public class MonthCalendarFragment extends Fragment {
 
-
+    private TimeScheduleDatabaseHelper _helper;
     private TextView titleText;
     private Button prevButton, nextButton, currentMonthButton;
-    private CalendarAdapter calendarAdapter;
-    private RecyclerView recyclerView;
+//    private CalendarAdapter calendarAdapter;
+//    private RecyclerView recyclerView;
     DateManager dateManager;
-
     private int SPAN_COUNT = 7;
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-       //  return inflater.inflate(R.layout.fragment_pre_and_next_month_calendar, container, false);
-
         Activity parentActivity = getActivity();
 
         View view = inflater.inflate(R.layout.fragment_month_calendar, container, false);
 
         Intent intent = parentActivity.getIntent();
-
+        _helper = new TimeScheduleDatabaseHelper(parentActivity);  // onDestroy()で helperを解放すること
         Date prevButtonDate = null;
         Date nextButtonDate = null;
         Date specifyDate = null;  // ScheduleFormから遷移してきた時 指定する月は現在の月ジャない時にだけここにくる
@@ -63,8 +58,11 @@ public class MonthCalendarFragment extends Fragment {
         //  null かどうかのチェックが必要です どっちのボタンから遷移してきたのか どっちかは nullになるので
     //     Date nextButtonDate = (Date)intent.getSerializableExtra("nextButtonDate");
 
-
-
+        // 比較をするために本日現在を取得する
+        Calendar calendar = Calendar.getInstance();
+        int year = calendar.get(Calendar.YEAR);
+        int month = calendar.get(Calendar.MONTH) + 1;  // 今日現在の月
+        int day = calendar.get(Calendar.DATE);  // 今日現在の日
 
         dateManager = new DateManager();
 
@@ -77,22 +75,22 @@ public class MonthCalendarFragment extends Fragment {
         String title = "";
         if (prevButtonDate != null) {
             title = format.format(prevButtonDate);
-            dates = dateManager.getDays(prevButtonDate);  //引数ありのgetDays(Date date)　を呼び出す
+            dates = dateManager.getDays(prevButtonDate);  // 引数ありのgetDays(Date date)　を呼び出す
 
         } else if (nextButtonDate != null) {
             title = format.format(nextButtonDate);
-            dates = dateManager.getDays(nextButtonDate); //引数ありのgetDays(Date date)　を呼び出す
+            dates = dateManager.getDays(nextButtonDate); // 引数ありのgetDays(Date date)　を呼び出す
 
         } else if (specifyDate != null) {  // 指定の日付のカレンダーを表示するならば、指定の日付が現在の月ではないなら、このフラグメントで表示します
             title = format.format(specifyDate);
-            dates = dateManager.getDays(specifyDate);  //引数ありのgetDays(Date date)　を呼び出す
+            dates = dateManager.getDays(specifyDate);  // 引数ありのgetDays(Date date)　を呼び出す
         }
         titleText.setText(title);
 
 
 
 
-// フォーマットし直し
+        // フォーマットし直し
         format = new SimpleDateFormat("d");  // "dd" だと　　01  02 となってしまう
 
         /**
@@ -113,34 +111,32 @@ public class MonthCalendarFragment extends Fragment {
             data.add(item);
         }
 
+
         // 最初の土曜日は、その月に必ずなってるから
         Date firstSaturdayDate = dates.get(6);
-
 
         // 表示してる月よりも１つ前の月を表示するためのボタン
         prevButton = view.findViewById(R.id.prevButton);
         prevButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // MainActivityで今、表示をしている月の情報を取得する MainActivityでは、初期の画面 今月のカレンダーを表示するので
-                //  アクティビティを新たに生成し、
-                //  新しいアクティビティにMainActivityの firstSaturdayDateの情報から、１ヶ月前にした情報を渡す
-                // Date型の計算を行いたい場合には、Calendar型に一度変換し、計算を行います。
                 Calendar calendar = Calendar.getInstance();
                 calendar.setTime(firstSaturdayDate);
-                calendar.add(Calendar.MONTH, -1);  // -1 をして ひと月前に
+                calendar.add(Calendar.MONTH, -1);  // -1 をして ひと月前の最初の土曜日の日付にしています
+
                 Date date = new Date();
-                // これで1月前の最初の土曜日の日付が取得できている
+                // Date型に変換する これを遷移先に送ります これで1月前の最初の土曜日の日付が取得できている
                 date = calendar.getTime();
 
-              //  Intent intent = new Intent(PreAndNextMonthCalendarActivity.this, PreAndNextMonthCalendarActivity.class);
                 Intent intent = new Intent(parentActivity, MonthCalendarActivity.class);
-
                 intent.putExtra("prevButtonDate", date);  // 1月前の最初の土曜日の日付を送る Date型情報を渡します
                 startActivity(intent);
-
-                //またこの所属する同じアクティビティを使うから、自分自身が所属するアクティビティを終了させてない
+                // こっちは終了させない自分自身のアクティビティは これはうまくいく　OK　
+                // やっぱり書く
+                Activity parentActivity = getActivity();
+                parentActivity.finish();
             }
+
         });
 
         // 次の月を表示するためのボタン
@@ -155,14 +151,13 @@ public class MonthCalendarFragment extends Fragment {
                 // これで1月先の最初の土曜日の日付が取得できている
                 date = calendar.getTime();
 
-              //   Intent intent = new Intent(PreAndNextMonthCalendarActivity.this, PreAndNextMonthCalendarActivity.class);
                 Intent intent = new Intent(parentActivity, MonthCalendarActivity.class);
-
-                intent.putExtra("nextButtonDate", date);  // 1月先の最初の土曜日の日付を送ってる Date型情報を渡します
-                startActivity(intent);
-                //またこの所属する同じアクティビティを使うから、自分自身が所属するアクティビティを終了させてない
-
-
+                    intent.putExtra("nextButtonDate", date);  // 1月先の最初の土曜日の日付を送ってる Date型情報を渡します
+                    startActivity(intent);
+                    // こっちは終了させない自分自身のアクティビティは  これはうまくいくOK
+                // いや、終わらす
+                Activity parentActivity = getActivity();
+                parentActivity.finish();
             }
         });
 
@@ -171,27 +166,12 @@ public class MonthCalendarFragment extends Fragment {
         currentMonthButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // MainActivityで今、表示をしている月の情報を取得する MainActivityでは、初期の画面 今月のカレンダーを表示するので
-                //  アクティビティを新たに生成し、
-                //  新しいアクティビティにMainActivityの firstSaturdayDateの情報から、１ヶ月前にした情報を渡す
-                // Date型の計算を行いたい場合には、Calendar型に一度変換し、計算を行います。
-//                Calendar calendar = Calendar.getInstance();
-//                calendar.setTime(firstSaturdayDate);
-//                calendar.add(Calendar.MONTH, -1);  // -1 をして ひと月前に
-//                Date date = new Date();
-//                // これで1月前の最初の土曜日の日付が取得できている
-//                date = calendar.getTime();
 
-              //  Intent intent = new Intent(PreAndNextMonthCalendarActivity.this, MainActivity.class);
-                Intent intent = new Intent(parentActivity, MainActivity.class);
-
-
+               Intent intent = new Intent(parentActivity, MainActivity.class);
                 startActivity(intent);
-
                 // 自分自身が所属するアクティビティを終了させます
                 Activity parentActivity = getActivity();
                 parentActivity.finish();
-
             }
         });
 
@@ -212,5 +192,11 @@ public class MonthCalendarFragment extends Fragment {
 
         return view;
 
+    }
+
+    @Override
+    public void onDestroy() {
+        _helper.close();  // フラグメントの消滅の前に DBヘルパーオブジェクトの解放をすること
+        super.onDestroy();
     }
 }

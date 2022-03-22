@@ -14,13 +14,15 @@ public class DateManager {
 
 
     public DateManager(){
+        // コンストラクタでは生成しないように変更した
        // mCalendar = Calendar.getInstance();
     }
 
 
     /**
+     * 引数なし getDays()メソッドです 　もう一つ、オーバーロード(多重定義)した 引数ありの同名メソッドがあります
      * 引数なしだと今月要素を取得する MainActivityで使う
-     * @return
+     * @return List<Date> 現在の月のカレンダーに表示するためのリスト
      */
     public List<Date> getDays() {
         // コンストラクタではなく、ここで現在を取得するようにした　　変更
@@ -54,10 +56,12 @@ public class DateManager {
     }
 
     /**
+     * 引数ありのメソッド
+     * オーバーロード（多重定義)したメソッドです
      * 引数で渡された指定の日付の月の 要素を取得します
      * 引数には、Date型オブジェクトが渡されます。 指定の月の最初の土曜日の日付が入ってます
      * @param date
-     * @return
+     * @return List<Date> 指定した月のカレンダーを表示するためのリスト
      */
     public List<Date> getDays(Date date){
         // 指定の日付は引数から取得できる

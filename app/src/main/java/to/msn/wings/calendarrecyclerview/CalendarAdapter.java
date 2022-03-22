@@ -142,7 +142,7 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarCellViewHolder
         // View.INVISIBLE・・・非表示（非表示にしたスペースは詰めない）
         // View.GONE・・・非表示（非表示にしたスペースを詰める）
         // 後でこれをコメント外してください
-          textViewGone.setVisibility(View.GONE);  // これで表示しない なおかつ 非表示にしたスペースを詰める
+        //  textViewGone.setVisibility(View.GONE);  // これで表示しない なおかつ 非表示にしたスペースを詰める
 
         // 追加
         TextView schedules = holder.view.findViewById(R.id.schedules);
