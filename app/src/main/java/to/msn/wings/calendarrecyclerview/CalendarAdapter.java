@@ -7,11 +7,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.EditText;
+import android.widget.TableLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -66,7 +69,7 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarCellViewHolder
 
                 TextView textViewGone = view.findViewById(R.id.textViewGone);
                 String scheduleDayText = textViewGone.getText().toString();  //  "2022/03/16"  などが取れる
-//
+
                 intent.putExtra("scheduleDayText" , scheduleDayText ); //  "2022/03/16"  日付の文字列情報を送るのにセットする
 
                 // nullだとエラーになるので注意してください  落ちます nullにはならないはずです
@@ -123,10 +126,14 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarCellViewHolder
 
         holder.dateText.setText(this.data.get(position).getDateText());
         holder.textViewToday.setText(this.data.get(position).getTextViewToday());  // 追加
-        // 追加 これは非表示したい
+        // 追加 これは非表示したい　後で textViewGone.setVisibility(View.GONE);
         holder.textViewGone.setText(this.data.get(position).getTextViewGone());
+        // 追加
+        holder.schedules.setText(this.data.get(position).getSchedules());
 
-        // holder.view は　CardViewです
+
+        // holder.view は　ルート要素です　ここでは　ConstraintLayoutです
+        // ConstraintLayout route = (ConstraintLayout) holder.view;
         CardView cardView = holder.view.findViewById(R.id.cardView);
         TextView dateText = holder.view.findViewById(R.id.dateText);
         TextView textViewToday = holder.view.findViewById(R.id.textViewToday);
@@ -134,7 +141,12 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarCellViewHolder
         // textViewGone を非表示としたい  大切  View.VISIBLE・・・表示
         // View.INVISIBLE・・・非表示（非表示にしたスペースは詰めない）
         // View.GONE・・・非表示（非表示にしたスペースを詰める）
+        // 後でこれをコメント外してください
         //  textViewGone.setVisibility(View.GONE);  // これで表示しない なおかつ 非表示にしたスペースを詰める
+
+        // 追加
+        TextView schedules = holder.view.findViewById(R.id.schedules);
+        // これに対して、属性をつけられます
 
         for(int i = 0; i < data.size(); i++) {
             if (position == (i*7 )) {  // 日曜日

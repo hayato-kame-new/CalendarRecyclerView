@@ -1,6 +1,8 @@
 package to.msn.wings.calendarrecyclerview;
 
 import android.view.View;
+import android.widget.EditText;
+import android.widget.TableLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -12,13 +14,16 @@ import androidx.recyclerview.widget.RecyclerView;
 public class CalendarCellViewHolder extends RecyclerView.ViewHolder {
 
     //　フィールド
-    View view;  // ルート要素のビューここだと ConstraintLayoutのことだと思うけど？？
+    View view;  // ルート要素のビューここだと ConstraintLayoutのこと
 
-    TextView dateText;
 
-    TextView textViewToday;
+    TextView dateText;  // ルートの配下のウィジェット
 
-    TextView textViewGone;  // 非表示するアダプターのクラスで
+    TextView textViewToday; // ルートの配下のウィジェット
+
+    TextView textViewGone;  //  ルートの配下のウィジェット   非表示する(アダプターのクラスで)
+
+    TextView schedules;  // ルートの配下のウィジェット android:inputType="textMultiLine"
 
     /**
      * コンストラクタ
@@ -30,5 +35,7 @@ public class CalendarCellViewHolder extends RecyclerView.ViewHolder {
         this.dateText = view.findViewById(R.id.dateText);
         this.textViewToday = view.findViewById(R.id.textViewToday);
         this.textViewGone = view.findViewById(R.id.textViewGone);  // 非表示にする
+        // 追加
+        this.schedules = view.findViewById(R.id.schedules);
     }
 }
