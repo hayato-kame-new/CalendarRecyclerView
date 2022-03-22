@@ -26,49 +26,14 @@ import java.util.List;
 import java.util.Random;
 
 /**
- * メインアクティビティの上にCurrentMonthFragmentが乗っています そこで、データベースにも接続してデータ取得します
+ * メインアクティビティの上にCurrentMonthFragmentが乗っています
  */
 public class MainActivity extends AppCompatActivity {
 
-    // public で staticな　フィールドにすれば、他のフラグメントなどでも使い回しできるらしい
-    // private TimeScheduleDatabaseHelper helper;
-    // １つしかない　　他のアクティビティなどで呼び出せる クラス名::フィールド名 で呼び出せる
- //    public static TimeScheduleDatabaseHelper helper;  // 変更してみた staticな　クラスフィールドに変更 静的フィールド　１つしかない　　他のアクティビティなどで呼び出せる
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-
-        // ちなみに　バックキーで戻ることのできる、MainActivityは　メインのスレッドでもあるので サブアクティビティのような終了finish()はさせません
-        // 他のアクティビティやフラグメントでも helperを使い回しするので、Mainctivityでクラスフィールドとして宣言している onCreateで newして インスタンス生成する
-    //    helper = new TimeScheduleDatabaseHelper(MainActivity.this);  // onDestroy()で helperを解放すること
-
-
-        // MainActivityの上に乗せた CurrentMonthFragmentで、既存のデータを表示させるので、SELECT文で取得する
-        // データベースを取得する try-catch-resources構文なのでfinallyを書かなくても必ず db を　close()処理をしてくれます！！ dbはその都度close()するけど helpserはonDestroy()で解放する
-//        try (SQLiteDatabase db = helper.getWritableDatabase()) {  // dbはきちんとクローズ自動でしてくれます
-//            Toast.makeText(this, "接続しました", Toast.LENGTH_SHORT).show();
-//            // ここにデータベースの処理を書く SELECT文で取得する CurrentMonthFragmentで表示
-//
-//            // スケジュールのタイトルだけを今月の分取得
-//
-//        }
-
-
-
-
-
-    }
-
-    @Override
-    protected void onDestroy() {
-
-//        // ここで解放じゃなくて、フラグメント移動した時に解放したほうがいいのかも
-//        helper.close();  // アクティビティの消滅の前に DBヘルパーオブジェクトの解放をすること
-        super.onDestroy();
     }
 
 }

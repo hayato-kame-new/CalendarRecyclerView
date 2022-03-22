@@ -2,6 +2,7 @@ package to.msn.wings.calendarrecyclerview;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 
@@ -10,6 +11,7 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,13 +22,17 @@ import android.widget.Button;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 /**
  * このフラグメントで、個々のタイムスケジュールのCardViewを表示させる  fragment_time_schedule.xml の
  */
 public class TimeScheduleFragment extends Fragment {
 
+    private TimeScheduleDatabaseHelper _helper;
     private Button addButton, returnMonButton, currentMonButton;
     TextView day, day_today;
 
@@ -76,7 +82,7 @@ public class TimeScheduleFragment extends Fragment {
         int month = Integer.parseInt(scheduleDayText.substring(5, 7));
       returnMonButton.setText(year + "年" + month + "月カレンダーへ戻る");
 
-      // 現在を取得して
+      // 現在を取得して LocalDate の方がいい　Calendar使わない
         LocalDate localdateToday = LocalDate.now();
 // returnMonButton は、今月ならば 非表示にしています
       if (year == localdateToday.getYear() && month == localdateToday.getMonthValue()) {
@@ -84,8 +90,103 @@ public class TimeScheduleFragment extends Fragment {
       }
 
 
+        List<Schedule> list = new ArrayList<Schedule>();
 
-      // 表示してる月のカレンダーへ戻るボタンにリスナーをつける  今月なら、このボタンは非表示になっております
+        _helper = new TimeScheduleDatabaseHelper(parentActivity);  // onDestroy()で helperを解放すること
+        //  データベースを取得する try-catch-resources構文 finallyを書かなくても必ず close()処理をしてくれます
+        try (SQLiteDatabase db = _helper.getWritableDatabase()) {  // dbはきちんとクローズ自動でしてくれます
+            Toast.makeText(parentActivity, "接続しました", Toast.LENGTH_SHORT).show();
+            // ここにデータベースの処理を書く SELECT文で取得する 今月分のだけを取得する   SELECT * FROM テーブル名 WHERE date >= '2011-08-20' AND date <= '2011-08-27'
+            //  SELECT * FROM テーブル名 WHERE date BETWEEN '2011-08-20' AND '2011-08-27'  開始時間の順番にして取得する
+            // scheduleDayText  DATE
+            // Date型の日付を加算するには、Calendarクラスに変換後、Calendarクラスのaddメソッドを使用します。
+            // Calendarクラスのインスタンスを生成
+            Calendar cal = Calendar.getInstance();
+            cal.setTime(DATE);
+            cal.add(Calendar.DATE, 1);  // 1日後
+            String next = new SimpleDateFormat("yyyy-MM-dd").format(cal.getTime());
+            // "2000/09/09" じゃダメです "2000-09-09" の形にすること
+            String dd = new SimpleDateFormat("yyyy-MM-dd").format(DATE);
+            // 注意、指定した日が1日だけでも、このように >= 　< 　を使って期間で指定をすること
+            // たとえば、2006/09/13のデータが欲しいときは
+
+            // Where scheduledate = '2006/09/13'
+            // でなく
+            // Where scheduledate >= '2006/09/13' And YMD < '2006/09/14'
+            // となります。
+            String sqlSelect = "SELECT * FROM timeschedule WHERE scheduledate >= ? AND scheduledate < ? ORDER BY starttime ASC";
+
+            String[] params = new String[]{dd, next};
+
+            Cursor cursor = db.rawQuery(sqlSelect, params);  // 第二引数は、配列にすること
+
+            int _id = 0;
+            String scheduledate = "";
+            String starttime = "";
+            String endtime = "";
+            String scheduletitle = "";
+            String schedulememo = "";
+
+            Schedule schedule;
+
+            while ( cursor.moveToNext()) {
+                // SELECT分によって、インデックスは変わってくるので getColumnIndexで、インデックスを取得します
+                int index__id = cursor.getColumnIndex("_id");
+                int index_scheduledate = cursor.getColumnIndex("scheduledate");  // 引数には カラム名を指定してください
+                int index_starttime = cursor.getColumnIndex("starttime");  // 引数には カラム名を指定してください
+                int index_endtime = cursor.getColumnIndex("endtime");  // 引数には カラム名を指定してください
+                int index_scheduletitle = cursor.getColumnIndex("scheduletitle");  // 引数には カラム名を指定してください
+                int index_schedulememo = cursor.getColumnIndex("schedulememo");  // 引数には カラム名を指定してください
+
+                // カラムのインデックスを元に、　実際のデータを取得する
+                _id = cursor.getInt(index__id);
+                scheduledate = cursor.getString(index_scheduledate);
+                starttime = cursor.getString(index_starttime);
+                endtime = cursor.getString(index_endtime);
+                scheduletitle = cursor.getString(index_scheduletitle);
+                schedulememo = cursor.getString(index_schedulememo);
+
+                Log.i("SQLITE_TIME_SCHE", "_id : " + _id + " " +
+                        "scheduledate : " + scheduledate + " " +
+                        "starttime : "+ starttime + " " +
+                        "endtime : "+ endtime + " " +
+                        "scheduletitle : "+ scheduletitle + " " +
+                        "schedulememo : "+ schedulememo + " "
+                );
+                // インスタンス生成
+                schedule = new Schedule(_id, scheduledate,  starttime, endtime, scheduletitle, schedulememo);
+                list.add(schedule);
+            }
+        }
+        _helper.close();  // ヘルパーを解放する
+
+        // リスト取得できた リサイクラービューで このリストを日付が同じならば、セット指定く    2022-03-25 14:00 16:00 しごと かいもの
+//        for( Schedule schedule : list) {
+//            Log.i("LIST",
+//                    schedule.getScheduledate() + " "  + schedule.getStarttime() + " "  +
+//                            schedule.getEndtime() + " "  + schedule.getScheduletitle() + " "  + schedule.getSchedulememo());
+//        }
+
+        /**
+         * 表示だけのテキストのリスト
+         */
+        ArrayList<TimeScheduleListItem> data = new ArrayList<>();
+        for (int i = 0; i < list.size(); i++) {
+            TimeScheduleListItem item = new TimeScheduleListItem();
+            item.setId(i + 1);  // 1から順に通し番号をふる
+            item.setDate(scheduleDayText);
+
+            Schedule schedule = list.get(i);
+
+            item.setStartTime(schedule.getStarttime());
+            item.setEndTime(schedule.getEndtime());
+            item.setScheduleTitle(schedule.getScheduletitle());
+            item.setScheduleMemo(schedule.getSchedulememo());
+            data.add(item);
+        }
+
+
+        // 表示してる月のカレンダーへ戻るボタンにリスナーをつける  今月なら、このボタンは非表示になっております
         returnMonButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -147,7 +248,6 @@ public class TimeScheduleFragment extends Fragment {
                 Activity parentActivity = getActivity();
                 parentActivity.finish();
 
-
             }
         });
 
@@ -156,18 +256,17 @@ public class TimeScheduleFragment extends Fragment {
         rv.setHasFixedSize(true);  // パフォーマンス向上
 
 
-// タブレットサイズならば　
+// 後で タブレットサイズならば　
 // GridLyoutManager manager = new GridLayoutManager(parentActivity, 2);  // にするように後でする
         LinearLayoutManager manager = new LinearLayoutManager(parentActivity);
         manager.setOrientation(LinearLayoutManager.VERTICAL);
         rv.setLayoutManager(manager);
-//        // dataはデータベースから取得してくる
-//        RecyclerView.Adapter adapter = new CalendarAdapter(data);
-//        rv.setAdapter(adapter);
 
+        RecyclerView.Adapter adapter = new TimeScheduleListAdapter(data);  //  dataはデータベースから取得
+        rv.setAdapter(adapter);
 
         // 最後にreturn viewをすること
         return view;
-
     }
+
 }

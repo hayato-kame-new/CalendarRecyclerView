@@ -95,7 +95,7 @@ public class MonthCalendarFragment extends Fragment {
         // 今月分のカレンダー(１週目に表示した前の月や　最後の週に表示してある後ろの月　の分も含む)に表示するリスト
         List<Schedule> list = new ArrayList<Schedule>();
 
-        _helper = new TimeScheduleDatabaseHelper(parentActivity);  // onDestroy()で helperを解放すること
+        _helper = new TimeScheduleDatabaseHelper(parentActivity);
 //  データベースを取得する try-catch-resources構文 finallyを書かなくても必ず close()処理をしてくれます
         try (SQLiteDatabase db = _helper.getWritableDatabase()) {  // dbはきちんとクローズ自動でしてくれます
             Toast.makeText(parentActivity, "接続しました", Toast.LENGTH_SHORT).show();
@@ -147,7 +147,7 @@ public class MonthCalendarFragment extends Fragment {
             }
 
         }
-        _helper.close();  // ヘルパーを解放する
+        _helper.close();  // ヘルパーを解放する　ここで
 
         // リスト取得できた リサイクラービューで このリストを日付が同じならば、セット指定く    2022-03-25 14:00 16:00 しごと かいもの
 //        for( Schedule schedule : list) {
@@ -299,9 +299,5 @@ public class MonthCalendarFragment extends Fragment {
 
     }
 
-    @Override
-    public void onDestroy() {
-        _helper.close();  // フラグメントの消滅の前に DBヘルパーオブジェクトの解放をすること
-        super.onDestroy();
-    }
+
 }

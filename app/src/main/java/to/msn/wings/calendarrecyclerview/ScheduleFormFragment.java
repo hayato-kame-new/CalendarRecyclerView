@@ -401,6 +401,7 @@ public class ScheduleFormFragment extends Fragment {
              //   Toast.makeText(getActivity(),  "タイトルは　" + etTitle + " です　メモは　" + etMemo + " です　", Toast.LENGTH_LONG).show();
 
                 // データベースを取得する try-catch-resources構文 finallyを書かなくても必ず close()処理をしてくれます
+                // 使ったらすぐに helper close()すること 同じメソッド内ですぐに close()する onDestory()には書かないでください
                 TimeScheduleDatabaseHelper helper =  new TimeScheduleDatabaseHelper(parentActivity);
                 //          _db = MainActivity.helper.getWritableDatabase();  // クラス名::フィールド名 で　１つしかない　静的フィールド（クラスフィールド　static)を呼び出して使いまわす
 
@@ -420,7 +421,7 @@ public class ScheduleFormFragment extends Fragment {
                     stmt.executeInsert();
                 }
 
-                helper.close();  // ヘルパーを解放する
+                helper.close();  // ヘルパーを解放する  ここで
 
                 // ここで db　をクローズする処理を書く　
                 // クラスフィールドのhelperは使い回しするのでまだ　ここで クローズしないで MainActivityの　コールバックメソッドのonDestory()で解放してます

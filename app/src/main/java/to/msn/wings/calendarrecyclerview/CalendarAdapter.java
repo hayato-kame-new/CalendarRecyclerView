@@ -35,9 +35,6 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarCellViewHolder
     // フィールド
     private ArrayList<CalendarCellItem> data;
 
-
-
-
     // コンストラクタ
     public CalendarAdapter(ArrayList<CalendarCellItem> data) {
         this.data = data;
@@ -56,7 +53,7 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarCellViewHolder
     @NonNull
     @Override
     public CalendarCellViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        // return null;
+
         View v = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.calendar_cell, parent, false);
 
@@ -111,9 +108,7 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarCellViewHolder
 //            }
 //        });
 
-
         return new CalendarCellViewHolder(v);
-
     }
 
     /**

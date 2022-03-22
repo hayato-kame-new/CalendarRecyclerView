@@ -1,5 +1,6 @@
 package to.msn.wings.calendarrecyclerview;
 
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -26,10 +27,8 @@ public class TimeScheduleListAdapter extends RecyclerView.Adapter<TimeScheduleLi
     // メソッドを3つオーバーライドすること
 
     /**
-     * 自分で作った個々のリストアイテムのレイアウトをインフレートする
-     *
-     *  カードビューにリスナーをつけたい時にはこのonCreateViewHolderに書くか、下のonBindViewHolerに書く
-     *       トースト表示ならこのメソッド内に書いてもいいが、
+     * R.layout.time_schedule_list_itemレイアウトをインフレートする
+     *  カードビューにリスナーをつけたい時にはこのonCreateViewHolderに書ける
      *
      * @param parent
      * @param viewType
@@ -38,13 +37,10 @@ public class TimeScheduleListAdapter extends RecyclerView.Adapter<TimeScheduleLi
     @NonNull
     @Override
     public TimeScheduleListHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-       //  return null;
 
         // 個々のリストアイテムのレイアウトファイルでインフレートしたビューのインスタンスを生成して
         View v = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.time_schedule_list_item, parent, false);
-
-
 
         // 最後に ビューを ビューホルダーにセットして ビューホルダーのインスタンスをリターンする
         return new TimeScheduleListHolder(v);
@@ -57,26 +53,33 @@ public class TimeScheduleListAdapter extends RecyclerView.Adapter<TimeScheduleLi
      */
     @Override
     public void onBindViewHolder(@NonNull TimeScheduleListHolder holder, int position) {
-
-        // 開始時間 ~ 終了時間 を表示するので
-        String timeText = this.data.get(position).getStartTime() + " ~ " + this.data.get(position).getEndTime();
-        holder.time.setText(timeText);
-        holder.time.setTextColor(Integer.parseInt("green"));
-
+        // 日付け
         String dateText = this.data.get(position).getDate();
         holder.date.setText(dateText);
+        // 開始時間 ~ 終了時間 を表示する
+        String timeText = "[" + this.data.get(position).getStartTime() + " ~ " + this.data.get(position).getEndTime() + "]";
+        holder.time.setText(timeText);
+        holder.time.setTextColor(Color.parseColor("green"));
 
         // スケジュールのタイトル
         String title = this.data.get(position).getScheduleTitle();
-        title = title.substring(0, 10);
+        if(title.length() > 9) {  // 注意エラーに
+            title = title.substring(0, 10);  // 後で変更すること
+        }
+
+
         holder.scheduleTitle.setText(title);
-        // 下線もつけられます
+        // 下線もつけられます  リンクに見せるようにできる
         TextView scheduleTitle = holder.view.findViewById(R.id.scheduleTitle);
-          scheduleTitle.setPaintFlags(Paint.UNDERLINE_TEXT_FLAG);
+        scheduleTitle.setPaintFlags(Paint.UNDERLINE_TEXT_FLAG);
+        scheduleTitle.setTextColor(Color.parseColor("blue"));
 
         // スケジュールのメモ
         String memo = this.data.get(position).getScheduleMemo();
-        memo = memo.substring(0,10);
+        if(memo.length() > 9) {  // 注意エラーに
+            memo = memo.substring(0, 10); // 後で変更すること
+        }
+
         holder.scheduleMemo.setText("メモ: " + memo);
 
     }

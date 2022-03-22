@@ -9,12 +9,13 @@ import androidx.recyclerview.widget.RecyclerView;
 
 public class TimeScheduleListHolder extends RecyclerView.ViewHolder{
 
-    View view;  // ルート要素のビュー
-    TextView date;
-    TextView time;
-    TextView scheduleTitle;
-    TextView scheduleMemo;
-   //  TableLayout tableLayout; // 追加 違うこっちではない
+    View view;  // ルート要素のビューグループ ConstraintLayoutのこと
+
+    TextView date;  // ルート要素の配下のウィジェット
+    TextView time;  // ルート要素の配下のウィジェット
+    TextView scheduleTitle;  // ルート要素の配下のウィジェット
+    TextView scheduleMemo;  // ルート要素の配下のウィジェット
+
 
     public TimeScheduleListHolder(@NonNull View itemView) {
         super(itemView);
@@ -23,6 +24,6 @@ public class TimeScheduleListHolder extends RecyclerView.ViewHolder{
         this.time = view.findViewById(R.id.time);
         this.scheduleTitle = view.findViewById(R.id.scheduleTitle);
         this.scheduleMemo = view.findViewById(R.id.scheduleMemo);
-      //   this.tableLayout = view.findViewById(R.id.tableLayout);
+
     }
 }
