@@ -28,6 +28,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="○月カレンダーへ戻る"
+        android:textSize="12sp"
         app:layout_constraintEnd_toStartOf="@+id/currentMonButton"
         app:layout_constraintTop_toBottomOf="@+id/titleText" />
 
@@ -35,7 +36,8 @@
         android:id="@+id/currentMonButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="今月のカレンダーに戻る"
+        android:text="今月カレンダーに戻る"
+        android:textSize="12sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/titleText" />
 
@@ -44,6 +46,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="新規スケジュール登録"
+        android:textSize="12sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/currentMonButton" />
 

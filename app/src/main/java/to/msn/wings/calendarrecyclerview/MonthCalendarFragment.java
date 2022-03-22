@@ -30,7 +30,7 @@ public class MonthCalendarFragment extends Fragment {
     private TimeScheduleDatabaseHelper _helper;
     private TextView titleText;
     private Button prevButton, nextButton, currentMonthButton;
-//    private CalendarAdapter calendarAdapter;
+    //    private CalendarAdapter calendarAdapter;
 //    private RecyclerView recyclerView;
     DateManager dateManager;
     private int SPAN_COUNT = 7;
@@ -50,17 +50,17 @@ public class MonthCalendarFragment extends Fragment {
         Bundle extras = intent.getExtras();
         if(extras != null) {
             //  null かどうかのチェックが必要です どっちのボタンから遷移してきたのか  どっちかは nullになるので
-             prevButtonDate = (Date)intent.getSerializableExtra("prevButtonDate");  // nullが入ってるかもしれないです
+            prevButtonDate = (Date)intent.getSerializableExtra("prevButtonDate");  // nullが入ってるかもしれないです
             //  null かどうかのチェックが必要です どっちのボタンから遷移してきたのか どっちかは nullになるので
-             nextButtonDate = (Date)intent.getSerializableExtra("nextButtonDate");  // nullが入ってるかもしれないです
+            nextButtonDate = (Date)intent.getSerializableExtra("nextButtonDate");  // nullが入ってるかもしれないです
             // null かどうかのチェックが必要です
             specifyDate = (Date)intent.getSerializableExtra("specifyDate");
         }
 
         //  null かどうかのチェックが必要です どっちのボタンから遷移してきたのか  どっちかは nullになるので
-   //     Date prevButtonDate = (Date)intent.getSerializableExtra("prevButtonDate");
+        //     Date prevButtonDate = (Date)intent.getSerializableExtra("prevButtonDate");
         //  null かどうかのチェックが必要です どっちのボタンから遷移してきたのか どっちかは nullになるので
-    //     Date nextButtonDate = (Date)intent.getSerializableExtra("nextButtonDate");
+        //     Date nextButtonDate = (Date)intent.getSerializableExtra("nextButtonDate");
 
 
         dateManager = new DateManager();
@@ -257,8 +257,8 @@ public class MonthCalendarFragment extends Fragment {
                 date = calendar.getTime();
 
                 Intent intent = new Intent(parentActivity, MonthCalendarActivity.class);
-                    intent.putExtra("nextButtonDate", date);  // 1月先の最初の土曜日の日付を送ってる Date型情報を渡します
-                    startActivity(intent);
+                intent.putExtra("nextButtonDate", date);  // 1月先の最初の土曜日の日付を送ってる Date型情報を渡します
+                startActivity(intent);
 
                 // いや、終わらす
                 Activity parentActivity = getActivity();
@@ -267,12 +267,12 @@ public class MonthCalendarFragment extends Fragment {
         });
 
         //  今月の表示に戻る MainActivityに戻る  自分自身が所属するアクティビティを終了させます
-         currentMonthButton = view.findViewById(R.id.currentMonthButton);
+        currentMonthButton = view.findViewById(R.id.currentMonthButton);
         currentMonthButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-               Intent intent = new Intent(parentActivity, MainActivity.class);
+                Intent intent = new Intent(parentActivity, MainActivity.class);
                 startActivity(intent);
                 // 自分自身が所属するアクティビティを終了させます
                 Activity parentActivity = getActivity();
@@ -288,7 +288,7 @@ public class MonthCalendarFragment extends Fragment {
         rv.setHasFixedSize(true);  // パフォーマンス向上
 
         // グリッド状にカードを配置する 7つづつ
-      //   GridLayoutManager manager = new GridLayoutManager(this, SPAN_COUNT);
+        //   GridLayoutManager manager = new GridLayoutManager(this, SPAN_COUNT);
         GridLayoutManager manager = new GridLayoutManager(parentActivity, SPAN_COUNT);
         rv.setLayoutManager(manager);
 

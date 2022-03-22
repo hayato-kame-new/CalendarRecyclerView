@@ -74,7 +74,7 @@ public class TimeScheduleFragment extends Fragment {
         returnMonButton = view.findViewById(R.id.returnMonButton);
         int year = Integer.parseInt(scheduleDayText.substring(0, 4));
         int month = Integer.parseInt(scheduleDayText.substring(5, 7));
-      returnMonButton.setText(year + "年" + month + "月のカレンダーへ戻る");
+      returnMonButton.setText(year + "年" + month + "月カレンダーへ戻る");
 
       // 現在を取得して
         LocalDate localdateToday = LocalDate.now();
