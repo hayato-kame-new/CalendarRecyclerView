@@ -11,17 +11,8 @@ public class CalendarCellItem {
     // 追加 非表示のTextViewにする
     private String textViewGone = null;
 
-
-     // これできるのかな？？ 追加したけど
-   // 追加 テーブルに表示する各スケジュールの日付
+   // 追加 テーブルに表示する各スケジュール
     private String schedules = null;
-//    private String scheduledate = null;
-//    private String startime = null;
-//    private String endtime = null;
-//    private String scheduletitle = null;
-//    private String schedulememo = null;
-
-
 
     // ゲッター セッター
     public long getId() {
@@ -56,8 +47,6 @@ public class CalendarCellItem {
         this.textViewGone = textViewGone;
     }
 
-// 追加
-
     public String getSchedules() {
         return schedules;
     }
@@ -65,45 +54,5 @@ public class CalendarCellItem {
     public void setSchedules(String schedules) {
         this.schedules = schedules;
     }
-// 追加したけどいいのかわからない
 
-//    public String getScheduledate() {
-//        return scheduledate;
-//    }
-//
-//    public String getStartime() {
-//        return startime;
-//    }
-//
-//    public String getEndtime() {
-//        return endtime;
-//    }
-//
-//    public String getScheduletitle() {
-//        return scheduletitle;
-//    }
-//
-//    public String getSchedulememo() {
-//        return schedulememo;
-//    }
-//
-//    public void setScheduledate(String scheduledate) {
-//        this.scheduledate = scheduledate;
-//    }
-//
-//    public void setStartime(String startime) {
-//        this.startime = startime;
-//    }
-//
-//    public void setEndtime(String endtime) {
-//        this.endtime = endtime;
-//    }
-//
-//    public void setScheduletitle(String scheduletitle) {
-//        this.scheduletitle = scheduletitle;
-//    }
-//
-//    public void setSchedulememo(String schedulememo) {
-//        this.schedulememo = schedulememo;
-//    }
 }
