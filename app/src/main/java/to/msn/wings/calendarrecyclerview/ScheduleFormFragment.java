@@ -22,6 +22,7 @@ import android.widget.ArrayAdapter;
 import android.widget.CalendarView;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.SpinnerAdapter;
 import android.widget.TextView;
 
 import android.widget.Button;
@@ -74,25 +75,77 @@ public class ScheduleFormFragment extends Fragment {
         // 個々のデータを取得 うまく取得できなかった時のために String型は ""で初期化  Date型は nullで初期化
         final Date[] date = {null};
         String action = "";
+        String timeString = "";  // 新規の時には送られこない 編集の時だけ送られてくる
+        String scheduleTitleString = "";
+        String scheduleMemoString = "";
+
         if (extras != null) {
             date[0] = (Date)extras.getSerializable("date");  // Date型へキャストが必要です
             action = extras.getString("action");  // "add" もしくは "edit" が入ってきます
+
+            // 編集の時にだけ、 時間とタイトルとメモの情報が intentに乗っています
+            timeString = extras.getString("timeString");
+            scheduleTitleString = extras.getString("scheduleTitleString");
+            scheduleMemoString = extras.getString("scheduleMemoString");
         }
         // 後でインナークラスで dateを使うので定数にしておく final つける
         final Date DATE = date[0];
 
+
+        String startH = "";
+        String startM = "";
+        String endH = "";
+        String endM = "";
+
+        if (!timeString.equals("")) {
+            // 編集の時  "[ 09:00 ~ 15:00 ]"  という形になっていますので 取り除きます
+        // String result = s.replace("[", "").replace("]", "").replace(" ", "").replace("~", "").replace(":", "");
+            // 注意  正規表現 角括弧は　バックスラッシュを2つ書くことで、対応します
+            String replaced = timeString.replaceAll("[\\[\\]~ :]", "");  // "09001500"
+             startH = replaced.substring(0, 2);  // "09"
+            startM = replaced.substring(2,4);  // "00"
+             endH = replaced.substring(4, 6); // "15"
+             endM = replaced.substring(6); // "00"
+            if (startH.substring(0, 1).equals("0")) {  // "0"で始まるならば "0"をとる
+                startH = startH.substring(0, 1);  // 再代入
+            }
+            if (startH.substring(0, 1).equals("0")) { // "0"で始まるならば "0"をとる
+                endH = endH.substring(0, 1);  // 再代入
+            }
+        }
+
+
         _formTitle = view.findViewById(R.id.formTitle);
+        _spinnerStartHour = view.findViewById(R.id.spinnerStartHour);
+        _spinnerStartMinutes = view.findViewById(R.id.spinnerStartMinutes);
+        _spinnerEndHour = view.findViewById(R.id.spinnerEndHour);
+        _spinnerEndMinutes = view.findViewById(R.id.spinnerEndMinutes);
+        _editTextScheTitle = view.findViewById(R.id.editTextScheTitle);
+        _editTextScheMemo = view.findViewById(R.id.editTextScheMemo);
         // もし、新規登録ボタンをクリックしてきたら、新規であることをintentでデータで送ってきた action の値によって分岐できるようにする
         if (action.equals("add")) {  // 新規の時
             _formTitle.setText(R.string.tvFormTitleAdd);  // 新規の時に　新規スケジュール登録画面　と表示する
             _saveButton.setEnabled(false);  // 新規なら最初は保存ボタン押せないようになってる  false
+            // 新規の時には カレンダービューだけは初期値が入っている
         } else {  // 編集の時
             _formTitle.setText(R.string.tvFormTitleEdit);  // 編集の時に　編集-スケジュール登録画面　と表示する
             _saveButton.setEnabled(true);  // 編集なら最初は保存ボタン押せます
+            // 編集の時には、時間フォーム タイトル メモ カレンダービュー に初期値を入れておくので
+
+
+         //    _spinnerStartHour.setSelection(index);  // とする代わりに
+            ScheduleFormFragment.this.setSelection(_spinnerStartHour, startH);  // 自クラスの staticメソッドを呼び出す
+            ScheduleFormFragment.this.setSelection(_spinnerStartMinutes, startM);  // 自クラスの staticメソッドを呼び出す
+            ScheduleFormFragment.this.setSelection(_spinnerEndHour, endH);  // 自クラスの staticメソッドを呼び出す
+            ScheduleFormFragment.this.setSelection(_spinnerEndMinutes, endM);  // 自クラスの staticメソッドを呼び出す
+
+            _editTextScheTitle.setText(scheduleTitleString);
+            _editTextScheMemo.setText(scheduleMemoString);
 
         }
-// ここまで確認OK
-
+        _calendarView = view.findViewById(R.id.calendarView);
+        // ここで 新規の時も 編集の時にも CalendarViewに  初期値として 送られてきた 日時を設定します。
+        _calendarView.setDate(DATE.getTime());  // 引数には long型 カレンダービューに初期値設定
 
         // Date型の getYear getMonth getDay　は　非推奨メソッドなので、SimpleDateFormatを使い、文字列として取得する
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy年M月");  // MM に　すると 01 02 03   M にすると 1  2  3
@@ -111,15 +164,8 @@ public class ScheduleFormFragment extends Fragment {
             _returnMonButton.setVisibility(View.GONE); // これで表示しない なおかつ 非表示にしたスペースを詰める
         }
 
-        _spinnerStartHour = view.findViewById(R.id.spinnerStartHour);
-        _spinnerStartMinutes = view.findViewById(R.id.spinnerStartMinutes);
-        _spinnerEndHour = view.findViewById(R.id.spinnerEndHour);
-        _spinnerEndMinutes = view.findViewById(R.id.spinnerEndMinutes);
-        _editTextScheTitle = view.findViewById(R.id.editTextScheTitle);
-        _editTextScheMemo = view.findViewById(R.id.editTextScheMemo);
-
         _currentMonButton = view.findViewById(R.id.currentMonButton);
-        _calendarView = view.findViewById(R.id.calendarView);
+
         _textViewHourError = view.findViewById(R.id.textViewHourError);
         _textViewMinutesError = view.findViewById(R.id.textViewMinutesError);
 
@@ -193,7 +239,7 @@ public class ScheduleFormFragment extends Fragment {
 
 
         // CalendarViewに日時を設定します。
-        _calendarView.setDate(DATE.getTime());  // 引数には long型
+     //    _calendarView.setDate(DATE.getTime());  // 引数には long型
         long setL = _calendarView.getDate();
 
         java.sql.Date setDaySql = new java.sql.Date(setL);
@@ -212,9 +258,11 @@ public class ScheduleFormFragment extends Fragment {
                 java.util.Date utilDate = c.getTime();
                 java.sql.Date sqlDate = new java.sql.Date(utilDate.getTime());  // 本当は変換必要なかった java.util.Date　のままで良かったです
                 sqlDateArray[0] = sqlDate;
-               // Toast.makeText(view.getContext(), sqlDateArray[0].toString(), Toast.LENGTH_LONG).show();
+                // Toast.makeText(view.getContext(), sqlDateArray[0].toString(), Toast.LENGTH_LONG).show();
             }
         });
+
+
 
 
 
@@ -466,6 +514,7 @@ public class ScheduleFormFragment extends Fragment {
             Toast.makeText(parentActivity, "接続しました", Toast.LENGTH_SHORT).show();
             // ここにデータベースの処理を書く
 
+
                     String sqlInsert = "INSERT INTO timeschedule (scheduledate, starttime, endtime, scheduletitle, schedulememo) VALUES (?,?,?,?,?)";
 
                     SQLiteStatement stmt = db.compileStatement(sqlInsert);
@@ -527,6 +576,19 @@ public class ScheduleFormFragment extends Fragment {
                 _saveButton.setEnabled(true);
             }
         }
+    }
+
+    // staticな メソッドメンバ クラスメソッド(静的メソッド)
+    public static void setSelection(Spinner spinner, String item) {
+        SpinnerAdapter adapter = spinner.getAdapter();
+        int index = 0;
+        for (int i = 0; i < adapter.getCount(); i++) {
+            if (adapter.getItem(i).equals(item)) {
+                index = i;
+                break;
+            }
+        }
+        spinner.setSelection(index);
     }
 
 

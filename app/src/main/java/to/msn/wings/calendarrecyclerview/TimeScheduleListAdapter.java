@@ -65,7 +65,7 @@ public class TimeScheduleListAdapter extends RecyclerView.Adapter<TimeScheduleLi
 // context  TimeSheduleActivity のこと
                 Context context = parent.getContext();
                 Activity parentActivity = (Activity) context;
-                // 内部クラスで取得する
+                // クリックしたアイテムの 日にちの情報   内部クラスで取得する
                 TextView date = v.findViewById(R.id.date);  // 内部クラスで取得する
                 // クリックした時に取得するテキストは 内部クラスで取得する "2022/03/01" とかになってる
                 String dateString = date.getText().toString();  // クリックした時に取得するテキストは
@@ -75,10 +75,25 @@ public class TimeScheduleListAdapter extends RecyclerView.Adapter<TimeScheduleLi
                 } catch (ParseException e) {
                     e.printStackTrace();
                 }
+                // 時間の情報を送ります
+                TextView time = v.findViewById(R.id.time);
+                String timeString = time.getText().toString();
+                // タイトルの情報を送ります
+                TextView scheduleTitle = v.findViewById(R.id.scheduleTitle);
+                String scheduleTitleString = scheduleTitle.getText().toString();
+                // メモの情報を送ります
+                TextView scheduleMemo = v.findViewById(R.id.scheduleMemo);
+                String scheduleMemoString = scheduleMemo.getText().toString();
+
                 Intent intent = new Intent(parentActivity, ScheduleFormActivity.class); // 新しくintentオブジェクトを作る
 
               intent.putExtra("date", editDate);  // 日付を送ってる Date型情報を渡します インナークラスで使うので finalにしてる
                 intent.putExtra("action", "edit");  // 編集ということもわかるようにデータを送る キーが "action"  値が String型の "edit"
+
+                // 編集の時には、新規とは違って、時間やタイトル メモの情報も送ります
+                intent.putExtra("timeString", timeString);
+                intent.putExtra("scheduleTitleString", scheduleTitleString);
+                intent.putExtra("scheduleMemoString", scheduleMemoString);
 
                 parentActivity.startActivity(intent);  // context.startActivity(intent); でもいい
 
