@@ -1,5 +1,8 @@
 package to.msn.wings.calendarrecyclerview;
 
+import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.view.LayoutInflater;
@@ -10,7 +13,10 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 public class TimeScheduleListAdapter extends RecyclerView.Adapter<TimeScheduleListHolder>{
     // フィールド
@@ -30,7 +36,7 @@ public class TimeScheduleListAdapter extends RecyclerView.Adapter<TimeScheduleLi
      * R.layout.time_schedule_list_itemレイアウトをインフレートする
      *  カードビューにリスナーをつけたい時にはこのonCreateViewHolderに書ける
      *
-     * @param parent
+     * @param parent RecyclerView
      * @param viewType
      * @return
      */
@@ -43,12 +49,45 @@ public class TimeScheduleListAdapter extends RecyclerView.Adapter<TimeScheduleLi
                 .inflate(R.layout.time_schedule_list_item, parent, false);
         // v は、 CardViewのオブジェクトです
         TextView scheduleTitle = v.findViewById(R.id.scheduleTitle);
+//        TextView date = v.findViewById(R.id.date);
+//       String dateString = date.getText().toString();
+
 
         // ここで、このTextViewに　クリックイベントをつけます xmlでは android:clickable="true" が必要です
+        scheduleTitle.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // 小さいスマホサイズなら、画面遷移あり 新しいアクティビティへ画面遷移する その上のフラグメント切り替えるようにして
+                // 新規フラグメントや編集フラグメントのフォームを作る
 
-        //
+                // タブレットサイズなら、画面遷移なし fragment_time_schedule.xml　の　RecyclerView　の親に、LinearLayoutにして、
+                // 左にCardView  右に新規や編集のフォームを作る
+// context  TimeSheduleActivity のこと
+                Context context = parent.getContext();
+                Activity parentActivity = (Activity) context;
+                // 内部クラスで取得する
+                TextView date = v.findViewById(R.id.date);  // 内部クラスで取得する
+                // クリックした時に取得するテキストは 内部クラスで取得する "2022/03/01" とかになってる
+                String dateString = date.getText().toString();  // クリックした時に取得するテキストは
+                Date editDate = null;
+                try {
+                    editDate = new SimpleDateFormat("yyyy/MM/dd").parse(dateString);
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+                Intent intent = new Intent(parentActivity, ScheduleFormActivity.class); // 新しくintentオブジェクトを作る
 
+              intent.putExtra("date", editDate);  // 日付を送ってる Date型情報を渡します インナークラスで使うので finalにしてる
+                intent.putExtra("action", "edit");  // 編集ということもわかるようにデータを送る キーが "action"  値が String型の "edit"
 
+                parentActivity.startActivity(intent);  // context.startActivity(intent); でもいい
+
+//                // 小さいスマホサイズなら、画面遷移ありなので 現在のフラグメントを乗せてるサブのアクティビティを終わらせてください
+//                // 小さいスマホサイズなら 自分自身が所属するアクティビティを終了させます
+
+                parentActivity.finish();
+            }
+        });
         // 最後に ビューを ビューホルダーにセットして ビューホルダーのインスタンスをリターンする
         return new TimeScheduleListHolder(v);
     }
@@ -90,6 +129,8 @@ public class TimeScheduleListAdapter extends RecyclerView.Adapter<TimeScheduleLi
         }
 
         holder.scheduleMemo.setText("メモ: " + memo);
+        TextView scheduleMemo = holder.view.findViewById(R.id.scheduleMemo);
+        scheduleMemo.setTextColor(Color.parseColor("#333132"));
 
     }
 

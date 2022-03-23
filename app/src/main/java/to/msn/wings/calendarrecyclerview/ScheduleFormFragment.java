@@ -37,6 +37,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * 新規登録の時と 編集の時にこのフラグメントでデータベースに接続する
+ */
 public class ScheduleFormFragment extends Fragment {
 
     TextView _formTitle, _textViewHourError, _textViewMinutesError;
@@ -73,17 +76,23 @@ public class ScheduleFormFragment extends Fragment {
         String action = "";
         if (extras != null) {
             date[0] = (Date)extras.getSerializable("date");  // Date型へキャストが必要です
-            action = extras.getString("action");
+            action = extras.getString("action");  // "add" もしくは "edit" が入ってきます
         }
         // 後でインナークラスで dateを使うので定数にしておく final つける
         final Date DATE = date[0];
 
         _formTitle = view.findViewById(R.id.formTitle);
         // もし、新規登録ボタンをクリックしてきたら、新規であることをintentでデータで送ってきた action の値によって分岐できるようにする
-        if (action.equals("add")) {
+        if (action.equals("add")) {  // 新規の時
             _formTitle.setText(R.string.tvFormTitleAdd);  // 新規の時に　新規スケジュール登録画面　と表示する
             _saveButton.setEnabled(false);  // 新規なら最初は保存ボタン押せないようになってる  false
+        } else {  // 編集の時
+            _formTitle.setText(R.string.tvFormTitleEdit);  // 編集の時に　編集-スケジュール登録画面　と表示する
+            _saveButton.setEnabled(true);  // 編集なら最初は保存ボタン押せます
+
         }
+// ここまで確認OK
+
 
         // Date型の getYear getMonth getDay　は　非推奨メソッドなので、SimpleDateFormatを使い、文字列として取得する
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy年M月");  // MM に　すると 01 02 03   M にすると 1  2  3
