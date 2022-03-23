@@ -41,6 +41,13 @@ public class TimeScheduleListAdapter extends RecyclerView.Adapter<TimeScheduleLi
         // 個々のリストアイテムのレイアウトファイルでインフレートしたビューのインスタンスを生成して
         View v = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.time_schedule_list_item, parent, false);
+        // v は、 CardViewのオブジェクトです
+        TextView scheduleTitle = v.findViewById(R.id.scheduleTitle);
+
+        // ここで、このTextViewに　クリックイベントをつけます xmlでは android:clickable="true" が必要です
+
+        //
+
 
         // 最後に ビューを ビューホルダーにセットして ビューホルダーのインスタンスをリターンする
         return new TimeScheduleListHolder(v);
@@ -70,9 +77,11 @@ public class TimeScheduleListAdapter extends RecyclerView.Adapter<TimeScheduleLi
 
         holder.scheduleTitle.setText(title);
         // 下線もつけられます  リンクに見せるようにできる
+        //  <string name="link"><u>リンク文字列</u></string>  でも下線がつけられる  android:text="@string/link" とすれいい android:clickable="true"
         TextView scheduleTitle = holder.view.findViewById(R.id.scheduleTitle);
         scheduleTitle.setPaintFlags(Paint.UNDERLINE_TEXT_FLAG);
         scheduleTitle.setTextColor(Color.parseColor("blue"));
+
 
         // スケジュールのメモ
         String memo = this.data.get(position).getScheduleMemo();
