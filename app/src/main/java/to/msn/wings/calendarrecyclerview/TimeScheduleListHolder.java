@@ -15,6 +15,8 @@ public class TimeScheduleListHolder extends RecyclerView.ViewHolder{
     TextView time;  // ルート要素の配下のウィジェット
     TextView scheduleTitle;  // ルート要素の配下のウィジェット
     TextView scheduleMemo;  // ルート要素の配下のウィジェット
+    // データベースの主キーの情報をStringにして表示する
+    TextView id;  // 追加
 
 
     public TimeScheduleListHolder(@NonNull View itemView) {
@@ -24,6 +26,6 @@ public class TimeScheduleListHolder extends RecyclerView.ViewHolder{
         this.time = view.findViewById(R.id.time);
         this.scheduleTitle = view.findViewById(R.id.scheduleTitle);
         this.scheduleMemo = view.findViewById(R.id.scheduleMemo);
-
+        this.id = view.findViewById(R.id.id); // 追加
     }
 }

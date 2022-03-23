@@ -136,7 +136,6 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarCellViewHolder
         // textViewGone を非表示としたい  大切  View.VISIBLE・・・表示
         // View.INVISIBLE・・・非表示（非表示にしたスペースは詰めない）
         // View.GONE・・・非表示（非表示にしたスペースを詰める）
-        // 後でこれをコメント外してください
          textViewGone.setVisibility(View.GONE);  // これで表示しない なおかつ 非表示にしたスペースを詰める
 
         // 追加

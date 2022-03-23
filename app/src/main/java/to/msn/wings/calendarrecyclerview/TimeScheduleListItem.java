@@ -2,7 +2,7 @@ package to.msn.wings.calendarrecyclerview;
 
 public class TimeScheduleListItem {
 
-    private long id = 0;
+    private long id = 0;  // データベースからの _id カラムの値を
      private String date = null;
     private String startTime = null;
     private String endTime = null;

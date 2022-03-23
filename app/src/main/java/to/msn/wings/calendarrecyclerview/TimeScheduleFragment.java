@@ -183,6 +183,8 @@ public class TimeScheduleFragment extends Fragment {
             item.setEndTime(schedule.getEndtime());
             item.setScheduleTitle(schedule.getScheduletitle());
             item.setScheduleMemo(schedule.getSchedulememo());
+            // 追加
+            item.setId(schedule.get_id());  // これはアダプタで非表示にしています
             data.add(item);
         }
 

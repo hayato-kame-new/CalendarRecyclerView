@@ -78,6 +78,7 @@ public class ScheduleFormFragment extends Fragment {
         String timeString = "";  // 新規の時には送られこない 編集の時だけ送られてくる
         String scheduleTitleString = "";
         String scheduleMemoString = "";
+        Integer intId = null;
 
         if (extras != null) {
             date[0] = (Date)extras.getSerializable("date");  // Date型へキャストが必要です
@@ -87,10 +88,12 @@ public class ScheduleFormFragment extends Fragment {
             timeString = extras.getString("timeString");  // 新規の時には送られこないので null が入ってくる 編集の時だけ送られてくる
             scheduleTitleString = extras.getString("scheduleTitleString");  // 新規の時は nullになる
             scheduleMemoString = extras.getString("scheduleMemoString");  // 新規の時は nullになる
+            intId = extras.getInt("intId");  // 新規の時は nullになる
         }
         // 後でインナークラスで dateを使うので定数にしておく final つける
         final Date DATE = date[0];
-
+        final String ACTION = action;
+        final Integer ID = intId;
 
         String startH = "";
         String startM = "";
@@ -108,10 +111,10 @@ public class ScheduleFormFragment extends Fragment {
              endH = replaced.substring(4, 6); // "15"
              endM = replaced.substring(6); // "00"
             if (startH.substring(0, 1).equals("0")) {  // "0"で始まるならば "0"をとる
-                startH = startH.substring(0, 1);  // 再代入
+                startH = startH.substring(1, 2);  // 再代入
             }
             if (startH.substring(0, 1).equals("0")) { // "0"で始まるならば "0"をとる
-                endH = endH.substring(0, 1);  // 再代入
+                endH = endH.substring(1, 2);  // 再代入
             }
         }
 
@@ -123,8 +126,9 @@ public class ScheduleFormFragment extends Fragment {
         _spinnerEndMinutes = view.findViewById(R.id.spinnerEndMinutes);
         _editTextScheTitle = view.findViewById(R.id.editTextScheTitle);
         _editTextScheMemo = view.findViewById(R.id.editTextScheMemo);
-        // もし、新規登録ボタンをクリックしてきたら、新規であることをintentでデータで送ってきた action の値によって分岐できるようにする
-        if (action.equals("add")) {  // 新規の時
+        // もし、新規登録ボタンをクリックしてきたら、新規であることをintentでデータで送ってきた ACTION の値によって分岐できるようにする
+
+        if (ACTION.equals("add")) {  // 新規の時
             _formTitle.setText(R.string.tvFormTitleAdd);  // 新規の時に　新規スケジュール登録画面　と表示する
             _saveButton.setEnabled(false);  // 新規なら最初は保存ボタン押せないようになってる  false
             // 新規の時には カレンダービューだけは初期値が入っている
@@ -134,11 +138,23 @@ public class ScheduleFormFragment extends Fragment {
             // 編集の時には、時間フォーム タイトル メモ カレンダービュー に初期値を入れておくので
 
 
-         //    _spinnerStartHour.setSelection(index);  // とする代わりに
-            ScheduleFormFragment.this.setSelection(_spinnerStartHour, startH);  // 自クラスの staticメソッドを呼び出す
-            ScheduleFormFragment.this.setSelection(_spinnerStartMinutes, startM);  // 自クラスの staticメソッドを呼び出す
-            ScheduleFormFragment.this.setSelection(_spinnerEndHour, endH);  // 自クラスの staticメソッドを呼び出す
-            ScheduleFormFragment.this.setSelection(_spinnerEndMinutes, endM);  // 自クラスの staticメソッドを呼び出す
+
+           ScheduleFormFragment.this.setSelection(_spinnerStartHour, startH);
+            setSelection(_spinnerStartMinutes, startM);
+            setSelection(_spinnerEndHour, endH);
+            setSelection(_spinnerEndMinutes, endM);
+
+//            SpinnerAdapter adapter = _spinnerStartHour.getAdapter();
+//        int index = 0;
+//        for (int i = 0; i < adapter.getCount(); i++) {
+//            if (adapter.getItem(i).equals(startH)) {
+//                index = i;
+//                break;
+//            }
+//        }
+//            _spinnerStartHour.setSelection(index);
+//            String item = (String) _spinnerStartHour.getItemAtPosition(index);
+
 
             if (scheduleTitleString != null) {
                 _editTextScheTitle.setText(scheduleTitleString);
@@ -479,6 +495,7 @@ public class ScheduleFormFragment extends Fragment {
 
 
         // 保存ボタン
+
         _saveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -511,17 +528,31 @@ public class ScheduleFormFragment extends Fragment {
             Toast.makeText(parentActivity, "接続しました", Toast.LENGTH_SHORT).show();
             // ここにデータベースの処理を書く
                     // もし、action が "add" なら INSERT  "edit"なら UPDATE します
+                    if (ACTION.equals("add")) {  // 新規作成なら
+                        String sqlInsert = "INSERT INTO timeschedule (scheduledate, starttime, endtime, scheduletitle, schedulememo) VALUES (?,?,?,?,?)";
 
-                    String sqlInsert = "INSERT INTO timeschedule (scheduledate, starttime, endtime, scheduletitle, schedulememo) VALUES (?,?,?,?,?)";
+                        SQLiteStatement stmt = db.compileStatement(sqlInsert);
+                        stmt.bindString(4, etTitle);
+                        stmt.bindString(5, etMemo);
+                        stmt.bindString(1, strDate);
+                        stmt.bindString(2, insertST);
+                        stmt.bindString(3, insertET);
 
-                    SQLiteStatement stmt = db.compileStatement(sqlInsert);
-                    stmt.bindString(4, etTitle);
-                    stmt.bindString(5, etMemo);
-                    stmt.bindString(1, strDate);
-                    stmt.bindString(2, insertST);
-                    stmt.bindString(3, insertET);
+                        stmt.executeInsert();
+                    } else { // 編集なら
+                        // 　final 定数の ID　使う  ""では途中で改行しないように書く
+                        String sqlUpdate = "UPDATE timeschedule SET scheduledate = ?, starttime = ?, endtime = ?, scheduletitle = ?, schedulememo = ?  WHERE _id = ?";
 
-                    stmt.executeInsert();
+                         SQLiteStatement stmt = db.compileStatement(sqlUpdate);
+                        stmt.bindString(4, etTitle);
+                        stmt.bindString(5, etMemo);
+                        stmt.bindString(1, strDate);
+                        stmt.bindString(2, insertST);
+                        stmt.bindString(3, insertET);
+                        stmt.bindLong(6, ID);
+
+                        stmt.executeUpdateDelete();
+                    }
                 }
 
                 helper.close();  // ヘルパーを解放する  ここで
@@ -575,7 +606,7 @@ public class ScheduleFormFragment extends Fragment {
         }
     }
 
-    // staticな メソッドメンバ クラスメソッド(静的メソッド)
+
     public static void setSelection(Spinner spinner, String item) {
         SpinnerAdapter adapter = spinner.getAdapter();
         int index = 0;

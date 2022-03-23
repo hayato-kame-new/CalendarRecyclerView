@@ -85,6 +85,11 @@ public class TimeScheduleListAdapter extends RecyclerView.Adapter<TimeScheduleLi
                 TextView scheduleMemo = v.findViewById(R.id.scheduleMemo);
                 String scheduleMemoString = scheduleMemo.getText().toString();
 
+                TextView id = v.findViewById(R.id.id);
+                String strId = id.getText().toString();
+                // intに変換して送ります
+                int intId = Integer.parseInt(strId);
+
                 Intent intent = new Intent(parentActivity, ScheduleFormActivity.class); // 新しくintentオブジェクトを作る
 
               intent.putExtra("date", editDate);  // 日付を送ってる Date型情報を渡します インナークラスで使うので finalにしてる
@@ -94,6 +99,8 @@ public class TimeScheduleListAdapter extends RecyclerView.Adapter<TimeScheduleLi
                 intent.putExtra("timeString", timeString);
                 intent.putExtra("scheduleTitleString", scheduleTitleString);
                 intent.putExtra("scheduleMemoString", scheduleMemoString);
+                // データベースでは _idカラムで検索するので
+                intent.putExtra("intId", intId);
 
                 parentActivity.startActivity(intent);  // context.startActivity(intent); でもいい
 
@@ -143,9 +150,20 @@ public class TimeScheduleListAdapter extends RecyclerView.Adapter<TimeScheduleLi
             memo = memo.substring(0, 81); // 後で変更すること 制限を後で android:maxLength="80"  つけたので　大丈夫だが一応
         }
 
-        holder.scheduleMemo.setText("メモ: " + memo);
+        holder.scheduleMemo.setText(memo);
         TextView scheduleMemo = holder.view.findViewById(R.id.scheduleMemo);
         scheduleMemo.setTextColor(Color.parseColor("#333132"));
+
+        // id  非表示にして、データだけをフォームに送ります 上のonClickで送ってます
+        long longId = this.data.get(position).getId();
+        // Stringへ変換する
+        String strId = String.valueOf(longId);
+        holder.id.setText(strId);
+        // textViewGone を非表示としたい  大切  View.VISIBLE・・・表示
+        // View.INVISIBLE・・・非表示（非表示にしたスペースは詰めない）
+        // View.GONE・・・非表示（非表示にしたスペースを詰める）
+        TextView id = holder.view.findViewById(R.id.id);
+        id.setVisibility(View.GONE);  // これで表示しない なおかつ 非表示にしたスペースを詰める
 
     }
 
