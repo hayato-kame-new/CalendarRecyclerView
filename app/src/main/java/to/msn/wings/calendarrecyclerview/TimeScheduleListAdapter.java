@@ -57,14 +57,14 @@ public class TimeScheduleListAdapter extends RecyclerView.Adapter<TimeScheduleLi
         String dateText = this.data.get(position).getDate();
         holder.date.setText(dateText);
         // 開始時間 ~ 終了時間 を表示する
-        String timeText = "[" + this.data.get(position).getStartTime() + " ~ " + this.data.get(position).getEndTime() + "]";
+        String timeText = "[ " + this.data.get(position).getStartTime() + " ~ " + this.data.get(position).getEndTime() + " ]";
         holder.time.setText(timeText);
-        holder.time.setTextColor(Color.parseColor("green"));
+        holder.time.setTextColor(Color.parseColor("#006400"));
 
         // スケジュールのタイトル
         String title = this.data.get(position).getScheduleTitle();
-        if(title.length() > 9) {  // 注意エラーに
-            title = title.substring(0, 10);  // 後で変更すること
+        if(title.length() > 30) {  // 注意エラーに  制限を後で android:maxLength="30"  つけたので　大丈夫だが一応
+            title = title.substring(0, 31);  // 後で変更すること
         }
 
 
@@ -76,8 +76,8 @@ public class TimeScheduleListAdapter extends RecyclerView.Adapter<TimeScheduleLi
 
         // スケジュールのメモ
         String memo = this.data.get(position).getScheduleMemo();
-        if(memo.length() > 9) {  // 注意エラーに
-            memo = memo.substring(0, 10); // 後で変更すること
+        if(memo.length() > 80) {  // 注意エラーに
+            memo = memo.substring(0, 81); // 後で変更すること 制限を後で android:maxLength="80"  つけたので　大丈夫だが一応
         }
 
         holder.scheduleMemo.setText("メモ: " + memo);

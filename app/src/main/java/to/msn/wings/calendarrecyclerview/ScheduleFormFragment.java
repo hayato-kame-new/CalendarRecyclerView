@@ -122,7 +122,9 @@ public class ScheduleFormFragment extends Fragment {
 //        adapterEM.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 //        _spinnerEndMinutes.setAdapter(adapterEM);
 
-        // 新規ではの状態では　　""になってる  編集では必ず入ってる
+        //  SQLite のテーブルのスキーマでは文字列の最大の長さを指定することはできない
+        //  タイトルは android:maxLength="30"   メモは android:maxLength="80"  など xmlで入力文字数を制限することができる
+        // タイトルは 新規ではの状態では　　""になってる  編集では必ず入ってる  (20文字以内で)
         if (_editTextScheTitle.getText().toString().isEmpty() || _editTextScheTitle.getText().toString().equals("")) {  // 新規の時最初は　""　空文字が入ってくる
             _editTextScheTitle.setError("スケジュールのタイトルに文字を入力してください");
            // 保存ボタン押せない 新規登録画面では　最初は押せないようになってる ""になってるから
@@ -212,6 +214,12 @@ public class ScheduleFormFragment extends Fragment {
         final String[] _START_HOUR_STR_ARRAY = {""};
         // 終了時間を表す文字列の定数　インナークラスで使うから final で定数化しておく必要がある。また、配列にすると、要素を書き換えるようにできる
          final String[] _END_HOUR_STR_ARRAY = {""};
+
+        // 開始の分を表す文字列の定数　インナークラスで使うから final で定数化しておく必要がある。また、配列にすると、要素を書き換えるようにできる
+        final String[] _START_MINUTES_STR_ARRAY = {""};
+        // 終了時間を表す文字列の定数　インナークラスで使うから final で定数化しておく必要がある。また、配列にすると、要素を書き換えるようにできる
+        final String[] _END_MINUTES_STR_ARRAY = {""};
+
         // 開始  時間にリスナーつける
         _spinnerStartHour.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -226,11 +234,22 @@ public class ScheduleFormFragment extends Fragment {
                     _textViewHourError.setText("開始時間と終了時間を確認してください");
                    // 押せない
                     _buttonFlagMap.put("startHour", false );
+                    // ここを追加しました！！！
+                }else if (Integer.parseInt((String)adapterView.getItemAtPosition(i)) ==  Integer.parseInt(_END_HOUR_STR_ARRAY[0]) &&  (Integer.parseInt(_START_MINUTES_STR_ARRAY[0]) > Integer.parseInt(_END_MINUTES_STR_ARRAY[0]))) {
+                    _textViewHourError.setError("開始時間と終了時間を確認してください");
+                    _textViewHourError.setText("開始時間と終了時間を確認してください");
+                    // 押せない
+                    _buttonFlagMap.put("startHour", false);
                 } else {
                     _buttonFlagMap.put("startHour", true );
                     _buttonFlagMap.put("endHour", true );  // 押せる
                     _textViewHourError.setError(null);
                     _textViewHourError.setText("");
+                    // 追加
+                    _textViewMinutesError.setError(null);
+                    _textViewMinutesError.setText("");
+                    _buttonFlagMap.put("endMinutes", true ); // 押せる
+                    _buttonFlagMap.put("startMinutes", true ); // 押せる
                 }
                 _START_HOUR_STR_ARRAY[0] = (String) adapterView.getItemAtPosition(i);  // 選択されたアイテムを　親のアダプタービューから ポジションを指定して取得する
              //   Toast.makeText(getActivity(), "あなたが選んだ開始時間は " + START_HOUR_STR_ARRAY[0] + " 時です", Toast.LENGTH_SHORT).show();
@@ -265,21 +284,33 @@ public class ScheduleFormFragment extends Fragment {
 //                    adapterEM.remove("選択しない");
 //                    _spinnerEndMinutes.setSelection(0);  // "00" にしておく
 //                }
-                String select = (String)adapterView.getItemAtPosition(i);
+             //   String select = (String)adapterView.getItemAtPosition(i);
                 // 入力チェック
 
-                if ( _START_HOUR_STR_ARRAY[0].equals("")) {
+                if ( _START_HOUR_STR_ARRAY[0].equals("") || _START_MINUTES_STR_ARRAY[0].equals("") || _END_MINUTES_STR_ARRAY[0].equals("")) {
                     // 何もしない
                 } else if ( Integer.parseInt((String)adapterView.getItemAtPosition(i)) < Integer.parseInt(_START_HOUR_STR_ARRAY[0])) {
                     _textViewHourError.setError("開始時間と終了時間を確認してください");
                     _textViewHourError.setText("開始時間と終了時間を確認してください");
                     // 押せない
                     _buttonFlagMap.put("endHour", false );
-                } else {
+                    // この下を追加しました！！
+                } else if (Integer.parseInt((String)adapterView.getItemAtPosition(i)) ==  Integer.parseInt(_START_HOUR_STR_ARRAY[0]) &&  (Integer.parseInt(_START_MINUTES_STR_ARRAY[0]) > Integer.parseInt(_END_MINUTES_STR_ARRAY[0]))){
+                    _textViewHourError.setError("開始時間と終了時間を確認してください");
+                    _textViewHourError.setText("開始時間と終了時間を確認してください");
+                    // 押せない
+                    _buttonFlagMap.put("endHour", false );
+                }else {
                     _textViewHourError.setError(null);
                     _textViewHourError.setText("");
                     _buttonFlagMap.put("endHour", true );  // 押せる
                     _buttonFlagMap.put("startHour", true );  // 押せる
+                    // 追加
+                    _textViewMinutesError.setError(null);
+                    _textViewMinutesError.setText("");
+                    _buttonFlagMap.put("endMinutes", true ); // 押せる
+                    _buttonFlagMap.put("startMinutes", true ); // 押せる
+
                 }
                 _END_HOUR_STR_ARRAY[0] = (String) adapterView.getItemAtPosition(i);  // 選択されたアイテムを　親のアダプタービューから ポジションを指定して取得する
                 // ここでボタン変更するメソッドをよぶ
@@ -297,9 +328,9 @@ public class ScheduleFormFragment extends Fragment {
 
 
         // 開始の分を表す文字列の定数　インナークラスで使うから final で定数化しておく必要がある。また、配列にすると、要素を書き換えるようにできる
-        final String[] _START_MINUTES_STR_ARRAY = {""};
+       // final String[] _START_MINUTES_STR_ARRAY = {""};
         // 終了時間を表す文字列の定数　インナークラスで使うから final で定数化しておく必要がある。また、配列にすると、要素を書き換えるようにできる
-        final String[] _END_MINUTES_STR_ARRAY = {""};
+       //  final String[] _END_MINUTES_STR_ARRAY = {""};
 
         // 開始の　分にリスナーつける
         _spinnerStartMinutes.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -319,6 +350,12 @@ public class ScheduleFormFragment extends Fragment {
                     _textViewMinutesError.setError(null);
                     _textViewMinutesError.setText("");
                     _buttonFlagMap.put("startMinutes", true ); //押せる
+                    _buttonFlagMap.put("endMinutes", true ); //押せる
+
+                    _buttonFlagMap.put("startHour", true );
+                    _buttonFlagMap.put("endHour", true );  // 押せる
+                    _textViewHourError.setError(null);
+                    _textViewHourError.setText("");
                 }
                 // ここでボタン変更するメソッドをよぶ
                 changeSaveButton(_buttonFlagMap);
@@ -344,6 +381,11 @@ public class ScheduleFormFragment extends Fragment {
 
                 if ( _START_MINUTES_STR_ARRAY[0].equals("") || _END_HOUR_STR_ARRAY[0].equals("") || _START_HOUR_STR_ARRAY[0].equals("")) {
                     //   何もしない
+                } else if ( Integer.parseInt(_END_HOUR_STR_ARRAY[0]) < Integer.parseInt(_START_HOUR_STR_ARRAY[0])) {  // ここ追加した
+                    _textViewMinutesError.setError("開始時間と終了時間を確認してください");
+                    _textViewMinutesError.setText("開始時間と終了時間を確認してください");
+                    // 押せない
+                    _buttonFlagMap.put("endMinutes", false );
                 } else if (( Integer.parseInt(_END_HOUR_STR_ARRAY[0]) == Integer.parseInt(_START_HOUR_STR_ARRAY[0]))  &&  (Integer.parseInt((String)adapterView.getItemAtPosition(i)) < Integer.parseInt(_START_MINUTES_STR_ARRAY[0]))) {
                     _textViewMinutesError.setError("開始時間と終了時間を確認してください");
                     _textViewMinutesError.setText("開始時間と終了時間を確認してください");
@@ -353,6 +395,12 @@ public class ScheduleFormFragment extends Fragment {
                     _textViewMinutesError.setError(null);
                     _textViewMinutesError.setText("");
                     _buttonFlagMap.put("endMinutes", true ); // 押せる
+                    _buttonFlagMap.put("startMinutes", true ); // 押せる
+                    // 追加
+                    _buttonFlagMap.put("startHour", true );
+                    _buttonFlagMap.put("endHour", true );  // 押せる
+                    _textViewHourError.setError(null);
+                    _textViewHourError.setText("");
                 }
                 // ここでボタン変更するメソッドをよぶ
                 changeSaveButton(_buttonFlagMap);

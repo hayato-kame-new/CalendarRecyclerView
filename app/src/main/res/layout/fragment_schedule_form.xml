@@ -182,7 +182,7 @@
                 android:inputType="textMultiLine"
                 android:maxLines="5"
                 android:minLines="2"
-                android:maxLength="100"/>
+                android:maxLength="30"/>
 
             <TextView
                 android:id="@+id/tvScheMemo"
@@ -199,7 +199,7 @@
                 android:inputType="textMultiLine"
                 android:maxLines="10"
                 android:minLines="3"
-                android:maxLength="200"/>
+                android:maxLength="80"/>
 
             <Button
                 android:id="@+id/saveButton"

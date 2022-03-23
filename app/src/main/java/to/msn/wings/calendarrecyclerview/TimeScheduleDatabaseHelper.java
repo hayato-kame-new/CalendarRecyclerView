@@ -27,6 +27,8 @@ public class TimeScheduleDatabaseHelper extends SQLiteOpenHelper {
         // SQLiteでは、列が INTEGER型 かつ PRIMARY KEY（主キー）の場合に、AutoIncrement を指定をすることができますが。つけない方がいいらしい
         // SQLite3では、「CREATE TABLE」の際に「AUTO INCREMENT」を指定する必要はありません。つけない方がいいらしい
         //もし主キーを連番のIDにしたい場合、INTEGERで「PRIMARY KEY」を指定するようにします。
+       //  SQLite のテーブルのスキーマでは文字列の最大の長さを指定することはできない
+        //  タイトルは android:maxLength="30"   メモは android:maxLength="80"  など xmlで入力文字数を制限することができる
         if (sqLiteDatabase != null) {
 //            sqLiteDatabase.execSQL("CREATE TABLE timeschedule (" + "_id INTEGER PRIMARY KEY  , scheduledate DATE NOT NULL," +
 //                    " starttime DATETIME NOT NULL, endtime DATETIME , scheduletitle TEXT NOT NULL, schedulememo TEXT)");
