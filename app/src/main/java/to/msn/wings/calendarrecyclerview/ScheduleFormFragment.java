@@ -83,10 +83,10 @@ public class ScheduleFormFragment extends Fragment {
             date[0] = (Date)extras.getSerializable("date");  // Date型へキャストが必要です
             action = extras.getString("action");  // "add" もしくは "edit" が入ってきます
 
-            // 編集の時にだけ、 時間とタイトルとメモの情報が intentに乗っています
-            timeString = extras.getString("timeString");
-            scheduleTitleString = extras.getString("scheduleTitleString");
-            scheduleMemoString = extras.getString("scheduleMemoString");
+            // 編集の時にだけ、 時間とタイトルとメモの情報が intentに乗っています 新規の時には送られこないので null が入ってくる
+            timeString = extras.getString("timeString");  // 新規の時には送られこないので null が入ってくる 編集の時だけ送られてくる
+            scheduleTitleString = extras.getString("scheduleTitleString");  // 新規の時は nullになる
+            scheduleMemoString = extras.getString("scheduleMemoString");  // 新規の時は nullになる
         }
         // 後でインナークラスで dateを使うので定数にしておく final つける
         final Date DATE = date[0];
@@ -97,7 +97,8 @@ public class ScheduleFormFragment extends Fragment {
         String endH = "";
         String endM = "";
 
-        if (!timeString.equals("")) {
+     //    if (!timeString.equals("")) {
+        if (timeString != null) {
             // 編集の時  "[ 09:00 ~ 15:00 ]"  という形になっていますので 取り除きます
         // String result = s.replace("[", "").replace("]", "").replace(" ", "").replace("~", "").replace(":", "");
             // 注意  正規表現 角括弧は　バックスラッシュを2つ書くことで、対応します
@@ -139,8 +140,12 @@ public class ScheduleFormFragment extends Fragment {
             ScheduleFormFragment.this.setSelection(_spinnerEndHour, endH);  // 自クラスの staticメソッドを呼び出す
             ScheduleFormFragment.this.setSelection(_spinnerEndMinutes, endM);  // 自クラスの staticメソッドを呼び出す
 
-            _editTextScheTitle.setText(scheduleTitleString);
-            _editTextScheMemo.setText(scheduleMemoString);
+            if (scheduleTitleString != null) {
+                _editTextScheTitle.setText(scheduleTitleString);
+            }
+            if (_editTextScheMemo != null) {
+                _editTextScheMemo.setText(scheduleMemoString);
+            }
 
         }
         _calendarView = view.findViewById(R.id.calendarView);
@@ -484,36 +489,28 @@ public class ScheduleFormFragment extends Fragment {
                 Date date = sqlDateArray[0];  // "2022-03-19"
                 String strDate = new SimpleDateFormat("yyyy-MM-dd").format(date); // String型 にしてデータベースへ登録する
                 String  sh = _START_HOUR_STR_ARRAY[0];  // "0" や　"1"　
-                String paddingStr = sh.format("%2s", _START_HOUR_STR_ARRAY[0]).replace(" ", "0");  // "0" "1" "2" を　"00" "01" "02" へ成形してる
+                // "0" "1" "2" を　"00" "01" "02" へ成形してる
+                String paddingStr = sh.format("%2s", _START_HOUR_STR_ARRAY[0]).replace(" ", "0");
                 String sm = _START_MINUTES_STR_ARRAY[0]; // "00" または　"30"　
-                String eh = _END_HOUR_STR_ARRAY[0]; // "選択しない" が入ってくる可能性あり "0" や　"1"
-                String paddingStr2 = "";
-                if (!eh.equals("選択しない")) {
-                     paddingStr2 = sh.format("%2s", _END_HOUR_STR_ARRAY[0]).replace(" ", "0");
-                }
+                String eh = _END_HOUR_STR_ARRAY[0]; //  "0" や　"1"
+                String paddingStr2 = sh.format("%2s", _END_HOUR_STR_ARRAY[0]).replace(" ", "0");
 
-                String em = _END_MINUTES_STR_ARRAY[0]; // "選択しない" が入ってくる可能性あり  "00" または　"30"
-            //    Toast.makeText(getActivity(),  " 日にちが" + sqlDateArray[0] + " 開始時間が" + START_HOUR_STR_ARRAY[0] + ":" + START_MINUTES_STR_ARRAY[0] + "です 終了時間は　" + END_HOUR_STR_ARRAY[0] + ":" + END_MINUTES_STR_ARRAY[0] + " です" , Toast.LENGTH_LONG).show();
+                String em = _END_MINUTES_STR_ARRAY[0]; // "00" または　"30"
 
                 String insertST = paddingStr + ":" + sm;
-                String insertET = "";
-                if (!_END_HOUR_STR_ARRAY[0].equals("選択しない")) {
-                    insertET = paddingStr2 + ":" + em;
-                }
+                String insertET =  paddingStr2 + ":" + em;
 
                  String etTitle = _editTextScheTitle.getText().toString();
                  String etMemo = _editTextScheMemo.getText().toString(); // 何も書いてないと ""空文字になってる
-             //   Toast.makeText(getActivity(),  "タイトルは　" + etTitle + " です　メモは　" + etMemo + " です　", Toast.LENGTH_LONG).show();
 
                 // データベースを取得する try-catch-resources構文 finallyを書かなくても必ず close()処理をしてくれます
                 // 使ったらすぐに helper close()すること 同じメソッド内ですぐに close()する onDestory()には書かないでください
                 TimeScheduleDatabaseHelper helper =  new TimeScheduleDatabaseHelper(parentActivity);
-                //          _db = MainActivity.helper.getWritableDatabase();  // クラス名::フィールド名 で　１つしかない　静的フィールド（クラスフィールド　static)を呼び出して使いまわす
 
                 try (SQLiteDatabase db = helper.getWritableDatabase()) {  // dbはきちんとクローズ自動でしてくれます
             Toast.makeText(parentActivity, "接続しました", Toast.LENGTH_SHORT).show();
             // ここにデータベースの処理を書く
-
+                    // もし、action が "add" なら INSERT  "edit"なら UPDATE します
 
                     String sqlInsert = "INSERT INTO timeschedule (scheduledate, starttime, endtime, scheduletitle, schedulememo) VALUES (?,?,?,?,?)";
 
