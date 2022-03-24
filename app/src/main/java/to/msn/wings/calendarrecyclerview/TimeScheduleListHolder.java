@@ -19,8 +19,7 @@ public class TimeScheduleListHolder extends RecyclerView.ViewHolder{
     TextView scheduleMemo;  // ルート要素の配下のウィジェット
     // データベースの主キーの情報をStringにして表示する
     TextView id;  // 追加
-    // ボタンを2つ追加
-    Button editBtn;  // import android.widget.Button;
+    // ボタンを1つ追加  import android.widget.Button;
     Button deleteBtn;
 
 
@@ -32,7 +31,7 @@ public class TimeScheduleListHolder extends RecyclerView.ViewHolder{
         this.scheduleTitle = view.findViewById(R.id.scheduleTitle);
         this.scheduleMemo = view.findViewById(R.id.scheduleMemo);
         this.id = view.findViewById(R.id.id); // 追加  主キーをString型にして、非表示にして、送りたいため
-        this.editBtn = view.findViewById(R.id.editBtn);  // 追加
+
         this.deleteBtn = view.findViewById(R.id.deleteBtn);  // 追加
     }
 }

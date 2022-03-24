@@ -83,8 +83,14 @@
 
 
     <string name="saveButton">保存</string>
-    <string name="edit">編集</string>
+
     <string name="delete">削除</string>
+
+    <string name="dialogTitle">削除確認</string>
+    <string name="dialogMsg">選択されたスケジュールを削除します。よろしいですか。</string>
+    <string name="dialogBtnOk">削除します</string>
+    <string name="dialogBtnNg">キャンセル</string>
+
 
 
 </resources>
