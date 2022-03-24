@@ -127,6 +127,7 @@ public class TimeScheduleListAdapter extends RecyclerView.Adapter<TimeScheduleLi
                 Context context = parent.getContext();
                 // Activityクラスではダメです FragmentActivityクラスにキャストをしてください。
                 FragmentActivity parentActivity = (FragmentActivity) context;
+                // 第二引数は任意だから、クラス名にしておいた ダイアログを識別するための 名前を付けている
                 dialogFragment.show(parentActivity.getSupportFragmentManager(), "DeleteConfirmDialogFragment");
 
             }
