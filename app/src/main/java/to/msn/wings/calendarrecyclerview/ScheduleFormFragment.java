@@ -172,7 +172,7 @@ public class ScheduleFormFragment extends Fragment {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy年M月");  // MM に　すると 01 02 03   M にすると 1  2  3
         String str = sdf.format(date[0]);  // ボタンに表示するための
         _returnMonButton = view.findViewById(R.id.returnMonButton);
-        _returnMonButton.setText(str + "のカレンダーに戻る");
+        _returnMonButton.setText(str + "カレンダーに戻る");
         // 比較するために フォーマットし直して
          sdf = new SimpleDateFormat("yyyy年MM月"); // MM に　すると 01 02 03
         String strMM = sdf.format(date[0]);
@@ -549,7 +549,7 @@ public class ScheduleFormFragment extends Fragment {
                         stmt.bindString(1, strDate);
                         stmt.bindString(2, insertST);
                         stmt.bindString(3, insertET);
-                        stmt.bindLong(6, ID);
+                        stmt.bindLong(6, ID);  // 主キーを指定する
 
                         stmt.executeUpdateDelete();
                     }
@@ -559,9 +559,11 @@ public class ScheduleFormFragment extends Fragment {
 
                 // ここで db　をクローズする処理を書く　
                 // クラスフィールドのhelperは使い回しするのでまだ　ここで クローズしないで MainActivityの　コールバックメソッドのonDestory()で解放してます
-
-                Toast.makeText(getActivity(),  "スケジュールを新規登録しました", Toast.LENGTH_LONG).show();
-
+                if (ACTION.equals("add")) {  // 新規作成なら
+                    Toast.makeText(getActivity(), "スケジュールを新規登録しました", Toast.LENGTH_LONG).show();
+                } else {
+                    Toast.makeText(getActivity(), "スケジュールを編集しました", Toast.LENGTH_LONG).show();
+                }
                 // スケジュールを挿入した年月が、現在の年月なら MainActivityへ　それ以外の月ならMonthCalendarActivityへ遷移する "2022-03-19"
                 int year = Integer.parseInt(strDate.substring(0, 4));
                 int month = Integer.parseInt(strDate.substring(5, 7));

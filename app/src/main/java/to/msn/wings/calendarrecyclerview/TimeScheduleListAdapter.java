@@ -5,11 +5,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.os.Build;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-
+import android.widget.Button;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -17,6 +18,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+
 
 public class TimeScheduleListAdapter extends RecyclerView.Adapter<TimeScheduleListHolder>{
     // フィールド
@@ -48,9 +50,14 @@ public class TimeScheduleListAdapter extends RecyclerView.Adapter<TimeScheduleLi
         View v = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.time_schedule_list_item, parent, false);
         // v は、 CardViewのオブジェクトです
-        TextView scheduleTitle = v.findViewById(R.id.scheduleTitle);
+        TextView scheduleTitle = v.findViewById(R.id.scheduleTitle);  // リスナーつける
 //        TextView date = v.findViewById(R.id.date);
 //       String dateString = date.getText().toString();
+
+        Button editBtn = v.findViewById(R.id.editBtn);  // リスナーつける
+        Button deleteBtn = v.findViewById(R.id.deleteBtn);  // リスナーつける
+
+
 
 
         // ここで、このTextViewに　クリックイベントをつけます xmlでは android:clickable="true" が必要です
@@ -154,7 +161,7 @@ public class TimeScheduleListAdapter extends RecyclerView.Adapter<TimeScheduleLi
         TextView scheduleMemo = holder.view.findViewById(R.id.scheduleMemo);
         scheduleMemo.setTextColor(Color.parseColor("#333132"));
 
-        // id  非表示にして、データだけをフォームに送ります 上のonClickで送ってます
+        // idのTextView  非表示にして、データだけをフォームに送ります 上のonClickで送ってます
         long longId = this.data.get(position).getId();
         // Stringへ変換する
         String strId = String.valueOf(longId);
@@ -165,6 +172,26 @@ public class TimeScheduleListAdapter extends RecyclerView.Adapter<TimeScheduleLi
         TextView id = holder.view.findViewById(R.id.id);
         id.setVisibility(View.GONE);  // これで表示しない なおかつ 非表示にしたスペースを詰める
 
+
+       //  Context を取得すれば、getResources()メソッドが使用できます  context.getResources() というふうに使える
+        Context context = holder.deleteBtn.getContext();
+
+        // ボタン を少し小さくするには
+        holder.editBtn.setMinimumWidth(0);  // ボタンの最小幅がデフォルトで64dipである 一旦0にする
+        holder.editBtn.setWidth(180);  // ソースでなくxmlファイルで設定するには「wrap_content」ではなく、200dpと書けばOK
+        // getColor(int id)を使いたいのだが　非推奨なので API 23 から Deprecated（非推奨）
+        // 代わりに public int getColor (int id, Resources.Theme theme) を使います
+     //    int color = context.getResources().getColor(R.color.colorAccent);  // これだとダメ
+
+        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            // API 23 以上 は 新しいメソッドを使います
+            holder.deleteBtn.setBackgroundColor(context.getResources().getColor(R.color.colorAccent, context.getTheme()));
+        } else {
+            // API 23 未満 の時には　非推奨メソッドを使用します
+            holder.deleteBtn.setBackgroundColor(context.getResources().getColor(R.color.colorAccent));
+        }
+        holder.deleteBtn.setMinimumWidth(0); // ボタンの最小幅がデフォルトで64dipである  一旦0にする
+        holder.deleteBtn.setWidth(180);
     }
 
     @Override

@@ -9,6 +9,7 @@ public class TimeScheduleListItem {
     private String scheduleTitle = null;
     private String scheduleMemo = null;
 
+
     // アクセッサ ゲッター
     public long getId() {
         return id;
