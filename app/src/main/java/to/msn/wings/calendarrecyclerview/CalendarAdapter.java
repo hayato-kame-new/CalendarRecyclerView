@@ -69,8 +69,6 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarCellViewHolder
 
                 intent.putExtra("scheduleDayText" , scheduleDayText ); //  "2022/03/16"  日付の文字列情報を送るのにセットする
 
-                // nullだとエラーになるので注意してください  落ちます nullにはならないはずです
-
                 TextView textViewToday = view.findViewById(R.id.textViewToday);
                 String todayString = textViewToday.getText().toString();
                 intent.putExtra("todayString" , todayString );
@@ -78,35 +76,6 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarCellViewHolder
                 context.startActivity(intent);
             }
         } );
-
- // これはOK
-    //    CardView cardView = v.findViewById(R.id.cardView);
-//        cardView.setOnLongClickListener(new View.OnLongClickListener() {  // 長押し
-//            @Override
-//            public boolean onLongClick(View view) {
-//                Toast.makeText(v.getContext(), "長押ししますとトーストが出る", Toast.LENGTH_SHORT).show();
-//                return false;  // 長押しの時には、その後に普通の onClickをするのかどうかを return false　　return true を書いて終わる
-//            }
-//        });
-
-
-        // これでもOK
-//        cardView.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//
-//                Context context = view.getContext();  // タッチしたビューのコンテキスト(アクティビティクラス)を取得する
-//                // インテントオブジェクトの生成
-//                Intent intent = new Intent(context, TimeScheduleActivity.class ); // 今のアクティビティから、新しいアクティビティへ
-//                    //  nullだと落ちます
-////                TextView date = view.findViewById(R.id.date);
-////                String dateText =  date.getText().toString();
-////
-////               intent.putExtra("date",dateText);
-//                context.startActivity(intent);
-//
-//            }
-//        });
 
         return new CalendarCellViewHolder(v);
     }

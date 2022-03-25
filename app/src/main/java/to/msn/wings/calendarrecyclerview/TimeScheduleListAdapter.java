@@ -33,24 +33,13 @@ public class TimeScheduleListAdapter extends RecyclerView.Adapter<TimeScheduleLi
         this.data = data;
     }
 
-    // メソッドを3つオーバーライドすること
-
-    /**
-     * R.layout.time_schedule_list_itemレイアウトをインフレートする
-     *  カードビューにリスナーをつけたい時にはこのonCreateViewHolderに書ける
-     *
-     * @param parent RecyclerView
-     * @param viewType
-     * @return
-     */
     @NonNull
     @Override
     public TimeScheduleListHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
 
-        // 個々のリストアイテムのレイアウトファイルでインフレートしたビューのインスタンスを生成して
+        // v は、 CardViewのオブジェクトです
         View v = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.time_schedule_list_item, parent, false);
-        // v は、 CardViewのオブジェクトです
 
         v.setOnClickListener(new View.OnClickListener() {
             @Override

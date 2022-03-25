@@ -118,11 +118,10 @@ public class ScheduleFormFragment extends Fragment {
             if (startH.substring(0, 1).equals("0")) {  // "0"で始まるならば "0"をとる
                 startH = startH.substring(1, 2);  // 再代入
             }
-            if (startH.substring(0, 1).equals("0")) { // "0"で始まるならば "0"をとる
+            if (endH.substring(0, 1).equals("0")) { // "0"で始まるならば "0"をとる
                 endH = endH.substring(1, 2);  // 再代入
             }
         }
-
 
         _formTitle = view.findViewById(R.id.formTitle);
         _spinnerStartHour = view.findViewById(R.id.spinnerStartHour);
@@ -131,8 +130,8 @@ public class ScheduleFormFragment extends Fragment {
         _spinnerEndMinutes = view.findViewById(R.id.spinnerEndMinutes);
         _editTextScheTitle = view.findViewById(R.id.editTextScheTitle);
         _editTextScheMemo = view.findViewById(R.id.editTextScheMemo);
-        // もし、新規登録ボタンをクリックしてきたら、新規であることをintentでデータで送ってきた ACTION の値によって分岐できるようにする
 
+        // ACTION の値によって分岐できるようにする
         if (ACTION.equals("add")) {  // 新規の時
             _formTitle.setText(R.string.tvFormTitleAdd);  // 新規の時に　新規スケジュール登録画面　と表示する
             _saveButton.setEnabled(false);  // 新規なら最初は保存ボタン押せないようになってる  false
@@ -574,10 +573,6 @@ public class ScheduleFormFragment extends Fragment {
 
                 helper.close();  // ヘルパーを解放する  ここで
 
-
-
-                // ここで db　をクローズする処理を書く　
-                // クラスフィールドのhelperは使い回しするのでまだ　ここで クローズしないで MainActivityの　コールバックメソッドのonDestory()で解放してます
                 if (ACTION.equals("add")) {  // 新規作成なら
                     Toast.makeText(getActivity(), "スケジュールを新規登録しました", Toast.LENGTH_LONG).show();
                 } else if (ACTION.equals("edit")) {
