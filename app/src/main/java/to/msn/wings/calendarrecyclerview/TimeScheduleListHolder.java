@@ -20,7 +20,7 @@ public class TimeScheduleListHolder extends RecyclerView.ViewHolder{
     // データベースの主キーの情報をStringにして表示する
     TextView id;  // 追加
     // ボタンを1つ追加  import android.widget.Button;
-    Button deleteBtn;
+   // Button deleteBtn;
 
 
     public TimeScheduleListHolder(@NonNull View itemView) {
@@ -32,6 +32,6 @@ public class TimeScheduleListHolder extends RecyclerView.ViewHolder{
         this.scheduleMemo = view.findViewById(R.id.scheduleMemo);
         this.id = view.findViewById(R.id.id); // 追加  主キーをString型にして、非表示にして、送りたいため
 
-        this.deleteBtn = view.findViewById(R.id.deleteBtn);  // 追加
+      //  this.deleteBtn = view.findViewById(R.id.deleteBtn);  // 追加
     }
 }

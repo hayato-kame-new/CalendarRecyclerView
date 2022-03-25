@@ -12,6 +12,7 @@
         <entry key="app/src/main/res/layout/dialog_custom.xml" value="0.18313689936536717" />
         <entry key="app/src/main/res/layout/fragment_current_month.xml" value="0.1933876811594203" />
         <entry key="app/src/main/res/layout/fragment_delete_confirm_dialog.xml" value="0.18313689936536717" />
+        <entry key="app/src/main/res/layout/fragment_month_calendar.xml" value="0.115861479264643" />
         <entry key="app/src/main/res/layout/fragment_pre_and_next_month_calendar.xml" value="0.1933876811594203" />
         <entry key="app/src/main/res/layout/fragment_schedule_form.xml" value="0.165" />
         <entry key="app/src/main/res/layout/fragment_time_schedule.xml" value="0.25" />

@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteStatement;
 import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -48,7 +49,7 @@ public class ScheduleFormFragment extends Fragment {
     Spinner _spinnerStartHour, _spinnerStartMinutes, _spinnerEndHour, _spinnerEndMinutes;
     EditText _editTextScheTitle, _editTextScheMemo;
     CalendarView _calendarView;
-    Button _saveButton;  //  import android.widget.Button;
+    Button _saveButton, _deleteButton;  //  import android.widget.Button;
 
     // フラグ
     Map<String, Boolean> _buttonFlagMap = null;
@@ -131,14 +132,13 @@ public class ScheduleFormFragment extends Fragment {
         if (ACTION.equals("add")) {  // 新規の時
             _formTitle.setText(R.string.tvFormTitleAdd);  // 新規の時に　新規スケジュール登録画面　と表示する
             _saveButton.setEnabled(false);  // 新規なら最初は保存ボタン押せないようになってる  false
+         //   _deleteButton.setVisibility(View.GONE);  // 削除ボタン見えない
             // 新規の時には カレンダービューだけは初期値が入っている
         } else {  // 編集の時
             _formTitle.setText(R.string.tvFormTitleEdit);  // 編集の時に　編集-スケジュール登録画面　と表示する
             _saveButton.setEnabled(true);  // 編集なら最初は保存ボタン押せます
+        //    _deleteButton.setVisibility(View.VISIBLE); // 削除ボタン見える
             // 編集の時には、時間フォーム タイトル メモ カレンダービュー に初期値を入れておくので
-
-
-
            ScheduleFormFragment.this.setSelection(_spinnerStartHour, startH);
             setSelection(_spinnerStartMinutes, startM);
             setSelection(_spinnerEndHour, endH);
@@ -155,18 +155,30 @@ public class ScheduleFormFragment extends Fragment {
 //            _spinnerStartHour.setSelection(index);
 //            String item = (String) _spinnerStartHour.getItemAtPosition(index);
 
-
             if (scheduleTitleString != null) {
                 _editTextScheTitle.setText(scheduleTitleString);
             }
             if (_editTextScheMemo != null) {
                 _editTextScheMemo.setText(scheduleMemoString);
             }
-
         }
+        // カレンダービューに初期値をセット
         _calendarView = view.findViewById(R.id.calendarView);
         // ここで 新規の時も 編集の時にも CalendarViewに  初期値として 送られてきた 日時を設定します。
         _calendarView.setDate(DATE.getTime());  // 引数には long型 カレンダービューに初期値設定
+        // ボタンの大きさなどを設定     // getColor(int id)を使いたいのだが　非推奨なので API 23 から Deprecated（非推奨）
+        //        // 代わりに public int getColor (int id, Resources.Theme theme) を使います
+//        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+//            // API 23 以上 は 新しいメソッドを使います
+//            _deleteButton.setBackgroundColor(getResources().getColor(R.color.colorAccent, getActivity().getTheme()));
+//        } else {
+//            // API 23 未満 の時には　非推奨メソッドを使用します
+//            _deleteButton.setBackgroundColor(getActivity().getResources().getColor(R.color.colorAccent));
+//        }
+        // ボタン を少し小さくするには xmlファイルで設定するには「wrap_content」になってるので一旦0にする
+       // _deleteButton.setMinimumWidth(0); // ボタンの最小幅がデフォルトで64dipである  一旦0にする
+      //  _deleteButton.setWidth(180);
+
 
         // Date型の getYear getMonth getDay　は　非推奨メソッドなので、SimpleDateFormatを使い、文字列として取得する
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy年M月");  // MM に　すると 01 02 03   M にすると 1  2  3

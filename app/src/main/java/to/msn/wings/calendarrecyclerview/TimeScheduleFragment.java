@@ -81,14 +81,14 @@ public class TimeScheduleFragment extends Fragment {
         returnMonButton = view.findViewById(R.id.returnMonButton);
         int year = Integer.parseInt(scheduleDayText.substring(0, 4));
         int month = Integer.parseInt(scheduleDayText.substring(5, 7));
-      returnMonButton.setText(year + "年" + month + "月カレンダーへ戻る");
+        returnMonButton.setText(year + "年" + month + "月カレンダーへ戻る");
 
-      // 現在を取得して LocalDate の方がいい　Calendar使わない
+        // 現在を取得して LocalDate の方がいい　Calendar使わない
         LocalDate localdateToday = LocalDate.now();
 // returnMonButton は、今月ならば 非表示にしています
-      if (year == localdateToday.getYear() && month == localdateToday.getMonthValue()) {
-          returnMonButton.setVisibility(View.GONE); // これで表示しない なおかつ 非表示にしたスペースを詰める
-      }
+        if (year == localdateToday.getYear() && month == localdateToday.getMonthValue()) {
+            returnMonButton.setVisibility(View.GONE); // これで表示しない なおかつ 非表示にしたスペースを詰める
+        }
 
 
         List<Schedule> list = new ArrayList<Schedule>();
@@ -210,7 +210,7 @@ public class TimeScheduleFragment extends Fragment {
             }
         });
 
-      // 今月のカレンダーへ戻ります
+        // 今月のカレンダーへ戻ります
         currentMonButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
