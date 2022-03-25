@@ -287,6 +287,8 @@ public class MonthCalendarFragment extends Fragment {
         RecyclerView rv = view.findViewById(R.id.rv);
         rv.setHasFixedSize(true);  // パフォーマンス向上
 
+
+
         // グリッド状にカードを配置する 7つづつ
         //   GridLayoutManager manager = new GridLayoutManager(this, SPAN_COUNT);
         GridLayoutManager manager = new GridLayoutManager(parentActivity, SPAN_COUNT);

@@ -12,6 +12,8 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.FragmentManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -572,6 +574,8 @@ public class ScheduleFormFragment extends Fragment {
 
                 helper.close();  // ヘルパーを解放する  ここで
 
+
+
                 // ここで db　をクローズする処理を書く　
                 // クラスフィールドのhelperは使い回しするのでまだ　ここで クローズしないで MainActivityの　コールバックメソッドのonDestory()で解放してます
                 if (ACTION.equals("add")) {  // 新規作成なら
@@ -586,16 +590,22 @@ public class ScheduleFormFragment extends Fragment {
                 LocalDate localdateToday = LocalDate.now();
                 Intent intent = null;
                 if (year == localdateToday.getYear() && month == localdateToday.getMonthValue()) {
-
+                    // これおかしいんじゃないかな 自分自身を終わらせるだけでいいんじゃないかな、でもそうするとデータは半円されない
                     intent = new Intent(parentActivity, MainActivity.class);
+                    startActivity(intent);  // これ
                 } else {
                     intent = new Intent(parentActivity, MonthCalendarActivity.class);
                     intent.putExtra("specifyDate", DATE);  //  Date型情報を渡します
+                    startActivity(intent);  // これ
                 }
 
 
-                // 最後に 自分自身が所属するアクティビティを終了させます
                 Activity parentActivity = getActivity();
+
+
+                // 最後に 自分自身が所属するアクティビティを終了させます
+                // Activity parentActivity = getActivity();
+                Log.i("finish", "finishを呼びました");
                 parentActivity.finish();
 
 
@@ -624,6 +634,10 @@ public class ScheduleFormFragment extends Fragment {
 
 //                dialogFragment.show(getSupportFragmentManager(), "DeleteConfirmDialogFragment");
                 Activity parentActivity = getActivity();
+
+
+
+              //   削除ボタン押すと  ダイアログフラグメント DeleteConfirmDialogFragment を表示するだけ
                 // Activityクラスではダメです FragmentActivityクラスにキャストをしてください。
                 FragmentActivity fragmentActivity = (FragmentActivity) parentActivity;
                 // 第二引数は任意だから、クラス名にしておいた ダイアログを識別するための 名前を付けている

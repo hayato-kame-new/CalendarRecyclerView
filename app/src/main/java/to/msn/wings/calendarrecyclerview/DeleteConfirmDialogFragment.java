@@ -23,6 +23,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
+import androidx.recyclerview.widget.RecyclerView;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -118,12 +119,15 @@ public class DeleteConfirmDialogFragment extends DialogFragment {
                     LocalDate localdateToday = LocalDate.now();
                     Intent intent = null;
                     if (year == localdateToday.getYear() && month == localdateToday.getMonthValue()) {
-                        // 違う
+
                         intent = new Intent(parentActivity, MainActivity.class); // MainActivityは繋ぎっぱなしなので変わらないので
+                        startActivity(intent);  // これ
                     } else {
                         intent = new Intent(parentActivity, MonthCalendarActivity.class);
                         intent.putExtra("specifyDate", date);  //  Date型情報を渡します
+                        startActivity(intent);  // これ
                     }
+
                     // 最後に 自分自身が所属するアクティビティを終了させます
                     parentActivity.finish();
                     break;
