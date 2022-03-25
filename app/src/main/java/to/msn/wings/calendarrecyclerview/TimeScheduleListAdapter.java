@@ -51,16 +51,8 @@ public class TimeScheduleListAdapter extends RecyclerView.Adapter<TimeScheduleLi
         View v = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.time_schedule_list_item, parent, false);
         // v は、 CardViewのオブジェクトです
-        TextView scheduleTitle = v.findViewById(R.id.scheduleTitle);  // リスナーつける
-//        TextView date = v.findViewById(R.id.date);
-//       String dateString = date.getText().toString();
 
-      //  Button deleteBtn = v.findViewById(R.id.deleteBtn);  // リスナーつける
-
-
-        // ここで、このTextViewに　クリックイベントをつけます xmlでは android:clickable="true" が必要です
-        // スケジュールタイトルをクリックすると、編集できるようになります
-        scheduleTitle.setOnClickListener(new View.OnClickListener() {
+        v.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 // 小さいスマホサイズなら、画面遷移あり 新しいアクティビティへ画面遷移する その上のフラグメント切り替えるようにして
@@ -117,23 +109,6 @@ public class TimeScheduleListAdapter extends RecyclerView.Adapter<TimeScheduleLi
             }
         });
 
-//        deleteBtn.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                // ダイアログを表示させます DialogFragmentを継承したダイアログフラグメントクラスを作ったので
-//                // ここで newして インスタンスを生成する
-//                DeleteConfirmDialogFragment dialogFragment = new DeleteConfirmDialogFragment();
-//
-//                Context context = parent.getContext();
-//                // Activityクラスではダメです FragmentActivityクラスにキャストをしてください。
-//                FragmentActivity parentActivity = (FragmentActivity) context;
-//                // 第二引数は任意だから、クラス名にしておいた ダイアログを識別するための 名前を付けている
-//                dialogFragment.show(parentActivity.getSupportFragmentManager(), "DeleteConfirmDialogFragment");
-//
-//            }
-//        });
-
-
         // 最後に ビューを ビューホルダーにセットして ビューホルダーのインスタンスをリターンする
         return new TimeScheduleListHolder(v);
     }
@@ -189,24 +164,6 @@ public class TimeScheduleListAdapter extends RecyclerView.Adapter<TimeScheduleLi
         TextView id = holder.view.findViewById(R.id.id);
         id.setVisibility(View.GONE);  // これで表示しない なおかつ 非表示にしたスペースを詰める
 
-
-        //  Context を取得すれば、getResources()メソッドが使用できます  context.getResources() というふうに使える
-     //   Context context = holder.deleteBtn.getContext();
-
-        // getColor(int id)を使いたいのだが　非推奨なので API 23 から Deprecated（非推奨）
-        // 代わりに public int getColor (int id, Resources.Theme theme) を使います
-        //    int color = context.getResources().getColor(R.color.colorAccent);  // これだとダメ
-
-//        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-//            // API 23 以上 は 新しいメソッドを使います
-//            holder.deleteBtn.setBackgroundColor(context.getResources().getColor(R.color.colorAccent, context.getTheme()));
-//        } else {
-//            // API 23 未満 の時には　非推奨メソッドを使用します
-//            holder.deleteBtn.setBackgroundColor(context.getResources().getColor(R.color.colorAccent));
-//        }
-//        // ボタン を少し小さくするには xmlファイルで設定するには「wrap_content」になってるので一旦0にする
-//        holder.deleteBtn.setMinimumWidth(0); // ボタンの最小幅がデフォルトで64dipである  一旦0にする
-//        holder.deleteBtn.setWidth(180);
     }
 
     @Override

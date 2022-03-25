@@ -11,6 +11,7 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
 
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -67,6 +68,7 @@ public class ScheduleFormFragment extends Fragment {
         _buttonFlagMap = new HashMap<String, Boolean>();
 
         _saveButton = view.findViewById(R.id.saveButton);
+        _deleteButton = view.findViewById(R.id.deleteButton);
 
        //  所属するアクティビティから インテントを取得する
         Intent intent = parentActivity.getIntent();
@@ -132,12 +134,12 @@ public class ScheduleFormFragment extends Fragment {
         if (ACTION.equals("add")) {  // 新規の時
             _formTitle.setText(R.string.tvFormTitleAdd);  // 新規の時に　新規スケジュール登録画面　と表示する
             _saveButton.setEnabled(false);  // 新規なら最初は保存ボタン押せないようになってる  false
-         //   _deleteButton.setVisibility(View.GONE);  // 削除ボタン見えない
+            _deleteButton.setVisibility(View.GONE);  // 削除ボタン見えない
             // 新規の時には カレンダービューだけは初期値が入っている
         } else {  // 編集の時
             _formTitle.setText(R.string.tvFormTitleEdit);  // 編集の時に　編集-スケジュール登録画面　と表示する
             _saveButton.setEnabled(true);  // 編集なら最初は保存ボタン押せます
-        //    _deleteButton.setVisibility(View.VISIBLE); // 削除ボタン見える
+            _deleteButton.setVisibility(View.VISIBLE); // 削除ボタン見える
             // 編集の時には、時間フォーム タイトル メモ カレンダービュー に初期値を入れておくので
            ScheduleFormFragment.this.setSelection(_spinnerStartHour, startH);
             setSelection(_spinnerStartMinutes, startM);
@@ -166,18 +168,19 @@ public class ScheduleFormFragment extends Fragment {
         _calendarView = view.findViewById(R.id.calendarView);
         // ここで 新規の時も 編集の時にも CalendarViewに  初期値として 送られてきた 日時を設定します。
         _calendarView.setDate(DATE.getTime());  // 引数には long型 カレンダービューに初期値設定
-        // ボタンの大きさなどを設定     // getColor(int id)を使いたいのだが　非推奨なので API 23 から Deprecated（非推奨）
-        //        // 代わりに public int getColor (int id, Resources.Theme theme) を使います
-//        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-//            // API 23 以上 は 新しいメソッドを使います
-//            _deleteButton.setBackgroundColor(getResources().getColor(R.color.colorAccent, getActivity().getTheme()));
-//        } else {
-//            // API 23 未満 の時には　非推奨メソッドを使用します
-//            _deleteButton.setBackgroundColor(getActivity().getResources().getColor(R.color.colorAccent));
-//        }
+
+        // ボタンの大きさなどを設定     getColor(int id)を使いたいのだが　非推奨なので API 23 から Deprecated（非推奨）
+        //  代わりに public int getColor (int id, Resources.Theme theme) を使います
+        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            // API 23 以上 は 新しいメソッドを使います
+            _deleteButton.setBackgroundColor(getResources().getColor(R.color.colorAccent, getActivity().getTheme()));
+        } else {
+            // API 23 未満 の時には　非推奨メソッドを使用します
+            _deleteButton.setBackgroundColor(getActivity().getResources().getColor(R.color.colorAccent));
+        }
         // ボタン を少し小さくするには xmlファイルで設定するには「wrap_content」になってるので一旦0にする
-       // _deleteButton.setMinimumWidth(0); // ボタンの最小幅がデフォルトで64dipである  一旦0にする
-      //  _deleteButton.setWidth(180);
+        _deleteButton.setMinimumWidth(0); // ボタンの最小幅がデフォルトで64dipである  一旦0にする
+        _deleteButton.setWidth(180);
 
 
         // Date型の getYear getMonth getDay　は　非推奨メソッドなので、SimpleDateFormatを使い、文字列として取得する
@@ -573,8 +576,10 @@ public class ScheduleFormFragment extends Fragment {
                 // クラスフィールドのhelperは使い回しするのでまだ　ここで クローズしないで MainActivityの　コールバックメソッドのonDestory()で解放してます
                 if (ACTION.equals("add")) {  // 新規作成なら
                     Toast.makeText(getActivity(), "スケジュールを新規登録しました", Toast.LENGTH_LONG).show();
-                } else {
+                } else if (ACTION.equals("edit")) {
                     Toast.makeText(getActivity(), "スケジュールを編集しました", Toast.LENGTH_LONG).show();
+                } else {
+                    Toast.makeText(getActivity(), "スケジュールを削除しました", Toast.LENGTH_LONG).show();
                 }
                 // スケジュールを挿入した年月が、現在の年月なら MainActivityへ　それ以外の月ならMonthCalendarActivityへ遷移する "2022-03-19"
                 int year = Integer.parseInt(strDate.substring(0, 4));
@@ -596,6 +601,30 @@ public class ScheduleFormFragment extends Fragment {
                 Activity parentActivity = getActivity();
                 parentActivity.finish();
 
+            }
+        });
+
+        // 削除ボタンにリスナーつける  ダイアログフラグメント DeleteConfirmDialogFragment を表示する
+        _deleteButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+             // ダイアログを表示させます DialogFragmentを継承したダイアログフラグメントクラスを作ったので
+             // ここで newして インスタンスを生成する
+                DeleteConfirmDialogFragment dialogFragment = new DeleteConfirmDialogFragment();
+
+                Bundle args = new Bundle();
+
+                // 　final 定数の ID　使う
+                args.putString("strId", String.valueOf(ID));
+                args.putString("scheduleTitle", _editTextScheTitle.getText().toString());
+                dialogFragment.setArguments(args);
+
+//                dialogFragment.show(getSupportFragmentManager(), "DeleteConfirmDialogFragment");
+                Activity parentActivity = getActivity();
+                // Activityクラスではダメです FragmentActivityクラスにキャストをしてください。
+                FragmentActivity fragmentActivity = (FragmentActivity) parentActivity;
+                // 第二引数は任意だから、クラス名にしておいた ダイアログを識別するための 名前を付けている
+                dialogFragment.show(fragmentActivity.getSupportFragmentManager(), "DeleteConfirmDialogFragment");
             }
         });
 
