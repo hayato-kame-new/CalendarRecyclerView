@@ -578,8 +578,6 @@ public class ScheduleFormFragment extends Fragment {
                     Toast.makeText(getActivity(), "スケジュールを新規登録しました", Toast.LENGTH_LONG).show();
                 } else if (ACTION.equals("edit")) {
                     Toast.makeText(getActivity(), "スケジュールを編集しました", Toast.LENGTH_LONG).show();
-                } else {
-                    Toast.makeText(getActivity(), "スケジュールを削除しました", Toast.LENGTH_LONG).show();
                 }
                 // スケジュールを挿入した年月が、現在の年月なら MainActivityへ　それ以外の月ならMonthCalendarActivityへ遷移する "2022-03-19"
                 int year = Integer.parseInt(strDate.substring(0, 4));
@@ -589,17 +587,17 @@ public class ScheduleFormFragment extends Fragment {
                 Intent intent = null;
                 if (year == localdateToday.getYear() && month == localdateToday.getMonthValue()) {
 
-                     intent = new Intent(parentActivity, MainActivity.class);
+                    intent = new Intent(parentActivity, MainActivity.class);
                 } else {
-                     intent = new Intent(parentActivity, MonthCalendarActivity.class);
+                    intent = new Intent(parentActivity, MonthCalendarActivity.class);
                     intent.putExtra("specifyDate", DATE);  //  Date型情報を渡します
                 }
 
-                startActivity(intent);
 
                 // 最後に 自分自身が所属するアクティビティを終了させます
                 Activity parentActivity = getActivity();
                 parentActivity.finish();
+
 
             }
         });
@@ -608,12 +606,17 @@ public class ScheduleFormFragment extends Fragment {
         _deleteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-             // ダイアログを表示させます DialogFragmentを継承したダイアログフラグメントクラスを作ったので
-             // ここで newして インスタンスを生成する
+                Date date = sqlDateArray[0];  // "2022-03-19"
+                String strDate = new SimpleDateFormat("yyyy-MM-dd").format(date);
+                // ダイアログを表示させます DialogFragmentを継承したダイアログフラグメントクラスを作ったので
+                // ここで newして インスタンスを生成する
+
                 DeleteConfirmDialogFragment dialogFragment = new DeleteConfirmDialogFragment();
 
                 Bundle args = new Bundle();
 
+
+                args.putString("strDate", strDate);  // 日付もつける
                 // 　final 定数の ID　使う
                 args.putString("strId", String.valueOf(ID));
                 args.putString("scheduleTitle", _editTextScheTitle.getText().toString());

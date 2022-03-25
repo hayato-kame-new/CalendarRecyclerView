@@ -173,8 +173,10 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarCellViewHolder
     }
 
 
+    @Override
+    public void onViewRecycled(@NonNull CalendarCellViewHolder holder) {
 
-
-
-
+        super.onViewRecycled(holder);
+        notifyDataSetChanged();  // これを　つけてみたけど？？？違うか
+    }
 }
