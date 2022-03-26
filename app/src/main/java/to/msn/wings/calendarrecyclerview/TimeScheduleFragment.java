@@ -6,7 +6,11 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -31,16 +35,23 @@ import java.util.List;
  * このフラグメントで、個々のタイムスケジュールのCardViewを表示させる  fragment_time_schedule.xml の
  */
 public class TimeScheduleFragment extends Fragment {
+    // 大画面かどうかの判定フラグ onViewStateRestoredコールバックメソッドをオーバーライドします！！！
+    private boolean _isLayoutXLarge = true;
 
     private TimeScheduleDatabaseHelper _helper;
     private Button addButton, returnMonButton, currentMonButton;
     TextView day, day_today;
 
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        Log.i("Layout", "onCreateが呼ばれました");
+        super.onCreate(savedInstanceState);
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
+        Log.i("Layout", "onCreateViewが呼ばれました");
         View view = inflater.inflate(R.layout.fragment_time_schedule, container, false);
 
         Activity parentActivity = getActivity();
@@ -233,34 +244,46 @@ public class TimeScheduleFragment extends Fragment {
             @Override
             public void onClick(View view) {
 
-                // 小さいスマホサイズなら、画面遷移あり 新しいアクティビティへ画面遷移する その上のフラグメント切り替えるようにして
-                // 新規フラグメントや編集フラグメントのフォームを作る
+                // 大画面の場合 追加
+                // 大画面の場合 同じアクティビティ上 の右に　フラグメントを新たに乗せます FrameLayoutにしてあるので、上に乗せられるのです
+                Bundle bundle = new Bundle();
+                bundle.putSerializable("date", FINALDATE);  // DATE型
+                bundle.putString("action", "add");
 
-                // タブレットサイズなら、画面遷移なし fragment_time_schedule.xml　の　RecyclerView　の親に、LinearLayoutにして、
-                // 左にCardView  右に新規や編集のフォームを作る
+                if (_isLayoutXLarge) { // 大画面の場合
+                    FragmentManager manager = getParentFragmentManager(); // getFragmentManager() 非推奨になった
+                    FragmentTransaction transaction = manager.beginTransaction();
+                    // フォームのフラグメント生成
+                    ScheduleFormFragment scheduleFormFragment = new ScheduleFormFragment();
+                    // 引き継ぎデータをセット
+                    scheduleFormFragment.setArguments(bundle);
+                    // 生成したフラグメントを、
+                    // id が　timeScheduleFrame　の　FrameLayoutの上に乗せます (FrameLayoutは上に追加できます)replaceメソッドで置き換えます
 
-                Intent intent = new Intent(parentActivity, ScheduleFormActivity.class); // 新しくintentオブジェクトを作る
+                    transaction.replace(R.id.timeScheduleFrame, scheduleFormFragment); // 第一引数の上に 第二引数を乗せて表示する
+                    transaction.commit();
+                    // 同じアクティビティ上なので、所属するアクティビティを終了させません
 
-                intent.putExtra("date", FINALDATE);  // 日付を送ってる Date型情報を渡します インナークラスで使うので finalにしてる
-                intent.putExtra("action", "add");  // 新規ということもわかるようにデータを送る キーが "action"  値が String型の "add"
+                } else {
+                    // 通常画面の場合
+                    Intent intent = new Intent(parentActivity, ScheduleFormActivity.class); // 新しくintentオブジェクトを作る
 
-                startActivity(intent);
+                    intent.putExtra("date", FINALDATE);  // 日付を送ってる Date型情報を渡します インナークラスで使うので finalにしてる
+                    intent.putExtra("action", "add");  // 新規ということもわかるようにデータを送る キーが "action"  値が String型の "add"
 
-                // 小さいスマホサイズなら、画面遷移ありなので 現在のフラグメントを乗せてるサブのアクティビティを終わらせてください
-                // 小さいスマホサイズなら 自分自身が所属するアクティビティを終了させます
-                Activity parentActivity = getActivity();
-                parentActivity.finish();
+                    startActivity(intent);
+                 // 通常画面の場合は、別のアクティビティを起動させて表示するので 自分自身が所属するアクティビティをfinish()で終わらせます
+                    Activity parentActivity = getActivity();
+                    parentActivity.finish();
+
+                }
 
             }
         });
 
-
         RecyclerView rv = view.findViewById(R.id.rv);
         rv.setHasFixedSize(true);  // パフォーマンス向上
 
-
-// 後で タブレットサイズならば　
-// GridLyoutManager manager = new GridLayoutManager(parentActivity, 2);  // にするように後でする
         LinearLayoutManager manager = new LinearLayoutManager(parentActivity);
         manager.setOrientation(LinearLayoutManager.VERTICAL);
         rv.setLayoutManager(manager);
@@ -272,4 +295,44 @@ public class TimeScheduleFragment extends Fragment {
         return view;
     }
 
+
+    // onActivityCreated() メソッドは非推奨になりました。 onViewStateRestored に書いてください
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        Log.i("Layout", "onViewCreatedが呼ばれました");
+        super.onViewCreated(view, savedInstanceState);
+    }
+
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        Log.i("Layout", "非推奨のonActivityCreatedが呼ばれました");
+        super.onActivityCreated(savedInstanceState);
+    }
+
+
+    /**
+     *  onActivityCreated() メソッドは非推奨になりました。 onViewStateRestored に書いてください
+     *  ここでViewの状態を復元する
+     *   onCreate  onCreateView  onViewCreated 非推奨のonActivityCreated  推奨のonViewStateRestored  の順で呼ばれる
+     * @param savedInstanceState
+     */
+    @Override
+    public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
+
+        Log.i("Layout", "onViewStateRestoredが呼ばれました!!! 非推奨のonActivityCreatedの代わりにこれを使うこと");
+        super.onViewStateRestored(savedInstanceState);
+        Activity parentActivity = getActivity();  // このフラグメントの自分　が所属するアクティビティを取得する
+
+        // 自分が所属するアクティビティから、 id が　timeScheduleFrame　の　FrameLayoutを取得する
+        View timeScheduleFrame = parentActivity.findViewById(R.id.timeScheduleFrame);
+
+        if (timeScheduleFrame == null) {  // nullならば、大画面ではないので
+            // 画面判定フラグを通常画面とする
+            _isLayoutXLarge = false;
+            // 次にTimeScheduleFragmentで、RecycleViewの CardViewのタップ時の処理 と　新規スケジュールボタンのタップ時の処理で
+            // 画面サイズによって分岐する処理を書く
+        }
+    }
 }

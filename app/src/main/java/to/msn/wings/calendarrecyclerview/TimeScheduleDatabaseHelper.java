@@ -8,10 +8,9 @@ import androidx.annotation.Nullable;
 
 public class TimeScheduleDatabaseHelper extends SQLiteOpenHelper {
 
-    // 定数フィールド
+    // 定数フィールド static
     static final private String DBNAME = "timeschedule.sqlite";
     static final private int VERSION = 1;
-
 
     /**
      * コンストラクタ 第三引数は　null
@@ -30,14 +29,9 @@ public class TimeScheduleDatabaseHelper extends SQLiteOpenHelper {
        //  SQLite のテーブルのスキーマでは文字列の最大の長さを指定することはできない
         //  タイトルは android:maxLength="30"   メモは android:maxLength="80"  など xmlで入力文字数を制限することができる
         if (sqLiteDatabase != null) {
-//            sqLiteDatabase.execSQL("CREATE TABLE timeschedule (" + "_id INTEGER PRIMARY KEY  , scheduledate DATE NOT NULL," +
-//                    " starttime DATETIME NOT NULL, endtime DATETIME , scheduletitle TEXT NOT NULL, schedulememo TEXT)");
-
             sqLiteDatabase.execSQL("CREATE TABLE timeschedule (_id INTEGER PRIMARY KEY  , scheduledate TEXT NOT NULL," +
                     " starttime TEXT NOT NULL, endtime TEXT NOT NULL, scheduletitle TEXT NOT NULL, schedulememo TEXT)");
-
         }
-
     }
 
     // データベースをバージョンアップした時、テーブルを再作成
@@ -47,7 +41,6 @@ public class TimeScheduleDatabaseHelper extends SQLiteOpenHelper {
             sqLiteDatabase.execSQL("DROP TABLE IF EXISTS timeschedule");
             onCreate(sqLiteDatabase);
         }
-
-
     }
+
 }

@@ -10,6 +10,7 @@ import android.os.Build;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
@@ -46,6 +47,8 @@ import java.util.Map;
  * 新規登録の時と 編集の時にこのフラグメントでデータベースに接続する
  */
 public class ScheduleFormFragment extends Fragment {
+    // 大画面かどうかの判定フラグを 追加し、 onCreate()メソッドをオーバーライドして処理を記述
+    private boolean _isLayoutXLarge = true;  // 追加
 
     TextView _formTitle, _textViewHourError, _textViewMinutesError;
     Button _returnMonButton, _currentMonButton;
@@ -58,6 +61,22 @@ public class ScheduleFormFragment extends Fragment {
     Map<String, Boolean> _buttonFlagMap = null;
 
     @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        // 注意　getFragmentManager() 非推奨になりました
+        FragmentManager manager = getParentFragmentManager();
+        // フラグメントマネージャーから、 他のフラグメントが取得できる TimeScheduleFragmentを取得する
+        TimeScheduleFragment timeScheduleFragment = (TimeScheduleFragment) manager.findFragmentById(R.id.timeScheduleFragment);
+
+        // ScheduleFormFragment自分自身と、　同じアクティビティ上に、 TimeScheduleFragment が乗っていたら 大画面
+        if (timeScheduleFragment == null) {
+            // 通常画面
+            _isLayoutXLarge = false;
+        }
+
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
@@ -66,16 +85,26 @@ public class ScheduleFormFragment extends Fragment {
         Activity parentActivity = getActivity();
         View view = inflater.inflate(R.layout.fragment_schedule_form, container, false);
 
+        // 追加 大画面だった時の処理
+        Bundle extras;
+
+        if (_isLayoutXLarge) {  // 大画面だった時には、同じアクティビティ上で、フラグメント間でのデータの引き渡しをする
+            extras = getArguments() ;  // TimeScheduleフラグメントから自分自身のフラグメントへデータを受け取る
+        } else {
+
+            //  所属するアクティビティから インテントを取得する
+            Intent intent = parentActivity.getIntent();
+            // インテントから、引き継ぎデータをまとめたものを取得
+             extras = intent.getExtras();
+
+        }
+
+
 // フラグMap  インスタンス生成
         _buttonFlagMap = new HashMap<String, Boolean>();
 
         _saveButton = view.findViewById(R.id.saveButton);
         _deleteButton = view.findViewById(R.id.deleteButton);
-
-       //  所属するアクティビティから インテントを取得する
-        Intent intent = parentActivity.getIntent();
-        // インテントから、引き継ぎデータをまとめたものを取得
-        Bundle extras = intent.getExtras();
 
         // 個々のデータを取得 うまく取得できなかった時のために String型は ""で初期化  Date型は nullで初期化
         final Date[] date = {null};

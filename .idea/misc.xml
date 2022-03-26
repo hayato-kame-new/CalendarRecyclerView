@@ -3,6 +3,8 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="app/src/main/res/layout-xlarge/activity_time_schedule.xml" value="0.1" />
+        <entry key="app/src/main/res/layout-xlarge/fragment_time_schedule.xml" value="0.125" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.25" />
         <entry key="app/src/main/res/layout/activity_month_calendar.xml" value="0.1933876811594203" />
         <entry key="app/src/main/res/layout/activity_pre_and_next_month_calendar.xml" value="0.19427083333333334" />
