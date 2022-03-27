@@ -3,6 +3,7 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="../../../../layout/custom_preview.xml" value="0.16770833333333332" />
         <entry key="app/src/main/res/layout-xlarge/activity_time_schedule.xml" value="0.1" />
         <entry key="app/src/main/res/layout-xlarge/fragment_time_schedule.xml" value="0.125" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.25" />

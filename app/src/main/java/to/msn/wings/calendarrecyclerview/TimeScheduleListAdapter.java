@@ -19,6 +19,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -31,45 +32,49 @@ public class TimeScheduleListAdapter extends RecyclerView.Adapter<TimeScheduleLi
     // フィールド
     private ArrayList<TimeScheduleListItem> data;
     // 大画面かどうかの判定フラグを 追加し、 onCreate()メソッドをオーバーライドして処理を記述
-    private boolean _isLayoutXLarge = true;  // 追加
+   //  private boolean _isLayoutXLarge = true;  // 追加
      Context context;  // 追加コンストラクタで引数で渡ってきた値で 初期値をセットする
 
-   // コンストラクタを変更しました
-   //  public TimeScheduleListAdapter(ArrayList<TimeScheduleListItem> data) {
-//        this.data = data;
-//    }
+   // コンストラクタを変更しました やっぱこっちにする
+     public TimeScheduleListAdapter(ArrayList<TimeScheduleListItem> data) {
+        this.data = data;
+    }
 
     /**
      * コンストラクタ
      * TimeScheduleFragmentでインスタンスかする時に第二引数にコンテキストを渡しているので、それを第二引数で受け取る
      * コンストラクタの中で、画面が大画面かどうかを判断する フィールドの_isLayoutXLargeに再代入してる
-     * @param data
-     * @param context
+
      */
-    public TimeScheduleListAdapter(ArrayList<TimeScheduleListItem> data, Context context ) {
-        Log.i("Adapter", "コンストラクタが呼ばれました");
-        this.data = data;
-        this.context = context; // TimeScheduleActivityが引数で渡ってくる
-        // Contextをアクティビティへ変換してからgetSupportFragmentManager()を呼び出す
-        AppCompatActivity appCompatActivity = (AppCompatActivity) this.context;
-
-        // 注意　getFragmentManager() 非推奨になりました
-        // アクティビティからなら getSupportFragmentManager()を呼び出しますし、フラグメントから getParentFragmentManager()を呼び出します
-        androidx.fragment.app.FragmentManager fmanager =  appCompatActivity.getSupportFragmentManager();
-
-       //  フラグメントマネージャーから、 他のフラグメントが取得できる TimeScheduleFragmentを取得する
-       TimeScheduleFragment timeScheduleFragment = (TimeScheduleFragment)fmanager.findFragmentById(R.id.timeScheduleFragment);
-
-       //   ScheduleFormFragment自分自身と、　同じアクティビティ上に、 TimeScheduleFragment が乗っていたら 大画面
-        if (timeScheduleFragment == null) {
-            // 通常画面
-            _isLayoutXLarge = false;
-        }
-    }
+//    public TimeScheduleListAdapter(ArrayList<TimeScheduleListItem> data, Context context ) {
+//        Log.i("Adapter", "コンストラクタが呼ばれました");
+//        this.data = data;
+//        this.context = context; // TimeScheduleActivityが引数で渡ってくる
+//        // Contextをアクティビティへ変換してからgetSupportFragmentManager()を呼び出す
+//        AppCompatActivity appCompatActivity = (AppCompatActivity) this.context;
+//        // TimeScheduleActivity
+//        // 注意　getFragmentManager() 非推奨になりました
+//        // アクティビティからなら getSupportFragmentManager()を呼び出しますし、フラグメントから getParentFragmentManager()を呼び出します
+//        androidx.fragment.app.FragmentManager fmanager =  appCompatActivity.getSupportFragmentManager();
+//
+//       //  フラグメントマネージャーから、 TimeScheduleActivityに所属してる フラグメントが取得できる TimeScheduleFragmentを取得する timeScheduleFrame
+//     //  TimeScheduleFragment timeScheduleFragment = (TimeScheduleFragment)fmanager.findFragmentById(R.id.timeScheduleFragment);
+//       // ScheduleFormFragment scheduleFormFragment = (ScheduleFormFragment) fmanager.findFragmentById(R.id.scheduleFormFragment);
+//
+//        View timeScheduleFrame  = appCompatActivity.findViewById(R.id.timeScheduleFrame);
+//       //  View timeScheduleFrame = appCompatActivity.findViewById(R.id.timeScheduleFrame);
+//       //    TimeScheduleFragment自分自身と、　同じアクティビティ上に、 timeScheduleFrame が乗っていたら 大画面
+//      //  if (timeScheduleFragment == null) {
+//       //   if (scheduleFormFragment == null) {
+//        if (timeScheduleFrame == null) {
+//            // 通常画面
+//            _isLayoutXLarge = false;
+//        }
+//    }
 
     @NonNull
     @Override
-    public TimeScheduleListHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public TimeScheduleListHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) { // parentは　RecyclerViewです
             Log.i("Adapter", "onCreateViewHolderが呼ばれました");
         // v は、 CardViewのオブジェクトです
         View v = LayoutInflater.from(parent.getContext())
@@ -80,8 +85,8 @@ public class TimeScheduleListAdapter extends RecyclerView.Adapter<TimeScheduleLi
             @Override
             public void onClick(View view) {
 
-                Context context = parent.getContext();
-                Activity parentActivity = (Activity) context;
+                Context context = parent.getContext(); // context　は　TimeScheduleActivity
+                Activity parentActivity = (Activity) context; // TimeScheduleActivity
                 // クリックしたアイテムの 日にちの情報   内部クラスで取得する
                 TextView date = v.findViewById(R.id.date);  // 内部クラスで取得する
                 // クリックした時に取得するテキストは 内部クラスで取得する "2022/03/01" とかになってる
@@ -120,8 +125,15 @@ public class TimeScheduleListAdapter extends RecyclerView.Adapter<TimeScheduleLi
                 bundle.putString("scheduleMemoString", scheduleMemoString);
                 bundle.putInt("intId", intId);  // int型
 
-                if (_isLayoutXLarge) { // 大画面の場合 同じアクティビティ上で、フラグメントをreplaceする
-                    fmanager = ((FragmentActivity) view.getContext()).getSupportFragmentManager();
+                // 判定するために TimeScheduleFragmentのフィールドにアクセスして値を調べる必要がある
+                // クリックした時点でのフィールドを調べる
+                fmanager = ((FragmentActivity) view.getContext()).getSupportFragmentManager();
+                //  フラグメントマネージャーから、 TimeScheduleActivityに所属してる フラグメントが取得できる TimeScheduleFragmentを取得する timeScheduleFrame
+                 TimeScheduleFragment timeScheduleFragment = (TimeScheduleFragment)fmanager.findFragmentById(R.id.timeScheduleFragment);
+                boolean _isLayoutXLarge = timeScheduleFragment.is_isLayoutXLarge();  // ゲッターメソッドを使う
+               if (_isLayoutXLarge) { // 大画面の場合 同じアクティビティ上で、フラグメントをreplaceする
+
+                 //    fmanager = ((FragmentActivity) view.getContext()).getSupportFragmentManager();
 
                      ftransaction = fmanager.beginTransaction();
                     // フォームのフラグメント生成

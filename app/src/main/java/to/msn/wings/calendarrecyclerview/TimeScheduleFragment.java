@@ -290,12 +290,12 @@ public class TimeScheduleFragment extends Fragment {
         rv.setLayoutManager(manager);
 
         // ここを修正した TimeScheduleListAdapterのコンストラクタも修正引数２つにした
-     //   RecyclerView.Adapter adapter = new TimeScheduleListAdapter(data);  //  dataはデータベースから取得
+      RecyclerView.Adapter adapter = new TimeScheduleListAdapter(data);  //  dataはデータベースから取得
 
         // ここ二行追加した Adapterに第二引数を渡したいので
-        Context context = getContext();
-        // このコンストラクタの中で、大画面かどうかの判定をしているので この判定は、Adapterのリスナーで使うのに必要 編集の時に使う
-        RecyclerView.Adapter adapter = new TimeScheduleListAdapter(data, context);
+//        Context context = getContext();
+//        // このコンストラクタの中で、大画面かどうかの判定をしているので この判定は、Adapterのリスナーで使うのに必要 編集の時に使う
+//        RecyclerView.Adapter adapter = new TimeScheduleListAdapter(data, context);
 
         rv.setAdapter(adapter);
 
@@ -333,7 +333,7 @@ public class TimeScheduleFragment extends Fragment {
         super.onViewStateRestored(savedInstanceState);
         Activity parentActivity = getActivity();  // このフラグメントの自分　が所属するアクティビティを取得する
 
-        // 自分が所属するアクティビティから、 id が　timeScheduleFrame　の　FrameLayoutを取得する
+        // 自分が所属するアクティビティから、 id が　timeScheduleFrame　の　FrameLayoutを取得する  timeScheduleFrame
         View timeScheduleFrame = parentActivity.findViewById(R.id.timeScheduleFrame);
       // この判定は新規ボタンが押される時に使う
         if (timeScheduleFrame == null) {  // nullならば、大画面ではないので
@@ -342,5 +342,9 @@ public class TimeScheduleFragment extends Fragment {
             // 次にTimeScheduleFragmentで、RecycleViewの CardViewのタップ時の処理 と　新規スケジュールボタンのタップ時の処理で
             // 画面サイズによって分岐する処理を書く
         }
+    }
+
+    public boolean is_isLayoutXLarge() {
+        return _isLayoutXLarge;
     }
 }
