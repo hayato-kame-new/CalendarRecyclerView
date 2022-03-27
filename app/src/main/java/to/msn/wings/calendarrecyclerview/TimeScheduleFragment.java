@@ -1,6 +1,7 @@
 package to.msn.wings.calendarrecyclerview;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -288,7 +289,14 @@ public class TimeScheduleFragment extends Fragment {
         manager.setOrientation(LinearLayoutManager.VERTICAL);
         rv.setLayoutManager(manager);
 
-        RecyclerView.Adapter adapter = new TimeScheduleListAdapter(data);  //  dataはデータベースから取得
+        // ここを修正した TimeScheduleListAdapterのコンストラクタも修正引数２つにした
+     //   RecyclerView.Adapter adapter = new TimeScheduleListAdapter(data);  //  dataはデータベースから取得
+
+        // ここ二行追加した Adapterに第二引数を渡したいので
+        Context context = getContext();
+        // このコンストラクタの中で、大画面かどうかの判定をしているので この判定は、Adapterのリスナーで使うのに必要 編集の時に使う
+        RecyclerView.Adapter adapter = new TimeScheduleListAdapter(data, context);
+
         rv.setAdapter(adapter);
 
         // 最後にreturn viewをすること
@@ -327,7 +335,7 @@ public class TimeScheduleFragment extends Fragment {
 
         // 自分が所属するアクティビティから、 id が　timeScheduleFrame　の　FrameLayoutを取得する
         View timeScheduleFrame = parentActivity.findViewById(R.id.timeScheduleFrame);
-
+      // この判定は新規ボタンが押される時に使う
         if (timeScheduleFrame == null) {  // nullならば、大画面ではないので
             // 画面判定フラグを通常画面とする
             _isLayoutXLarge = false;
