@@ -30,47 +30,19 @@ import java.util.Date;
 
 public class TimeScheduleListAdapter extends RecyclerView.Adapter<TimeScheduleListHolder>{
     // フィールド
-    private ArrayList<TimeScheduleListItem> data;
-    // 大画面かどうかの判定フラグを 追加し、 onCreate()メソッドをオーバーライドして処理を記述
-   //  private boolean _isLayoutXLarge = true;  // 追加
-     Context context;  // 追加コンストラクタで引数で渡ってきた値で 初期値をセットする
-
-   // コンストラクタを変更しました やっぱこっちにする
-     public TimeScheduleListAdapter(ArrayList<TimeScheduleListItem> data) {
-        this.data = data;
-    }
+    private ArrayList<TimeScheduleListItem> _data;
+    // 大画面かどうかの判定フラグ インスタンスフィールド   宣言だけをしておき、クリックされた時点での、TimeScheduleFragmentのゲッター画面の状態を取得する
+    // onCreateViewHolderでこのインスタンスフィールドに値をセットします！！ 画面サイズの状態を代入します
+    // その後で、onBindViewHolderでもインスタンスフィールドから取得して使います
+    private boolean _isLayoutXLarge;  // 宣言だけ クラスのインスタンスフィールドの初期値は　falseになっています
 
     /**
      * コンストラクタ
-     * TimeScheduleFragmentでインスタンスかする時に第二引数にコンテキストを渡しているので、それを第二引数で受け取る
-     * コンストラクタの中で、画面が大画面かどうかを判断する フィールドの_isLayoutXLargeに再代入してる
-
+     * @param data
      */
-//    public TimeScheduleListAdapter(ArrayList<TimeScheduleListItem> data, Context context ) {
-//        Log.i("Adapter", "コンストラクタが呼ばれました");
-//        this.data = data;
-//        this.context = context; // TimeScheduleActivityが引数で渡ってくる
-//        // Contextをアクティビティへ変換してからgetSupportFragmentManager()を呼び出す
-//        AppCompatActivity appCompatActivity = (AppCompatActivity) this.context;
-//        // TimeScheduleActivity
-//        // 注意　getFragmentManager() 非推奨になりました
-//        // アクティビティからなら getSupportFragmentManager()を呼び出しますし、フラグメントから getParentFragmentManager()を呼び出します
-//        androidx.fragment.app.FragmentManager fmanager =  appCompatActivity.getSupportFragmentManager();
-//
-//       //  フラグメントマネージャーから、 TimeScheduleActivityに所属してる フラグメントが取得できる TimeScheduleFragmentを取得する timeScheduleFrame
-//     //  TimeScheduleFragment timeScheduleFragment = (TimeScheduleFragment)fmanager.findFragmentById(R.id.timeScheduleFragment);
-//       // ScheduleFormFragment scheduleFormFragment = (ScheduleFormFragment) fmanager.findFragmentById(R.id.scheduleFormFragment);
-//
-//        View timeScheduleFrame  = appCompatActivity.findViewById(R.id.timeScheduleFrame);
-//       //  View timeScheduleFrame = appCompatActivity.findViewById(R.id.timeScheduleFrame);
-//       //    TimeScheduleFragment自分自身と、　同じアクティビティ上に、 timeScheduleFrame が乗っていたら 大画面
-//      //  if (timeScheduleFragment == null) {
-//       //   if (scheduleFormFragment == null) {
-//        if (timeScheduleFrame == null) {
-//            // 通常画面
-//            _isLayoutXLarge = false;
-//        }
-//    }
+     public TimeScheduleListAdapter(ArrayList<TimeScheduleListItem> data) {
+        this._data = data;
+    }
 
     @NonNull
     @Override
@@ -79,8 +51,26 @@ public class TimeScheduleListAdapter extends RecyclerView.Adapter<TimeScheduleLi
         // v は、 CardViewのオブジェクトです
         View v = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.time_schedule_list_item, parent, false);
+
+
+        // 大画面の場合 追加
+
+        androidx.fragment.app.FragmentManager fmanager = null;
+        final androidx.fragment.app.FragmentTransaction[] ftransaction = {null};
+        fmanager = ((FragmentActivity) parent.getContext()).getSupportFragmentManager();
+        //  フラグメントマネージャーから、 TimeScheduleActivityに所属してる フラグメントが取得できる TimeScheduleFragmentを取得する timeScheduleFrame
+        TimeScheduleFragment timeScheduleFragment = (TimeScheduleFragment)fmanager.findFragmentById(R.id.timeScheduleFragment);
+        // このクラスのインスタンスフィールドに値をセットします！！ このあと、onBindViewHolderでもインスタンスフィールドから取得するので
+        _isLayoutXLarge = timeScheduleFragment.is_isLayoutXLarge();  // ゲッターメソッドを使う
+
+
+
+
         // 編集 削除 をするために、フォームを表示するリスナーです
+
+
         // 大画面の時と、スマホのサイズの時に、挙動が違いますので注意
+        final androidx.fragment.app.FragmentManager  finalFmanager = fmanager;
         v.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -113,9 +103,12 @@ public class TimeScheduleListAdapter extends RecyclerView.Adapter<TimeScheduleLi
                 int intId = Integer.parseInt(strId);
 
 
+
                 // 大画面の場合 追加
-                androidx.fragment.app.FragmentManager fmanager = null;
-                androidx.fragment.app.FragmentTransaction ftransaction = null;
+//                androidx.fragment.app.FragmentManager fmanager = null;
+//                androidx.fragment.app.FragmentTransaction ftransaction = null;
+
+
                 // 大画面の場合 同じアクティビティ上 の右に　フラグメントを新たに乗せます FrameLayoutにしてあるので、上に乗せられるのです
                 Bundle bundle = new Bundle();
                 bundle.putSerializable("date", editDate);  // DATE型
@@ -125,17 +118,22 @@ public class TimeScheduleListAdapter extends RecyclerView.Adapter<TimeScheduleLi
                 bundle.putString("scheduleMemoString", scheduleMemoString);
                 bundle.putInt("intId", intId);  // int型
 
+
                 // 判定するために TimeScheduleFragmentのフィールドにアクセスして値を調べる必要がある
                 // クリックした時点でのフィールドを調べる
-                fmanager = ((FragmentActivity) view.getContext()).getSupportFragmentManager();
+            //    fmanager = ((FragmentActivity) view.getContext()).getSupportFragmentManager();
                 //  フラグメントマネージャーから、 TimeScheduleActivityに所属してる フラグメントが取得できる TimeScheduleFragmentを取得する timeScheduleFrame
-                 TimeScheduleFragment timeScheduleFragment = (TimeScheduleFragment)fmanager.findFragmentById(R.id.timeScheduleFragment);
-                boolean _isLayoutXLarge = timeScheduleFragment.is_isLayoutXLarge();  // ゲッターメソッドを使う
+            //     TimeScheduleFragment timeScheduleFragment = (TimeScheduleFragment)fmanager.findFragmentById(R.id.timeScheduleFragment);
+                // このクラスのインスタンスフィールドに値をセットします！！ このあと、onBindViewHolderでもインスタンスフィールドから取得するので
+            //    _isLayoutXLarge = timeScheduleFragment.is_isLayoutXLarge();  // ゲッターメソッドを使う
+
+
+
                if (_isLayoutXLarge) { // 大画面の場合 同じアクティビティ上で、フラグメントをreplaceする
 
                  //    fmanager = ((FragmentActivity) view.getContext()).getSupportFragmentManager();
 
-                     ftransaction = fmanager.beginTransaction();
+                     ftransaction[0] = finalFmanager.beginTransaction();
                     // フォームのフラグメント生成
                     ScheduleFormFragment scheduleFormFragment = new ScheduleFormFragment();
                     // 引き継ぎデータをセット
@@ -143,8 +141,8 @@ public class TimeScheduleListAdapter extends RecyclerView.Adapter<TimeScheduleLi
                     // 生成したフラグメントを、
                     // id が　timeScheduleFrame　の　FrameLayoutの上に乗せます (FrameLayoutは上に追加できます)replaceメソッドで置き換えます
 
-                    ftransaction.replace(R.id.timeScheduleFrame, scheduleFormFragment); // 第一引数の上に 第二引数を乗せて表示する
-                    ftransaction.commit();
+                    ftransaction[0].replace(R.id.timeScheduleFrame, scheduleFormFragment); // 第一引数の上に 第二引数を乗せて表示する
+                    ftransaction[0].commit();
                     // 同じアクティビティ上なので、所属するアクティビティを終了させません
 
                 } else {
@@ -183,19 +181,23 @@ public class TimeScheduleListAdapter extends RecyclerView.Adapter<TimeScheduleLi
     public void onBindViewHolder(@NonNull TimeScheduleListHolder holder, int position) {
         Log.i("Adapter", "onBindViewHolderが呼ばれました"); // onCreateViewHolderの後に呼ばれます
         // 日付け
-        String dateText = this.data.get(position).getDate();
+        String dateText = this._data.get(position).getDate();
         holder.date.setText(dateText);
         // 開始時間 ~ 終了時間 を表示する
-        String timeText = "[ " + this.data.get(position).getStartTime() + " ~ " + this.data.get(position).getEndTime() + " ]";
+        String timeText = "[ " + this._data.get(position).getStartTime() + " ~ " + this._data.get(position).getEndTime() + " ]";
         holder.time.setText(timeText);
         holder.time.setTextColor(Color.parseColor("#006400"));
-
-        // スケジュールのタイトル
-        String title = this.data.get(position).getScheduleTitle();
-        if(title.length() > 30) {  // 注意エラーに  制限を後で android:maxLength="30"  つけたので　大丈夫だが一応
-            title = title.substring(0, 31);  // 後で変更すること
+        if(_isLayoutXLarge) {  // 大画面だったら
+            holder.time.setTextSize(17);
+        } else {  // 通常サイズなら
+            holder.time.setTextSize(14);
         }
 
+        // スケジュールのタイトル
+        String title = this._data.get(position).getScheduleTitle();
+        if(title.length() > 30) {  // 注意エラーに  制限を後で android:maxLength="30"  つけたので　大丈夫だが一応
+            title = title.substring(0, 31);  // 制限を android:maxLength="30"  つけたので　大丈夫だが一応
+        }
 
         holder.scheduleTitle.setText(title);
         // 下線もつけられます  リンクに見せるようにできる
@@ -203,20 +205,30 @@ public class TimeScheduleListAdapter extends RecyclerView.Adapter<TimeScheduleLi
         TextView scheduleTitle = holder.view.findViewById(R.id.scheduleTitle);
         scheduleTitle.setPaintFlags(Paint.UNDERLINE_TEXT_FLAG);
         scheduleTitle.setTextColor(Color.parseColor("blue"));
+        if(_isLayoutXLarge) {  // 大画面だったら
+            holder.scheduleTitle.setTextSize(22);
+        } else {  // 通常サイズなら
+            holder.scheduleTitle.setTextSize(20);
+        }
 
 
         // スケジュールのメモ
-        String memo = this.data.get(position).getScheduleMemo();
+        String memo = this._data.get(position).getScheduleMemo();
         if(memo.length() > 80) {  // 注意エラーに
-            memo = memo.substring(0, 81); // 後で変更すること 制限を後で android:maxLength="80"  つけたので　大丈夫だが一応
+            memo = memo.substring(0, 81); // 制限を android:maxLength="80"  つけたので　大丈夫だが一応
         }
 
         holder.scheduleMemo.setText(memo);
         TextView scheduleMemo = holder.view.findViewById(R.id.scheduleMemo);
         scheduleMemo.setTextColor(Color.parseColor("#333132"));
+        if(_isLayoutXLarge) {  // 大画面だったら
+            holder.scheduleMemo.setTextSize(15);
+        } else {  // 通常サイズなら
+            holder.scheduleMemo.setTextSize(13);
+        }
 
         // idのTextView  非表示にして、データだけをフォームに送ります 上のonClickで送ってます
-        long longId = this.data.get(position).getId();
+        long longId = this._data.get(position).getId();
         // Stringへ変換する
         String strId = String.valueOf(longId);
         holder.id.setText(strId);
@@ -232,9 +244,7 @@ public class TimeScheduleListAdapter extends RecyclerView.Adapter<TimeScheduleLi
     public int getItemCount() {
         Log.i("Adapter", "getItemCount()が呼ばれました");
         // return 0;
-        return this.data.size();
+        return this._data.size();
     }
-
-
 
 }
