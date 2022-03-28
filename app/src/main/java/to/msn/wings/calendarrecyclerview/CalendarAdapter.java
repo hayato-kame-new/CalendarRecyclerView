@@ -15,6 +15,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -34,6 +35,8 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarCellViewHolder
 
     // フィールド
     private ArrayList<CalendarCellItem> _data;
+    // 大画面かどうかの判定フラグ インスタンスフィールド   宣言だけをしておき TimeScheduleFragmentのゲッターを使ってフィールドに代入する
+    private boolean _isLayoutXLarge;  // 宣言だけ クラスのインスタンスフィールドの初期値は　falseになっています
 
     // コンストラクタ
     public CalendarAdapter(ArrayList<CalendarCellItem> data) {
@@ -44,16 +47,30 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarCellViewHolder
      * レイアウトファイルをインフレートする
      *  カードビューにリスナーをつけたい時にはこのonCreateViewHolderに書く
      *  トースト表示ならこのメソッド内に書いてもいいが、
-     * @param parent
-     * @param viewType
+     * @param parent RecycleView
+     * @param viewType 0
      * @return
      */
     @NonNull
     @Override
     public CalendarCellViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-
+        // v　は　CardView
         View v = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.calendar_cell, parent, false);
+        MainActivity parentActivity = (MainActivity) parent.getContext();  // MainActivity
+
+        // 大画面の場合 追加  androidx(テン)のパッケージの方ですので注意
+        androidx.fragment.app.FragmentManager fmanager = null;
+        final androidx.fragment.app.FragmentTransaction[] FINAL_F_TRANSACTION = {null};  // 匿名クラスの中で使うので finalの配列にする
+
+        // parent.getContext()　では　MainActivityが取得できる
+       fmanager = ((FragmentActivity) parent.getContext()).getSupportFragmentManager();  // getSupportFragmentManager()を呼び出すには FragmentActivityにキャストする
+       //  フラグメントマネージャーから、MainActivityに所属しているフラグメントを取得できます   findFragmentById メソッドを使う
+       // MainActivytyには 上に CurrentMonthFragmentが乗っていますので
+      CurrentMonthFragment currentMonthFragment = (CurrentMonthFragment)fmanager.findFragmentById(R.id.currentMonthFragment);
+
+        // このクラスのインスタンスフィールドに値をセットします！！ このあと、onBindViewHolderでも自分自身のインスタンスフィールドから取得するので
+        _isLayoutXLarge = currentMonthFragment.is_isLayoutXLarge();  // currentMonthFragmentインスタンスのゲッターメソッドを使う
 
         v.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -125,6 +142,22 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarCellViewHolder
            // 下線もつけられます
            //  dateText.setPaintFlags(Paint.UNDERLINE_TEXT_FLAG);
         }
+
+        // 　holder.schedulesを  subStringで切り取って、時間を緑 タイトルを黒にする
+
+        if (_isLayoutXLarge) {
+            // もし画面サイズがタブレットサイズだったら
+            holder.dateText.setTextSize(28);
+            holder.schedules.setTextSize(18);
+            // タブレットサイズだったら　holder.schedules はそのまま表示できますが
+
+        } else {
+            // 通常画面ならば
+
+            // holder.schedules  の表示は substringで切り取って表示しないといけません 2行にする
+
+        }
+
 
     }
 

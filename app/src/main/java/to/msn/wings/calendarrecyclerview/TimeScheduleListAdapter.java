@@ -31,7 +31,7 @@ import java.util.Date;
 public class TimeScheduleListAdapter extends RecyclerView.Adapter<TimeScheduleListHolder>{
     // フィールド
     private ArrayList<TimeScheduleListItem> _data;
-    // 大画面かどうかの判定フラグ インスタンスフィールド   宣言だけをしておき、クリックされた時点での、TimeScheduleFragmentのゲッター画面の状態を取得する
+    // 大画面かどうかの判定フラグ インスタンスフィールド   宣言だけをしておき
     // onCreateViewHolderでこのインスタンスフィールドに値をセットします！！ 画面サイズの状態を代入します
     // その後で、onBindViewHolderでもインスタンスフィールドから取得して使います
     private boolean _isLayoutXLarge;  // 宣言だけ クラスのインスタンスフィールドの初期値は　falseになっています
@@ -52,8 +52,7 @@ public class TimeScheduleListAdapter extends RecyclerView.Adapter<TimeScheduleLi
         View v = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.time_schedule_list_item, parent, false);
 
-        // 大画面の場合 追加
-
+        // 大画面の場合 追加  androidx(テン)のパッケージの方ですので注意
         androidx.fragment.app.FragmentManager fmanager = null;
         final androidx.fragment.app.FragmentTransaction[] FINAL_F_TRANSACTION = {null};  // 匿名クラスの中で使うので finalの配列にする
         fmanager = ((FragmentActivity) parent.getContext()).getSupportFragmentManager();
@@ -62,8 +61,8 @@ public class TimeScheduleListAdapter extends RecyclerView.Adapter<TimeScheduleLi
         // このクラスのインスタンスフィールドに値をセットします！！ このあと、onBindViewHolderでもインスタンスフィールドから取得するので
         _isLayoutXLarge = timeScheduleFragment.is_isLayoutXLarge();  // ゲッターメソッドを使う
 
-        // 大画面の時と、スマホのサイズの時に、挙動が違いますので注意
         final androidx.fragment.app.FragmentManager  FINAL_F_MANAGER = fmanager;
+        // CardViewをクリックした時のリスナー　　大画面の時と、スマホのサイズの時に、挙動が違いますので注意
         v.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

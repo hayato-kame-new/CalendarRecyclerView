@@ -188,6 +188,12 @@ public class MonthCalendarFragment extends Fragment {
                         && d == Integer.parseInt(scheduledate.substring(8))) {
                     // 同じ日付のものが見つかったら セルの中に表示する
                     String ti = schedule.getScheduletitle();
+
+                    //
+                    // 全部tiを使って構わない CalendarAdapterで、画面サイズによって表示を切り捨てるから
+                    ////////////
+                    ///////////
+
                     if(ti.length() > 3) {  // 注意エラーに
                         ti = schedule.getScheduletitle().substring(0, 4);
                     }
