@@ -52,25 +52,18 @@ public class TimeScheduleListAdapter extends RecyclerView.Adapter<TimeScheduleLi
         View v = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.time_schedule_list_item, parent, false);
 
-
         // 大画面の場合 追加
 
         androidx.fragment.app.FragmentManager fmanager = null;
-        final androidx.fragment.app.FragmentTransaction[] ftransaction = {null};
+        final androidx.fragment.app.FragmentTransaction[] FINAL_F_TRANSACTION = {null};  // 匿名クラスの中で使うので finalの配列にする
         fmanager = ((FragmentActivity) parent.getContext()).getSupportFragmentManager();
         //  フラグメントマネージャーから、 TimeScheduleActivityに所属してる フラグメントが取得できる TimeScheduleFragmentを取得する timeScheduleFrame
         TimeScheduleFragment timeScheduleFragment = (TimeScheduleFragment)fmanager.findFragmentById(R.id.timeScheduleFragment);
         // このクラスのインスタンスフィールドに値をセットします！！ このあと、onBindViewHolderでもインスタンスフィールドから取得するので
         _isLayoutXLarge = timeScheduleFragment.is_isLayoutXLarge();  // ゲッターメソッドを使う
 
-
-
-
-        // 編集 削除 をするために、フォームを表示するリスナーです
-
-
         // 大画面の時と、スマホのサイズの時に、挙動が違いますので注意
-        final androidx.fragment.app.FragmentManager  finalFmanager = fmanager;
+        final androidx.fragment.app.FragmentManager  FINAL_F_MANAGER = fmanager;
         v.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -133,7 +126,7 @@ public class TimeScheduleListAdapter extends RecyclerView.Adapter<TimeScheduleLi
 
                  //    fmanager = ((FragmentActivity) view.getContext()).getSupportFragmentManager();
 
-                     ftransaction[0] = finalFmanager.beginTransaction();
+                   FINAL_F_TRANSACTION[0] = FINAL_F_MANAGER.beginTransaction();
                     // フォームのフラグメント生成
                     ScheduleFormFragment scheduleFormFragment = new ScheduleFormFragment();
                     // 引き継ぎデータをセット
@@ -141,8 +134,8 @@ public class TimeScheduleListAdapter extends RecyclerView.Adapter<TimeScheduleLi
                     // 生成したフラグメントを、
                     // id が　timeScheduleFrame　の　FrameLayoutの上に乗せます (FrameLayoutは上に追加できます)replaceメソッドで置き換えます
 
-                    ftransaction[0].replace(R.id.timeScheduleFrame, scheduleFormFragment); // 第一引数の上に 第二引数を乗せて表示する
-                    ftransaction[0].commit();
+                   FINAL_F_TRANSACTION[0].replace(R.id.timeScheduleFrame, scheduleFormFragment); // 第一引数の上に 第二引数を乗せて表示する
+                   FINAL_F_TRANSACTION[0].commit();
                     // 同じアクティビティ上なので、所属するアクティビティを終了させません
 
                 } else {

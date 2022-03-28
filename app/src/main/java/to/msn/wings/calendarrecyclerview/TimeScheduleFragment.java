@@ -36,12 +36,12 @@ import java.util.List;
  * このフラグメントで、個々のタイムスケジュールのCardViewを表示させる  fragment_time_schedule.xml の
  */
 public class TimeScheduleFragment extends Fragment {
-    // 大画面かどうかの判定フラグ onViewStateRestoredコールバックメソッドをオーバーライドします！！！
-    private boolean _isLayoutXLarge = true;
+    // 大画面かどうかの判定フラグ インスタンスフィールド onViewStateRestoredコールバックメソッドをオーバーライドします！！！
+    private boolean _isLayoutXLarge = true;  // ここでは 初期値は trueにしておく
 
     private TimeScheduleDatabaseHelper _helper;
-    private Button addButton, returnMonButton, currentMonButton;
-    TextView day, day_today;
+    private Button _addButton, _returnMonButton, _currentMonButton;
+    private TextView _day, _day_today;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -78,30 +78,29 @@ public class TimeScheduleFragment extends Fragment {
         }
 // インナークラスで使うために final で定数に
         final Date DATE = date;
-        currentMonButton = view.findViewById(R.id.currentMonButton);
+        _currentMonButton = view.findViewById(R.id.currentMonButton);
 
-        day = view.findViewById(R.id.titleText); // fragment_time_schedule.xmlの idが titleTextのもの
-        day.setText(scheduleDayText);
+        _day = view.findViewById(R.id.titleText); // fragment_time_schedule.xmlの idが titleTextのもの
+        _day.setText(scheduleDayText);
 
 
-        day_today = view.findViewById(R.id.day_today);
+        _day_today = view.findViewById(R.id.day_today);
         if (!todayString.equals("")) {
             todayString = "今日の予定 " + todayString + " ";
         }
-        day_today.setText(todayString);
+        _day_today.setText(todayString);
 
-        returnMonButton = view.findViewById(R.id.returnMonButton);
+        _returnMonButton = view.findViewById(R.id.returnMonButton);
         int year = Integer.parseInt(scheduleDayText.substring(0, 4));
         int month = Integer.parseInt(scheduleDayText.substring(5, 7));
-        returnMonButton.setText(year + "年" + month + "月カレンダーへ戻る");
+        _returnMonButton.setText(year + "年" + month + "月カレンダーへ戻る");
 
         // 現在を取得して LocalDate の方がいい　Calendar使わない
         LocalDate localdateToday = LocalDate.now();
 // returnMonButton は、今月ならば 非表示にしています
         if (year == localdateToday.getYear() && month == localdateToday.getMonthValue()) {
-            returnMonButton.setVisibility(View.GONE); // これで表示しない なおかつ 非表示にしたスペースを詰める
+            _returnMonButton.setVisibility(View.GONE); // これで表示しない なおかつ 非表示にしたスペースを詰める
         }
-
 
         List<Schedule> list = new ArrayList<Schedule>();
 
@@ -202,7 +201,7 @@ public class TimeScheduleFragment extends Fragment {
 
 
         // 表示してる月のカレンダーへ戻るボタンにリスナーをつける  今月なら、このボタンは非表示になっております
-        returnMonButton.setOnClickListener(new View.OnClickListener() {
+        _returnMonButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 // 画面遷移する
@@ -219,7 +218,7 @@ public class TimeScheduleFragment extends Fragment {
         });
 
         // 今月のカレンダーへ戻ります
-        currentMonButton.setOnClickListener(new View.OnClickListener() {
+        _currentMonButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 // 画面遷移する
@@ -234,9 +233,9 @@ public class TimeScheduleFragment extends Fragment {
 
 
         // タイムスケジュールを新規登録するボタンにリスナーをつける
-        addButton = view.findViewById(R.id.addButton);
+        _addButton = view.findViewById(R.id.addButton);
         final Date FINALDATE = date;  // 内部クラスで使うので final  定数にする
-        addButton.setOnClickListener(new View.OnClickListener() {
+        _addButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 

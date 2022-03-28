@@ -28,12 +28,10 @@ import java.util.List;
 public class MonthCalendarFragment extends Fragment {
 
     private TimeScheduleDatabaseHelper _helper;
-    private TextView titleText;
-    private Button prevButton, nextButton, currentMonthButton;
-    //    private CalendarAdapter calendarAdapter;
-//    private RecyclerView recyclerView;
-    DateManager dateManager;
-    private int SPAN_COUNT = 7;
+    private TextView _titleText;
+    private Button _prevButton, _nextButton, _currentMonthButton;
+    DateManager _dateManager;
+    final private int _SPAN_COUNT = 7;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -56,35 +54,27 @@ public class MonthCalendarFragment extends Fragment {
             // null かどうかのチェックが必要です
             specifyDate = (Date)intent.getSerializableExtra("specifyDate");
         }
-
-        //  null かどうかのチェックが必要です どっちのボタンから遷移してきたのか  どっちかは nullになるので
-        //     Date prevButtonDate = (Date)intent.getSerializableExtra("prevButtonDate");
-        //  null かどうかのチェックが必要です どっちのボタンから遷移してきたのか どっちかは nullになるので
-        //     Date nextButtonDate = (Date)intent.getSerializableExtra("nextButtonDate");
-
-
-        dateManager = new DateManager();
+        _dateManager = new DateManager();
 
         List<Date> dates = null;
 
-
-        titleText = view.findViewById(R.id.titleText);
+        _titleText = view.findViewById(R.id.titleText);
         SimpleDateFormat format = new SimpleDateFormat("yyyy年 MM月");
         // ここで条件分岐します
         String title = "";
-        if (prevButtonDate != null) {
+        if (prevButtonDate != null) {  //  null かどうかのチェックが必要です どっちのボタンから遷移してきたのか  どっちかは nullになるので
             title = format.format(prevButtonDate);
-            dates = dateManager.getDays(prevButtonDate);  // 引数ありのgetDays(Date date)　を呼び出す
+            dates = _dateManager.getDays(prevButtonDate);  // 引数ありのgetDays(Date date)　を呼び出す
 
-        } else if (nextButtonDate != null) {
+        } else if (nextButtonDate != null) {  //  null かどうかのチェックが必要です どっちのボタンから遷移してきたのか  どっちかは nullになるので
             title = format.format(nextButtonDate);
-            dates = dateManager.getDays(nextButtonDate); // 引数ありのgetDays(Date date)　を呼び出す
-
+            dates = _dateManager.getDays(nextButtonDate); // 引数ありのgetDays(Date date)　を呼び出す
+            //  null かどうかのチェックが必要です どっちのボタンから遷移してきたのか  どっちかは nullになるので
         } else if (specifyDate != null) {  // 指定の日付のカレンダーを表示するならば、指定の日付が現在の月ではないなら、このフラグメントで表示します
             title = format.format(specifyDate);
-            dates = dateManager.getDays(specifyDate);  // 引数ありのgetDays(Date date)　を呼び出す
+            dates = _dateManager.getDays(specifyDate);  // 引数ありのgetDays(Date date)　を呼び出す
         }
-        titleText.setText(title);
+        _titleText.setText(title);
 
         Date firstDate = dates.get(0);
         Date lastDate = dates.get(dates.size() - 1);
@@ -115,7 +105,6 @@ public class MonthCalendarFragment extends Fragment {
             String schedulememo = "";
 
             Schedule schedule;
-
             while ( cursor.moveToNext()) {
                 // SELECT分によって、インデックスは変わってくるので getColumnIndexで、インデックスを取得します
                 int index__id = cursor.getColumnIndex("_id");
@@ -143,11 +132,9 @@ public class MonthCalendarFragment extends Fragment {
                 // インスタンス生成
                 schedule = new Schedule(_id, scheduledate,  starttime, endtime, scheduletitle, schedulememo);
                 list.add(schedule);
-
             }
-
         }
-        _helper.close();  // ヘルパーを解放する　ここで
+        _helper.close();  // ここでヘルパーを解放すること　  SQLiteDatabase db は、try-catch-resources構文だから finallyを書かなくても必ず close()処理をしてくれます
 
         // リスト取得できた リサイクラービューで このリストを日付が同じならば、セット指定く    2022-03-25 14:00 16:00 しごと かいもの
 //        for( Schedule schedule : list) {
@@ -155,7 +142,6 @@ public class MonthCalendarFragment extends Fragment {
 //                    schedule.getScheduledate() + " "  + schedule.getStarttime() + " "  +
 //                            schedule.getEndtime() + " "  + schedule.getScheduletitle() + " "  + schedule.getSchedulememo());
 //        }
-
 
 
         // 表示用のフォーマットし直し
@@ -192,7 +178,6 @@ public class MonthCalendarFragment extends Fragment {
             String non_display =  sdFormat.format(date); //  2017/03/02 という形
             item.setTextViewGone(non_display);  // アダプターで非表示にしてるけど、日付の情報は送れてる
 
-
             // 追加 listの中にある同じ日付けの
             String display_schedules = "";
             for(Schedule schedule : list) {
@@ -207,22 +192,18 @@ public class MonthCalendarFragment extends Fragment {
                         ti = schedule.getScheduletitle().substring(0, 4);
                     }
                     display_schedules +=  schedule.getStarttime() + "~ "  +  ti + "\n";
-
                 }
                 item.setSchedules(display_schedules);
             }
-
-
             data.add(item);
         }
-
 
         // 最初の土曜日は、その月に必ずなってるから
         Date firstSaturdayDate = dates.get(6);
 
         // 表示してる月よりも１つ前の月を表示するためのボタン
-        prevButton = view.findViewById(R.id.prevButton);
-        prevButton.setOnClickListener(new View.OnClickListener() {
+        _prevButton = view.findViewById(R.id.prevButton);
+        _prevButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Calendar calendar = Calendar.getInstance();
@@ -237,16 +218,15 @@ public class MonthCalendarFragment extends Fragment {
                 intent.putExtra("prevButtonDate", date);  // 1月前の最初の土曜日の日付を送る Date型情報を渡します
                 startActivity(intent);
 
-                // やっぱり書く
+                // 所属しているアクティビティを finish()で終了させること
                 Activity parentActivity = getActivity();
                 parentActivity.finish();
             }
-
         });
 
         // 次の月を表示するためのボタン
-        nextButton = view.findViewById(R.id.nextButton);
-        nextButton.setOnClickListener(new View.OnClickListener() {
+        _nextButton = view.findViewById(R.id.nextButton);
+        _nextButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Calendar calendar = Calendar.getInstance();
@@ -260,18 +240,18 @@ public class MonthCalendarFragment extends Fragment {
                 intent.putExtra("nextButtonDate", date);  // 1月先の最初の土曜日の日付を送ってる Date型情報を渡します
                 startActivity(intent);
 
-                // いや、終わらす
+                // 所属しているアクティビティを finish()で終了させること
                 Activity parentActivity = getActivity();
                 parentActivity.finish();
             }
         });
 
         //  今月の表示に戻る MainActivityに戻る  自分自身が所属するアクティビティを終了させます
-        currentMonthButton = view.findViewById(R.id.currentMonthButton);
-        currentMonthButton.setOnClickListener(new View.OnClickListener() {
+        _currentMonthButton = view.findViewById(R.id.currentMonthButton);
+
+        _currentMonthButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 Intent intent = new Intent(parentActivity, MainActivity.class);
                 startActivity(intent);
                 // 自分自身が所属するアクティビティを終了させます
@@ -280,26 +260,16 @@ public class MonthCalendarFragment extends Fragment {
             }
         });
 
-
-
-        // マニフェストファイルによって、activity_month_calendar.xmlとの紐付けができてるので、
-        // idとかもこのまま使える メインレイアウトと同じだけど問題なく使える
         RecyclerView rv = view.findViewById(R.id.rv);
         rv.setHasFixedSize(true);  // パフォーマンス向上
 
-
-
         // グリッド状にカードを配置する 7つづつ
-        //   GridLayoutManager manager = new GridLayoutManager(this, SPAN_COUNT);
-        GridLayoutManager manager = new GridLayoutManager(parentActivity, SPAN_COUNT);
+        GridLayoutManager manager = new GridLayoutManager(parentActivity, _SPAN_COUNT);
         rv.setLayoutManager(manager);
 
         RecyclerView.Adapter adapter = new CalendarAdapter(data);
         rv.setAdapter(adapter);
 
         return view;
-
     }
-
-
 }

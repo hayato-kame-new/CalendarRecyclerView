@@ -33,11 +33,11 @@ import java.util.List;
 public class CalendarAdapter extends RecyclerView.Adapter<CalendarCellViewHolder> {
 
     // フィールド
-    private ArrayList<CalendarCellItem> data;
+    private ArrayList<CalendarCellItem> _data;
 
     // コンストラクタ
     public CalendarAdapter(ArrayList<CalendarCellItem> data) {
-        this.data = data;
+        this._data = data;
     }
 
     /**
@@ -86,12 +86,12 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarCellViewHolder
     @Override
     public void onBindViewHolder(@NonNull CalendarCellViewHolder holder, int position) {
 
-        holder.dateText.setText(this.data.get(position).getDateText());
-        holder.textViewToday.setText(this.data.get(position).getTextViewToday());  // 追加
+        holder.dateText.setText(this._data.get(position).getDateText());
+        holder.textViewToday.setText(this._data.get(position).getTextViewToday());  // 追加
         // 追加 これは非表示したい　後で textViewGone.setVisibility(View.GONE);
-        holder.textViewGone.setText(this.data.get(position).getTextViewGone());
+        holder.textViewGone.setText(this._data.get(position).getTextViewGone());
         // 追加
-        holder.schedules.setText(this.data.get(position).getSchedules());
+        holder.schedules.setText(this._data.get(position).getSchedules());
 
 
         // holder.view は　ルート要素です　ここでは　ConstraintLayoutです
@@ -109,7 +109,7 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarCellViewHolder
         TextView schedules = holder.view.findViewById(R.id.schedules);
         // これに対して、属性をつけられます
 
-        for(int i = 0; i < data.size(); i++) {
+        for(int i = 0; i < _data.size(); i++) {
             if (position == (i*7 )) {  // 日曜日
                 cardView.setCardBackgroundColor(null);
                 cardView.setCardBackgroundColor(Color.parseColor("#FF0800"));
@@ -131,7 +131,7 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarCellViewHolder
     @Override
     public int getItemCount() {
        // return 0;
-        return this.data.size();
+        return this._data.size();
     }
 
 

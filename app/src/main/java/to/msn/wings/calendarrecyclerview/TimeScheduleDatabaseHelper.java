@@ -8,7 +8,7 @@ import androidx.annotation.Nullable;
 
 public class TimeScheduleDatabaseHelper extends SQLiteOpenHelper {
 
-    // 定数フィールド static
+    // 定数フィールド static クラスフィールドです クラスフィールドだから　変数名に _ アンダーバーはつけない
     static final private String DBNAME = "timeschedule.sqlite";
     static final private int VERSION = 1;
 

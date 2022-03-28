@@ -10,9 +10,9 @@ import java.util.Locale;
 public class DateManager {
 
     //フィールド
-    Calendar mCalendar;
+    Calendar _mCalendar;
 
-
+// ここ修正しても大丈夫かも mCalendar = Calendar.getInstance();をここに書いても OKかも 後で確認すること
     public DateManager(){
         // コンストラクタでは生成しないように変更した
        // mCalendar = Calendar.getInstance();
@@ -26,32 +26,32 @@ public class DateManager {
      */
     public List<Date> getDays() {
         // コンストラクタではなく、ここで現在を取得するようにした　　変更
-        mCalendar = Calendar.getInstance();
+        _mCalendar = Calendar.getInstance();
         // 現在
-        Date startDate = mCalendar.getTime();
+        Date startDate = _mCalendar.getTime();
 
         // グリッドに表示するマスの合計
-        int count = mCalendar.getActualMaximum(Calendar.WEEK_OF_MONTH) * 7;
+        int count = _mCalendar.getActualMaximum(Calendar.WEEK_OF_MONTH) * 7;
         // int count = getWeeks() * 7;
 
         //今月のカレンダーに表示される前月分の日数を計算
-        mCalendar.set(Calendar.DATE, 1);  // 今月の1日をセットする
+        _mCalendar.set(Calendar.DATE, 1);  // 今月の1日をセットする
         // 1日の曜日を取得して、それから -1すれば 前の月の最後の日の曜日が取得できる
-        int dayOfWeek = mCalendar.get(Calendar.DAY_OF_WEEK) - 1;  // dayOfWeekは曜日 日曜日は  0
+        int dayOfWeek = _mCalendar.get(Calendar.DAY_OF_WEEK) - 1;  // dayOfWeekは曜日 日曜日は  0
 
          // カレンダーに載せる日曜日の日付を取得してる
-        mCalendar.add(Calendar.DATE, -dayOfWeek);  // 日曜日にする 0にするため -dayOnWeek 火曜日だったら -2すると日曜になる
+        _mCalendar.add(Calendar.DATE, -dayOfWeek);  // 日曜日にする 0にするため -dayOnWeek 火曜日だったら -2すると日曜になる
 
         List<Date> days = new ArrayList<>();
 
         for (int i = 0; i < count; i ++){
-            days.add(mCalendar.getTime());  // mCalendarは、今、カレンダーに載せる最初の日曜日になってる
+            days.add(_mCalendar.getTime());  // mCalendarは、今、カレンダーに載せる最初の日曜日になってる
             // mCalendarに1日をプラスしていき、リストに加える
-            mCalendar.add(Calendar.DATE, 1);
+            _mCalendar.add(Calendar.DATE, 1);
         }
         // このループで、記載する日付Date型の入った リストができてる
         //状態を復元 本日の日付に戻してる
-        mCalendar.setTime(startDate);
+        _mCalendar.setTime(startDate);
         return days;
     }
 
@@ -67,44 +67,45 @@ public class DateManager {
         // 指定の日付は引数から取得できる
 
         // コンストラクタではなく、ここで現在を取得するようにした　　変更
-        mCalendar = Calendar.getInstance();
-        mCalendar.setTime(date);  // 指定の日付にする
+        _mCalendar = Calendar.getInstance();
+        _mCalendar.setTime(date);  // 指定の日付にする
         // 指定の日付の月のグリッドに表示するマスの合計
-        int count = mCalendar.getActualMaximum(Calendar.WEEK_OF_MONTH) * 7;
+        int count = _mCalendar.getActualMaximum(Calendar.WEEK_OF_MONTH) * 7;
         // さらに、1日の日付にする 計算するために
         // 指定をした月のカレンダーに表示される前月分の日数を計算するため
-        mCalendar.set(Calendar.DATE, 1);  // 1日をセットする
+        _mCalendar.set(Calendar.DATE, 1);  // 1日をセットする
 
         // 1日の曜日を取得して、それから -1すれば 前の月の最後の日の曜日が取得できる
-        int dayOfWeek = mCalendar.get(Calendar.DAY_OF_WEEK) - 1;  // dayOfWeekは曜日 日曜日は  0
+        int dayOfWeek = _mCalendar.get(Calendar.DAY_OF_WEEK) - 1;  // dayOfWeekは曜日 日曜日は  0
 
         // カレンダーに載せる日曜日の日付を取得してる
-        mCalendar.add(Calendar.DATE, -dayOfWeek);  // 日曜日にする 0にするため -dayOnWeek 火曜日だったら -2すると日曜になる
+        _mCalendar.add(Calendar.DATE, -dayOfWeek);  // 日曜日にする 0にするため -dayOnWeek 火曜日だったら -2すると日曜になる
 
         List<Date> days = new ArrayList<>();
 
         for (int i = 0; i < count; i ++){
-            days.add(mCalendar.getTime());  // mCalendarは、今、カレンダーに載せる最初の日曜日になってる
+            days.add(_mCalendar.getTime());  // mCalendarは、今、カレンダーに載せる最初の日曜日になってる
             // mCalendarに1日をプラスしていき、リストに加える
-            mCalendar.add(Calendar.DATE, 1);
+            _mCalendar.add(Calendar.DATE, 1);
         }
         // このループで、記載する日付Date型の入った リストができてる
         //状態を復元 引数で 指定された日付に戻してる
-        mCalendar.setTime(date);  // ちょっと確認する
+        _mCalendar.setTime(date);  // ちょっと確認する
         return days;
     }
 
 
     //当月かどうか確認
-//    public boolean isCurrentMonth(Date date){
-//        SimpleDateFormat format = new SimpleDateFormat("yyyy.MM", Locale.US);
-//        String currentMonth = format.format(mCalendar.getTime());
-//        if (currentMonth.equals(format.format(date))){
-//            return true;
-//        }else {
-//            return false;
-//        }
-//    }
+    public boolean isCurrentMonth(Date date){
+        SimpleDateFormat format = new SimpleDateFormat("yyyy.MM", Locale.US);
+        _mCalendar = Calendar.getInstance();  // 後で修正するかも
+        String currentMonth = format.format(_mCalendar.getTime());
+        if (currentMonth.equals(format.format(date))){
+            return true;
+        }else {
+            return false;
+        }
+    }
 
 
 
