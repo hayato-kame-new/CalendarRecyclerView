@@ -45,14 +45,14 @@ public class TimeScheduleFragment extends Fragment {
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
-        Log.i("Layout", "onCreateが呼ばれました");
+       // Log.i("Layout", "onCreateが呼ばれました");
         super.onCreate(savedInstanceState);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        Log.i("Layout", "onCreateViewが呼ばれました");
+       // Log.i("Layout", "onCreateViewが呼ばれました");
         View view = inflater.inflate(R.layout.fragment_time_schedule, container, false);
 
         Activity parentActivity = getActivity();
@@ -108,7 +108,7 @@ public class TimeScheduleFragment extends Fragment {
         _helper = new TimeScheduleDatabaseHelper(parentActivity);  // onDestroy()で helperを解放すること
         //  データベースを取得する try-catch-resources構文 finallyを書かなくても必ず close()処理をしてくれます
         try (SQLiteDatabase db = _helper.getWritableDatabase()) {  // dbはきちんとクローズ自動でしてくれます
-            Toast.makeText(parentActivity, "接続しました", Toast.LENGTH_SHORT).show();
+          //  Toast.makeText(parentActivity, "接続しました", Toast.LENGTH_SHORT).show();
             // ここにデータベースの処理を書く SELECT文で取得する 今月分のだけを取得する   SELECT * FROM テーブル名 WHERE date >= '2011-08-20' AND date <= '2011-08-27'
             //  SELECT * FROM テーブル名 WHERE date BETWEEN '2011-08-20' AND '2011-08-27'  開始時間の順番にして取得する
             // scheduleDayText  DATE
@@ -205,11 +205,8 @@ public class TimeScheduleFragment extends Fragment {
         returnMonButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
                 // 画面遷移する
-                // フラグメントを乗せてるサブのアクティビティを終わらせてください
                 // インナークラスなので 定数 DATEを使う
-
                 Intent intent = new Intent(parentActivity, MonthCalendarActivity.class);
                 // 指定した年と月のカレンダーを表示するために Date型情報を渡します
                 intent.putExtra("specifyDate", DATE);  //  Date型情報を渡します
@@ -218,7 +215,6 @@ public class TimeScheduleFragment extends Fragment {
                 // 最後に 自分自身が所属するアクティビティを終了させます
                 Activity parentActivity = getActivity();
                 parentActivity.finish();
-
             }
         });
 
@@ -226,9 +222,8 @@ public class TimeScheduleFragment extends Fragment {
         currentMonButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
                 // 画面遷移する
-                //  今月の表示に戻る MainActivityに戻る  自分自身が所属するアクティビティを終了させます
+                //  今月の表示に戻る MainActivityに戻る
                 Intent intent = new Intent(parentActivity, MainActivity.class);
                 startActivity(intent);
                 // 自分自身が所属するアクティビティを終了させます
@@ -276,9 +271,7 @@ public class TimeScheduleFragment extends Fragment {
                  // 通常画面の場合は、別のアクティビティを起動させて表示するので 自分自身が所属するアクティビティをfinish()で終わらせます
                     Activity parentActivity = getActivity();
                     parentActivity.finish();
-
                 }
-
             }
         });
 
@@ -289,13 +282,7 @@ public class TimeScheduleFragment extends Fragment {
         manager.setOrientation(LinearLayoutManager.VERTICAL);
         rv.setLayoutManager(manager);
 
-        // ここを修正した TimeScheduleListAdapterのコンストラクタも修正引数２つにした
-      RecyclerView.Adapter adapter = new TimeScheduleListAdapter(data);  //  dataはデータベースから取得
-
-        // ここ二行追加した Adapterに第二引数を渡したいので
-//        Context context = getContext();
-//        // このコンストラクタの中で、大画面かどうかの判定をしているので この判定は、Adapterのリスナーで使うのに必要 編集の時に使う
-//        RecyclerView.Adapter adapter = new TimeScheduleListAdapter(data, context);
+        RecyclerView.Adapter adapter = new TimeScheduleListAdapter(data);  //  dataはデータベースから取得
 
         rv.setAdapter(adapter);
 
@@ -303,19 +290,16 @@ public class TimeScheduleFragment extends Fragment {
         return view;
     }
 
-
-    // onActivityCreated() メソッドは非推奨になりました。 onViewStateRestored に書いてください
-
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        Log.i("Layout", "onViewCreatedが呼ばれました");
+       // Log.i("Layout", "onViewCreatedが呼ばれました");
         super.onViewCreated(view, savedInstanceState);
     }
 
-
+    // onActivityCreated() メソッドは非推奨になりました。 onViewStateRestored に書いてください
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        Log.i("Layout", "非推奨のonActivityCreatedが呼ばれました");
+      //  Log.i("Layout", "非推奨のonActivityCreatedが呼ばれました");
         super.onActivityCreated(savedInstanceState);
     }
 
@@ -329,7 +313,7 @@ public class TimeScheduleFragment extends Fragment {
     @Override
     public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
 
-        Log.i("Layout", "onViewStateRestoredが呼ばれました!!! 非推奨のonActivityCreatedの代わりにこれを使うこと");
+     //   Log.i("Layout", "onViewStateRestoredが呼ばれました!!! 非推奨のonActivityCreatedの代わりにこれを使うこと");
         super.onViewStateRestored(savedInstanceState);
         Activity parentActivity = getActivity();  // このフラグメントの自分　が所属するアクティビティを取得する
 
@@ -339,11 +323,16 @@ public class TimeScheduleFragment extends Fragment {
         if (timeScheduleFrame == null) {  // nullならば、大画面ではないので
             // 画面判定フラグを通常画面とする
             _isLayoutXLarge = false;
-            // 次にTimeScheduleFragmentで、RecycleViewの CardViewのタップ時の処理 と　新規スケジュールボタンのタップ時の処理で
+            // 次にTimeScheduleFragmentで、RecycleViewの CardViewのタップ時の処理(編集や削除) と　新規スケジュールボタンのタップ時の処理で
             // 画面サイズによって分岐する処理を書く
         }
     }
 
+    /**
+     * アクセッサ  ゲッターメソッド
+     * TimeSucheduleListAdapterクラスの onCreateViewHolderメソッドの中の setOnClickListenerのところで使います
+     * @return true: 大画面である <br /> false: 通常サイズ（スマホサイズ)である
+     */
     public boolean is_isLayoutXLarge() {
         return _isLayoutXLarge;
     }

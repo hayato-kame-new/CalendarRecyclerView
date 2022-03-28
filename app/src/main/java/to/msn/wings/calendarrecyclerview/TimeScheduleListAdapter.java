@@ -181,7 +181,7 @@ public class TimeScheduleListAdapter extends RecyclerView.Adapter<TimeScheduleLi
      */
     @Override
     public void onBindViewHolder(@NonNull TimeScheduleListHolder holder, int position) {
-        Log.i("Adapter", "onBindViewHolderが呼ばれました");
+        Log.i("Adapter", "onBindViewHolderが呼ばれました"); // onCreateViewHolderの後に呼ばれます
         // 日付け
         String dateText = this.data.get(position).getDate();
         holder.date.setText(dateText);

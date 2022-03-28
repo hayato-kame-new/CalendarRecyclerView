@@ -40,8 +40,6 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarCellViewHolder
         this.data = data;
     }
 
-   // 3つのメソッドをオーバーライドすべき
-
     /**
      * レイアウトファイルをインフレートする
      *  カードビューにリスナーをつけたい時にはこのonCreateViewHolderに書く
@@ -126,12 +124,7 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarCellViewHolder
             }
            // 下線もつけられます
            //  dateText.setPaintFlags(Paint.UNDERLINE_TEXT_FLAG);
-
         }
-
-//        TextView titleText = holder.view.findViewById(R.id.titleText);
-//        titleText.setText();
-
 
     }
 
@@ -144,8 +137,7 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarCellViewHolder
 
     @Override
     public void onViewRecycled(@NonNull CalendarCellViewHolder holder) {
-
         super.onViewRecycled(holder);
-        notifyDataSetChanged();  // これを　つけてみたけど？？？違うか
+        notifyDataSetChanged(); // 要る?
     }
 }
