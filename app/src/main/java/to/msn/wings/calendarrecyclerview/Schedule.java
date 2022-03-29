@@ -1,7 +1,5 @@
 package to.msn.wings.calendarrecyclerview;
 
-import android.util.Log;
-
 public class Schedule {
     // フィールド
     private int _id;

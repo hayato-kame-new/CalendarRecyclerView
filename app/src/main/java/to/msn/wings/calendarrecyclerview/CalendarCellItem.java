@@ -11,7 +11,7 @@ public class CalendarCellItem {
     // 追加 非表示のTextViewにする
     private String textViewGone = null;
 
-   // 追加 表示する各スケジュール 改行文字で区切られている
+   // 追加 表示する各スケジュールを文字列で連結したもの
     private String schedules = null;
 
     // ゲッター セッター

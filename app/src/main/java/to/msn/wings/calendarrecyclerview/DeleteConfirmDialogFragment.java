@@ -47,12 +47,10 @@ public class DeleteConfirmDialogFragment extends DialogFragment {
         // String型のデータを渡しているので
         strId = args.getString("strId");  // onCreateDialogメソッドで取得しておく
         scheduleTitle = args.getString("scheduleTitle");
-        strDate = args.getString("strDate");  // 日付も取得 リスナーで使う
+        strDate = args.getString("strDate");
 
         // 既存のダイアログに TextViewを 付け足すには
-
         Activity parentActivity = getActivity();
-
        // TextViewを準備する
         TextView textViewStrId = new TextView(parentActivity);  // 既存のダイアログに 追加するTextView インスタンスを生成する
         TextView textViewScheduleTitle = new TextView(parentActivity);
@@ -84,12 +82,12 @@ public class DeleteConfirmDialogFragment extends DialogFragment {
 
             switch(i) {
                 case DialogInterface.BUTTON_POSITIVE:
-                    // ここで、削除の処理を実行するので データベースへ接続をします。 すぐに helperをclose()してください。
+                    // ここで、削除の処理を実行するので データベースへ接続をします。 helperをclose()してください。
                     Log.i("Dialog", "削除ボタン押しました");
 
                     Activity parentActivity = getActivity();
                     _helper = new TimeScheduleDatabaseHelper(parentActivity);  // _helper は　同じonClickの中で解放する
-                    //  データベースを取得する try-catch-resources構文 finallyを書かなくても必ず close()処理をしてくれます
+                    //  データベースを取得する try-catch-resources構文を使うので  SQLiteDatabase db は　finallyを書かなくても必ず close()処理をしてくれます
                     try (SQLiteDatabase db = _helper.getWritableDatabase()) {  // dbはきちんとクローズ自動でしてくれます
 
                         // ここにデータベースの処理を書く
@@ -100,7 +98,7 @@ public class DeleteConfirmDialogFragment extends DialogFragment {
                         stmt.executeUpdateDelete();
 
                     }
-                    _helper.close();  // 同じメソッド内でクローズしておくこと
+                    _helper.close();  // クローズしておくこと
 
                     Toast.makeText(getActivity(),"削除しました", Toast.LENGTH_LONG).show();
                     // 削除したら、このフラグメントが所属するアクティビティを終了させる
@@ -120,12 +118,12 @@ public class DeleteConfirmDialogFragment extends DialogFragment {
                     Intent intent = null;
                     if (year == localdateToday.getYear() && month == localdateToday.getMonthValue()) {
 
-                        intent = new Intent(parentActivity, MainActivity.class); // MainActivityは繋ぎっぱなしなので変わらないので
-                        startActivity(intent);  // これ
+                        intent = new Intent(parentActivity, MainActivity.class);
+                        startActivity(intent);
                     } else {
                         intent = new Intent(parentActivity, MonthCalendarActivity.class);
                         intent.putExtra("specifyDate", date);  //  Date型情報を渡します
-                        startActivity(intent);  // これ
+                        startActivity(intent);
                     }
 
                     // 最後に 自分自身が所属するアクティビティを終了させます

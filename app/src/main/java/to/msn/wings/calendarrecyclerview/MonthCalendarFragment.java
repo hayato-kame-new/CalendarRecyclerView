@@ -30,7 +30,6 @@ public class MonthCalendarFragment extends Fragment {
 
 
     // 大画面かどうかの判定フラグ インスタンスフィールド onViewStateRestoredコールバックメソッドをオーバーライドします！！！
-    // 大画面かどうかは、他のフラグメントを調べます
     private boolean _isLayoutXLarge = true;  // ここでは 初期値は trueにしておく
 
     private TimeScheduleDatabaseHelper _helper;
@@ -94,7 +93,7 @@ public class MonthCalendarFragment extends Fragment {
         _helper = new TimeScheduleDatabaseHelper(parentActivity);
 //  データベースを取得する try-catch-resources構文 finallyを書かなくても必ず close()処理をしてくれます
         try (SQLiteDatabase db = _helper.getWritableDatabase()) {  // dbはきちんとクローズ自動でしてくれます
-            Toast.makeText(parentActivity, "接続しました", Toast.LENGTH_SHORT).show();
+
             // ここにデータベースの処理を書く SELECT文で取得する 今月分のだけを取得する   SELECT * FROM テーブル名 WHERE date >= '2011-08-20' AND date <= '2011-08-27'
             //  SELECT * FROM テーブル名 WHERE date BETWEEN '2011-08-20' AND '2011-08-27'  開始時間の順番にして取得する
             String sqlSelect = "SELECT * FROM timeschedule WHERE scheduledate >= ? AND scheduledate <= ? ORDER BY starttime ASC";

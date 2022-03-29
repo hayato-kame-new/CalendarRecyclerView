@@ -78,14 +78,13 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarCellViewHolder
 
         // 条件分岐
         if (mainA != null) {
-
             fmanager = ((FragmentActivity) mainA).getSupportFragmentManager();
 
             //  フラグメントマネージャーから、MainActivityに所属しているフラグメントを取得できます   findFragmentById メソッドを使う
-            // MainActivytyには 上に CurrentMonthFragmentが乗っていますので
+            // MainActivytyには 上に CurrentMonthFragmentが乗ってるので
             CurrentMonthFragment currentMonthFragment = (CurrentMonthFragment)fmanager.findFragmentById(R.id.currentMonthFragment);
 
-            // このクラスのインスタンスフィールドに値をセットします！！ このあと、onBindViewHolderでも自分自身のインスタンスフィールドから取得するので
+            // このクラスのインスタンスフィールドに値をセット このあと、onBindViewHolderでも使うため
             _isLayoutXLarge = currentMonthFragment.is_isLayoutXLarge();  // currentMonthFragmentインスタンスのゲッターメソッドを使う
         } else if (monthA != null) {
             fmanager = ((FragmentActivity) monthA).getSupportFragmentManager();
@@ -93,7 +92,6 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarCellViewHolder
             MonthCalendarFragment monthCalendarFragment = (MonthCalendarFragment)fmanager.findFragmentById(R.id.monthCalendarFragment);
             _isLayoutXLarge = monthCalendarFragment.is_isLayoutXLarge();
         }
-
 
         v.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -167,27 +165,19 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarCellViewHolder
            //  dateText.setPaintFlags(Paint.UNDERLINE_TEXT_FLAG);
         }
 
-        // 　holder.schedulesを  subStringで切り取って、時間を緑 タイトルを黒にする
-
         if (_isLayoutXLarge) {
-            // もし画面サイズがタブレットサイズだったら
+            // もし画面サイズがタブレットサイズだったら ここで属性を変更できる
             holder.dateText.setTextSize(28);
             holder.schedules.setTextSize(18);
-            // タブレットサイズだったら　holder.schedules はそのまま表示できますが
-
         } else {
-            // 通常画面ならば
-
-            // holder.schedules  の表示は substringで切り取って表示しないといけません 2行にする
-
+            // 通常(スマホサイズ)画面ならば
+            // ここで、属性を変更できる
         }
-
 
     }
 
     @Override
     public int getItemCount() {
-       // return 0;
         return this._data.size();
     }
 
@@ -195,6 +185,6 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarCellViewHolder
     @Override
     public void onViewRecycled(@NonNull CalendarCellViewHolder holder) {
         super.onViewRecycled(holder);
-        notifyDataSetChanged(); // 要る?
+        notifyDataSetChanged();
     }
 }
