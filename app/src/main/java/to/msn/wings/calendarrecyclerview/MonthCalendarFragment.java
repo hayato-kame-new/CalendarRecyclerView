@@ -67,11 +67,11 @@ public class MonthCalendarFragment extends Fragment {
         SimpleDateFormat format = new SimpleDateFormat("yyyy年 MM月");
         // ここで条件分岐します
         String title = "";
-        if (prevButtonDate != null) {  //  null かどうかのチェックが必要です どっちのボタンから遷移してきたのか  どっちかは nullになるので
+        if (prevButtonDate != null) {  //  null かどうかのチェックが必要です どっちのボタンから遷移してきたのか
             title = format.format(prevButtonDate);
             dates = _dateManager.getDays(prevButtonDate);  // 引数ありのgetDays(Date date)　を呼び出す
 
-        } else if (nextButtonDate != null) {  //  null かどうかのチェックが必要です どっちのボタンから遷移してきたのか  どっちかは nullになるので
+        } else if (nextButtonDate != null) {  //  null かどうかのチェックが必要です どっちのボタンから遷移してきたのか
             title = format.format(nextButtonDate);
             dates = _dateManager.getDays(nextButtonDate); // 引数ありのgetDays(Date date)　を呼び出す
             //  null かどうかのチェックが必要です どっちのボタンから遷移してきたのか  どっちかは nullになるので
@@ -90,11 +90,11 @@ public class MonthCalendarFragment extends Fragment {
         // 今月分のカレンダー(１週目に表示した前の月や　最後の週に表示してある後ろの月　の分も含む)に表示するリスト
         List<Schedule> list = new ArrayList<Schedule>();
 
-        _helper = new TimeScheduleDatabaseHelper(parentActivity);
-//  データベースを取得する try-catch-resources構文 finallyを書かなくても必ず close()処理をしてくれます
+        _helper = new TimeScheduleDatabaseHelper(parentActivity);  // _helper.close();をすること
+        //  データベースを取得する try-catch-resources構文 finallyを書かなくても必ず close()処理をしてくれます
         try (SQLiteDatabase db = _helper.getWritableDatabase()) {  // dbはきちんとクローズ自動でしてくれます
 
-            // ここにデータベースの処理を書く SELECT文で取得する 今月分のだけを取得する   SELECT * FROM テーブル名 WHERE date >= '2011-08-20' AND date <= '2011-08-27'
+            //  SELECT文 指定の月の分のだけを取得する   SELECT * FROM テーブル名 WHERE date >= '2011-08-20' AND date <= '2011-08-27'
             //  SELECT * FROM テーブル名 WHERE date BETWEEN '2011-08-20' AND '2011-08-27'  開始時間の順番にして取得する
             String sqlSelect = "SELECT * FROM timeschedule WHERE scheduledate >= ? AND scheduledate <= ? ORDER BY starttime ASC";
 
@@ -127,13 +127,6 @@ public class MonthCalendarFragment extends Fragment {
                 scheduletitle = cursor.getString(index_scheduletitle);
                 schedulememo = cursor.getString(index_schedulememo);
 
-                Log.i("SQLITE", "_id : " + _id + " " +
-                        "scheduledate : " + scheduledate + " " +
-                        "starttime : "+ starttime + " " +
-                        "endtime : "+ endtime + " " +
-                        "scheduletitle : "+ scheduletitle + " " +
-                        "schedulememo : "+ schedulememo + " "
-                );
                 // インスタンス生成
                 schedule = new Schedule(_id, scheduledate,  starttime, endtime, scheduletitle, schedulememo);
                 list.add(schedule);
@@ -141,22 +134,14 @@ public class MonthCalendarFragment extends Fragment {
         }
         _helper.close();  // ここでヘルパーを解放すること　  SQLiteDatabase db は、try-catch-resources構文だから finallyを書かなくても必ず close()処理をしてくれます
 
-        // リスト取得できた リサイクラービューで このリストを日付が同じならば、セット指定く    2022-03-25 14:00 16:00 しごと かいもの
-//        for( Schedule schedule : list) {
-//            Log.i("LIST",
-//                    schedule.getScheduledate() + " "  + schedule.getStarttime() + " "  +
-//                            schedule.getEndtime() + " "  + schedule.getScheduletitle() + " "  + schedule.getSchedulememo());
-//        }
-
-
         // 表示用のフォーマットし直し
         format = new SimpleDateFormat("d");  // "dd" だと　　01  02 となってしまう
         // もう一つ必要  ループの中で使うためここでインスタンスを生成しておく  表示はしないけど必要
         SimpleDateFormat sdFormat = new SimpleDateFormat("yyyy/MM/dd");  //  2017/03/02
         // 比較をするために本日現在を取得する
         Calendar calendar = Calendar.getInstance();
-        int month = calendar.get(Calendar.MONTH) + 1;  // 今日現在の月
-        int day = calendar.get(Calendar.DATE);  // 今日現在の日
+        int month = calendar.get(Calendar.MONTH) + 1;  // 現在の月
+        int day = calendar.get(Calendar.DATE);  // 現在の日
 
         /**
          * 表示だけのテキストのリスト
@@ -181,7 +166,7 @@ public class MonthCalendarFragment extends Fragment {
             String display = format.format(date);
             item.setDateText(display);  // セットします
             String non_display =  sdFormat.format(date); //  2017/03/02 という形
-            item.setTextViewGone(non_display);  // アダプターで非表示にしてるけど、日付の情報は送れてる
+            item.setTextViewGone(non_display);  // アダプターで非表示にしてるけど、日付の情報を送るため
 
             // 追加 listの中にある同じ日付けの
             String display_schedules = "";
@@ -200,14 +185,13 @@ public class MonthCalendarFragment extends Fragment {
                         scheduleTitle =  scheduleTitle.substring(0, 8);
                     }
                     display_schedules += schedule.getStarttime() + "~ " + scheduleTitle + "\n";
-
                 }
                 item.setSchedules(display_schedules);
             }
             data.add(item);
         }
 
-        // 最初の土曜日は、その月に必ずなってるから
+        // 最初の土曜日は、その月に必ずなってるから 取得して
         Date firstSaturdayDate = dates.get(6);
 
         // 表示してる月よりも１つ前の月を表示するためのボタン
@@ -257,7 +241,6 @@ public class MonthCalendarFragment extends Fragment {
 
         //  今月の表示に戻る MainActivityに戻る  自分自身が所属するアクティビティを終了させます
         _currentMonthButton = view.findViewById(R.id.currentMonthButton);
-
         _currentMonthButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -291,10 +274,8 @@ public class MonthCalendarFragment extends Fragment {
     @Override
     public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
 
-        //   Log.i("Layout", "onViewStateRestoredが呼ばれました!!! 非推奨のonActivityCreatedの代わりにこれを使うこと");
         super.onViewStateRestored(savedInstanceState);
         Activity parentActivity = getActivity();  // このフラグメントの自分　が所属するアクティビティを取得する MonthCalendarActivity
-
 
         // 自分が所属するアクティビティから、 id が　activityMonthCalendarFrame　の　FrameLayoutを取得する
         View activityMonthCalendarFrame = parentActivity.findViewById(R.id.activityMonthCalendarFrame);
@@ -308,7 +289,6 @@ public class MonthCalendarFragment extends Fragment {
 
     /**
      * アクセッサ  ゲッターメソッド
-     * TimeSucheduleListAdapterクラスの onCreateViewHolderメソッドの中の setOnClickListenerのところで使います
      * @return true: 大画面である <br /> false: 通常サイズ（スマホサイズ)である
      */
     public boolean is_isLayoutXLarge() {

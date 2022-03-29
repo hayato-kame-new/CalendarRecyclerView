@@ -8,14 +8,10 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-/**
- * RecyclerView.ViewHolderを継承すること
- */
-public class CalendarCellViewHolder extends RecyclerView.ViewHolder {
+public class CalendarCellViewHolder extends RecyclerView.ViewHolder { // RecyclerView.ViewHolderを継承すること
 
     //　フィールド
     View view;  // ルート要素のビューここだと ConstraintLayoutのこと
-
 
     TextView dateText;  // ルートの配下のウィジェット
 
@@ -35,7 +31,6 @@ public class CalendarCellViewHolder extends RecyclerView.ViewHolder {
         this.dateText = view.findViewById(R.id.dateText);
         this.textViewToday = view.findViewById(R.id.textViewToday);
         this.textViewGone = view.findViewById(R.id.textViewGone);  // 非表示にする
-        // 追加
         this.schedules = view.findViewById(R.id.schedules);
     }
 }

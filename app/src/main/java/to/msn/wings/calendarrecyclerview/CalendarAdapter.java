@@ -112,7 +112,6 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarCellViewHolder
                 context.startActivity(intent);
             }
         } );
-
         return new CalendarCellViewHolder(v);
     }
 
@@ -130,7 +129,6 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarCellViewHolder
         holder.textViewGone.setText(this._data.get(position).getTextViewGone());
         // 追加
         holder.schedules.setText(this._data.get(position).getSchedules());
-
 
         // holder.view は　ルート要素です　ここでは　ConstraintLayoutです
         // ConstraintLayout route = (ConstraintLayout) holder.view;
@@ -173,7 +171,6 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarCellViewHolder
             // 通常(スマホサイズ)画面ならば
             // ここで、属性を変更できる
         }
-
     }
 
     @Override

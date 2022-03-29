@@ -12,7 +12,6 @@ public class DateManager {
     //フィールド
     Calendar _mCalendar;
 
-// ここ修正しても大丈夫かも mCalendar = Calendar.getInstance();をここに書いても OKかも 後で確認すること
     public DateManager(){
         // コンストラクタでは生成しないように変更した
        // mCalendar = Calendar.getInstance();
@@ -25,7 +24,7 @@ public class DateManager {
      * @return List<Date> 現在の月のカレンダーに表示するためのリスト
      */
     public List<Date> getDays() {
-        // コンストラクタではなく、ここで現在を取得するようにした　　変更
+
         _mCalendar = Calendar.getInstance();
         // 現在
         Date startDate = _mCalendar.getTime();
@@ -66,7 +65,6 @@ public class DateManager {
     public List<Date> getDays(Date date){
         // 指定の日付は引数から取得できる
 
-        // コンストラクタではなく、ここで現在を取得するようにした　　変更
         _mCalendar = Calendar.getInstance();
         _mCalendar.setTime(date);  // 指定の日付にする
         // 指定の日付の月のグリッドに表示するマスの合計
@@ -93,8 +91,7 @@ public class DateManager {
         _mCalendar.setTime(date);  // ちょっと確認する
         return days;
     }
-
-
+    
     //当月かどうか確認
     public boolean isCurrentMonth(Date date){
         SimpleDateFormat format = new SimpleDateFormat("yyyy.MM", Locale.US);
@@ -107,32 +104,11 @@ public class DateManager {
         }
     }
 
-
-
-    /**
-     * 週の数を取得する
-     * @return
-     */
-//    public int getWeeks() {
-//        return mCalendar.getActualMaximum(Calendar.WEEK_OF_MONTH);
-//    }
-
-
     //曜日を取得
     public int getDayOfWeek(Date date) {
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(date);
         return calendar.get(Calendar.DAY_OF_WEEK);
     }
-
-    //翌月へ
-//    public void nextMonth(){
-//        mCalendar.add(Calendar.MONTH, 1);
-//    }
-
-    //前月へ
-//    public void prevMonth(){
-//        mCalendar.add(Calendar.MONTH, -1);
-//    }
 
 }

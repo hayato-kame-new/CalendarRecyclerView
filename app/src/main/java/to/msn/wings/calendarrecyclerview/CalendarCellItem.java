@@ -2,16 +2,15 @@ package to.msn.wings.calendarrecyclerview;
 
 public class CalendarCellItem {
 
-    private long id = 0;  // 識別するためのID ランダムにつけてる
+    private long id = 0;  // 識別するためのID
 
     private String dateText = null;
 
-    // 追加  textViewToday
     private String textViewToday = null;
-    // 追加 非表示のTextViewにする
+    //  非表示のTextViewにする
     private String textViewGone = null;
 
-   // 追加 表示する各スケジュールを文字列で連結したもの
+   // 表示する各スケジュールを文字列で連結したもの
     private String schedules = null;
 
     // ゲッター セッター

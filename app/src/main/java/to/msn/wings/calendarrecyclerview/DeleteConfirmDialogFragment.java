@@ -34,9 +34,9 @@ import java.util.Date;
 public class DeleteConfirmDialogFragment extends DialogFragment {
 
     private TimeScheduleDatabaseHelper _helper;
-    String strId = "";
-    String scheduleTitle = "";
-    String strDate = "";
+    String _strId = "";
+    String _scheduleTitle = "";
+    String _strDate = "";
 
     @NonNull
     @Override
@@ -45,9 +45,9 @@ public class DeleteConfirmDialogFragment extends DialogFragment {
         // フォームで削除ボタンを押した時に、Bundleでデータを引き渡してるので、取得する
         Bundle args = requireArguments();
         // String型のデータを渡しているので
-        strId = args.getString("strId");  // onCreateDialogメソッドで取得しておく
-        scheduleTitle = args.getString("scheduleTitle");
-        strDate = args.getString("strDate");
+        _strId = args.getString("strId");  // onCreateDialogメソッドで取得しておく
+        _scheduleTitle = args.getString("scheduleTitle");
+        _strDate = args.getString("strDate");
 
         // 既存のダイアログに TextViewを 付け足すには
         Activity parentActivity = getActivity();
@@ -55,8 +55,8 @@ public class DeleteConfirmDialogFragment extends DialogFragment {
         TextView textViewStrId = new TextView(parentActivity);  // 既存のダイアログに 追加するTextView インスタンスを生成する
         TextView textViewScheduleTitle = new TextView(parentActivity);
 
-        textViewStrId.setText(strId);  // ここに動的に _idカラムの値をString型にしたものをセットして、非表示にする
-        textViewScheduleTitle.setText("タイトル: " + scheduleTitle );  // こっちが上に重なって乗ってid見えない
+        textViewStrId.setText(_strId);  // ここに動的に _idカラムの値をString型にしたものをセットして、非表示にする
+        textViewScheduleTitle.setText("タイトル: " + _scheduleTitle );  // こっちが上に重なって乗ってid見えない
         textViewScheduleTitle.setGravity(Gravity.CENTER);
 
         // textViewStrId.setVisibility(View.VISIBLE);
@@ -82,19 +82,17 @@ public class DeleteConfirmDialogFragment extends DialogFragment {
 
             switch(i) {
                 case DialogInterface.BUTTON_POSITIVE:
-                    // ここで、削除の処理を実行するので データベースへ接続をします。 helperをclose()してください。
-                    Log.i("Dialog", "削除ボタン押しました");
+                    // ここで、削除の処理を実行するので データベースへ接続をします。
 
                     Activity parentActivity = getActivity();
-                    _helper = new TimeScheduleDatabaseHelper(parentActivity);  // _helper は　同じonClickの中で解放する
+                    _helper = new TimeScheduleDatabaseHelper(parentActivity);  // _helper は解放すること
                     //  データベースを取得する try-catch-resources構文を使うので  SQLiteDatabase db は　finallyを書かなくても必ず close()処理をしてくれます
                     try (SQLiteDatabase db = _helper.getWritableDatabase()) {  // dbはきちんとクローズ自動でしてくれます
 
-                        // ここにデータベースの処理を書く
                         String sqlDelete = "DELETE FROM timeschedule WHERE _id = ?";
 
                         SQLiteStatement stmt = db.compileStatement(sqlDelete);
-                        stmt.bindLong(1, Long.parseLong(strId));
+                        stmt.bindLong(1, Long.parseLong(_strId));
                         stmt.executeUpdateDelete();
 
                     }
@@ -106,21 +104,22 @@ public class DeleteConfirmDialogFragment extends DialogFragment {
                     // スケジュールを挿入した年月が、現在の年月なら MainActivityへ　それ以外の月ならMonthCalendarActivityへ遷移する "2022-03-19"
                     Date date = null;
                     try {
-                         date = new SimpleDateFormat("yyyy/MM/dd").parse(strDate);
+                         date = new SimpleDateFormat("yyyy/MM/dd").parse(_strDate);
                     } catch (ParseException e) {
                         e.printStackTrace();
                     }
 
-                    int year = Integer.parseInt(strDate.substring(0, 4));
-                    int month = Integer.parseInt(strDate.substring(5, 7));
+                    int year = Integer.parseInt(_strDate.substring(0, 4));
+                    int month = Integer.parseInt(_strDate.substring(5, 7));
                     // 現在を取得して
                     LocalDate localdateToday = LocalDate.now();
                     Intent intent = null;
                     if (year == localdateToday.getYear() && month == localdateToday.getMonthValue()) {
-
+                        // 現在と同じなので MainActivityへ遷移する
                         intent = new Intent(parentActivity, MainActivity.class);
                         startActivity(intent);
                     } else {
+                        // 指定の日付のカレンダーを表示するため MonthCalendarActivityへ遷移する
                         intent = new Intent(parentActivity, MonthCalendarActivity.class);
                         intent.putExtra("specifyDate", date);  //  Date型情報を渡します
                         startActivity(intent);
