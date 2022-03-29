@@ -147,8 +147,9 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarCellViewHolder
 
         // 追加
         TextView schedules = holder.view.findViewById(R.id.schedules);
-        // これに対して、属性をつけられます
+    //    String s = schedules.getText().toString();
 
+        // 属性をつける
         for(int i = 0; i < _data.size(); i++) {
             if (position == (i*7 )) {  // 日曜日
                 cardView.setCardBackgroundColor(null);

@@ -193,17 +193,15 @@ public class MonthCalendarFragment extends Fragment {
                         && m ==  Integer.parseInt(scheduledate.substring(5, 7))
                         && d == Integer.parseInt(scheduledate.substring(8))) {
                     // 同じ日付のものが見つかったら セルの中に表示する
-                    String ti = schedule.getScheduletitle();
+                    String scheduleTitle = schedule.getScheduletitle();
+                    //  タイトルに改行があったら取り除いて、カレンダーのCardViewに表示したいので
+                    scheduleTitle =  scheduleTitle.replaceAll("[\r\n]", " ");
 
-                    //
-                    // 全部tiを使って構わない CalendarAdapterで、画面サイズによって表示を切り捨てるから
-                    ////////////
-                    ///////////
-
-                    if(ti.length() > 3) {  // 注意エラーに
-                        ti = schedule.getScheduletitle().substring(0, 4);
+                    if (scheduleTitle.length() > 7) {
+                        scheduleTitle =  scheduleTitle.substring(0, 8);
                     }
-                    display_schedules +=  schedule.getStarttime() + "~ "  +  ti + "\n";
+                    display_schedules += schedule.getStarttime() + "~ " + scheduleTitle + "\n";
+
                 }
                 item.setSchedules(display_schedules);
             }
