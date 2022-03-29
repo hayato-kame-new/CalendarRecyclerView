@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -26,6 +27,11 @@ import java.util.Date;
 import java.util.List;
 
 public class MonthCalendarFragment extends Fragment {
+
+
+    // 大画面かどうかの判定フラグ インスタンスフィールド onViewStateRestoredコールバックメソッドをオーバーライドします！！！
+    // 大画面かどうかは、他のフラグメントを調べます
+    private boolean _isLayoutXLarge = true;  // ここでは 初期値は trueにしておく
 
     private TimeScheduleDatabaseHelper _helper;
     private TextView _titleText;
@@ -277,5 +283,38 @@ public class MonthCalendarFragment extends Fragment {
         rv.setAdapter(adapter);
 
         return view;
+    }
+
+    /**
+     *  onActivityCreated() メソッドは非推奨になりました。 onViewStateRestored に書いてください
+     *  ここでViewの状態を復元する
+     *   onCreate   onCreateView   onViewCreated   非推奨のonActivityCreated   推奨のonViewStateRestored  の順で呼ばれる
+     * @param savedInstanceState
+     */
+    @Override
+    public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
+
+        //   Log.i("Layout", "onViewStateRestoredが呼ばれました!!! 非推奨のonActivityCreatedの代わりにこれを使うこと");
+        super.onViewStateRestored(savedInstanceState);
+        Activity parentActivity = getActivity();  // このフラグメントの自分　が所属するアクティビティを取得する MonthCalendarActivity
+
+
+        // 自分が所属するアクティビティから、 id が　activityMonthCalendarFrame　の　FrameLayoutを取得する
+        View activityMonthCalendarFrame = parentActivity.findViewById(R.id.activityMonthCalendarFrame);
+
+        // この判定は CardViewに表示するテキストのサイズなどの切り替えを画面サイズによって設定する時に使う CalendarAdaoterクラスで使うために必要
+        if (activityMonthCalendarFrame == null) {  // nullならば、大画面ではないので
+            // 画面判定フラグを通常画面(スマホサイズ)とする
+            _isLayoutXLarge = false; // falseだと 通常画面(スマホサイズ)
+        }
+    }
+
+    /**
+     * アクセッサ  ゲッターメソッド
+     * TimeSucheduleListAdapterクラスの onCreateViewHolderメソッドの中の setOnClickListenerのところで使います
+     * @return true: 大画面である <br /> false: 通常サイズ（スマホサイズ)である
+     */
+    public boolean is_isLayoutXLarge() {
+        return _isLayoutXLarge;
     }
 }

@@ -13,6 +13,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.FragmentActivity;
@@ -38,6 +39,7 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarCellViewHolder
     // 大画面かどうかの判定フラグ インスタンスフィールド   宣言だけをしておき TimeScheduleFragmentのゲッターを使ってフィールドに代入する
     private boolean _isLayoutXLarge;  // 宣言だけ クラスのインスタンスフィールドの初期値は　falseになっています
 
+
     // コンストラクタ
     public CalendarAdapter(ArrayList<CalendarCellItem> data) {
         this._data = data;
@@ -57,20 +59,41 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarCellViewHolder
         // v　は　CardView
         View v = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.calendar_cell, parent, false);
-        MainActivity parentActivity = (MainActivity) parent.getContext();  // MainActivity
+
+        // MainActivity型ではだめですここだめエラー 今月意外だとエラーになる 他の月の場合は parent.getContext()　は MonthCalendarActivityを取得するので
+        AppCompatActivity parentActivity = (AppCompatActivity) parent.getContext();  // MainActivity もしくは MonthCalendarActivity
+        // 条件分岐してください
+        MainActivity mainA = null;
+        MonthCalendarActivity monthA = null;
+        if (parentActivity.getClass().equals(MainActivity.class)) {
+            mainA = (MainActivity)parentActivity;
+        } else if (parentActivity.getClass().equals(MonthCalendarActivity.class)) {
+             monthA = (MonthCalendarActivity)parentActivity;
+        }
+
 
         // 大画面の場合 追加  androidx(テン)のパッケージの方ですので注意
         androidx.fragment.app.FragmentManager fmanager = null;
         final androidx.fragment.app.FragmentTransaction[] FINAL_F_TRANSACTION = {null};  // 匿名クラスの中で使うので finalの配列にする
 
-        // parent.getContext()　では　MainActivityが取得できる
-       fmanager = ((FragmentActivity) parent.getContext()).getSupportFragmentManager();  // getSupportFragmentManager()を呼び出すには FragmentActivityにキャストする
-       //  フラグメントマネージャーから、MainActivityに所属しているフラグメントを取得できます   findFragmentById メソッドを使う
-       // MainActivytyには 上に CurrentMonthFragmentが乗っていますので
-      CurrentMonthFragment currentMonthFragment = (CurrentMonthFragment)fmanager.findFragmentById(R.id.currentMonthFragment);
+        // 条件分岐
+        if (mainA != null) {
 
-        // このクラスのインスタンスフィールドに値をセットします！！ このあと、onBindViewHolderでも自分自身のインスタンスフィールドから取得するので
-        _isLayoutXLarge = currentMonthFragment.is_isLayoutXLarge();  // currentMonthFragmentインスタンスのゲッターメソッドを使う
+            fmanager = ((FragmentActivity) mainA).getSupportFragmentManager();
+
+            //  フラグメントマネージャーから、MainActivityに所属しているフラグメントを取得できます   findFragmentById メソッドを使う
+            // MainActivytyには 上に CurrentMonthFragmentが乗っていますので
+            CurrentMonthFragment currentMonthFragment = (CurrentMonthFragment)fmanager.findFragmentById(R.id.currentMonthFragment);
+
+            // このクラスのインスタンスフィールドに値をセットします！！ このあと、onBindViewHolderでも自分自身のインスタンスフィールドから取得するので
+            _isLayoutXLarge = currentMonthFragment.is_isLayoutXLarge();  // currentMonthFragmentインスタンスのゲッターメソッドを使う
+        } else if (monthA != null) {
+            fmanager = ((FragmentActivity) monthA).getSupportFragmentManager();
+            // MonthCalendarActivityの 上には MonthCalendarFragment が乗っているので
+            MonthCalendarFragment monthCalendarFragment = (MonthCalendarFragment)fmanager.findFragmentById(R.id.monthCalendarFragment);
+            _isLayoutXLarge = monthCalendarFragment.is_isLayoutXLarge();
+        }
+
 
         v.setOnClickListener(new View.OnClickListener() {
             @Override
