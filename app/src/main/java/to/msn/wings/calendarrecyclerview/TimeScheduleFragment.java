@@ -33,7 +33,7 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * このフラグメントで、個々のタイムスケジュールのCardViewを表示させる  fragment_time_schedule.xml の
+ * このフラグメントで、RecyclerViewを表示する
  */
 public class TimeScheduleFragment extends Fragment {
     // 大画面かどうかの判定フラグ インスタンスフィールド onViewStateRestoredコールバックメソッドをオーバーライドします！！！
@@ -44,15 +44,8 @@ public class TimeScheduleFragment extends Fragment {
     private TextView _day, _day_today;
 
     @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-       // Log.i("Layout", "onCreateが呼ばれました");
-        super.onCreate(savedInstanceState);
-    }
-
-    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-       // Log.i("Layout", "onCreateViewが呼ばれました");
         View view = inflater.inflate(R.layout.fragment_time_schedule, container, false);
 
         Activity parentActivity = getActivity();
@@ -63,7 +56,7 @@ public class TimeScheduleFragment extends Fragment {
         String scheduleDayText ="";
         String todayString = "";
         Date date = null;  // 文字列から　Date型へ変換するため  リスナーの匿名クラス(無名クラス インナークラス)で使用するので 後で、finalをつけて定数にする
-        // インナークラスで使うために final で定数に
+
         if(extras != null) {
             scheduleDayText = intent.getStringExtra("scheduleDayText");
             todayString = intent.getStringExtra("todayString");
@@ -76,13 +69,12 @@ public class TimeScheduleFragment extends Fragment {
                 }
             }
         }
-// インナークラスで使うために final で定数に
+        // インナークラスで使うために final で定数に
         final Date DATE = date;
         _currentMonButton = view.findViewById(R.id.currentMonButton);
-
-        _day = view.findViewById(R.id.titleText); // fragment_time_schedule.xmlの idが titleTextのもの
+        _returnMonButton = view.findViewById(R.id.returnMonButton);
+        _day = view.findViewById(R.id.titleText);
         _day.setText(scheduleDayText);
-
 
         _day_today = view.findViewById(R.id.day_today);
         if (!todayString.equals("")) {
@@ -90,14 +82,13 @@ public class TimeScheduleFragment extends Fragment {
         }
         _day_today.setText(todayString);
 
-        _returnMonButton = view.findViewById(R.id.returnMonButton);
         int year = Integer.parseInt(scheduleDayText.substring(0, 4));
         int month = Integer.parseInt(scheduleDayText.substring(5, 7));
         _returnMonButton.setText(year + "年" + month + "月カレンダーへ戻る");
 
-        // 現在を取得して LocalDate の方がいい　Calendar使わない
+        // 現在を取得して 比較する
         LocalDate localdateToday = LocalDate.now();
-// returnMonButton は、今月ならば 非表示にしています
+        // returnMonButton は、今月ならば 非表示にしています
         if (year == localdateToday.getYear() && month == localdateToday.getMonthValue()) {
             _returnMonButton.setVisibility(View.GONE); // これで表示しない なおかつ 非表示にしたスペースを詰める
         }
@@ -158,13 +149,13 @@ public class TimeScheduleFragment extends Fragment {
                 scheduletitle = cursor.getString(index_scheduletitle);
                 schedulememo = cursor.getString(index_schedulememo);
 
-                Log.i("SQLITE_TIME_SCHE", "_id : " + _id + " " +
-                        "scheduledate : " + scheduledate + " " +
-                        "starttime : "+ starttime + " " +
-                        "endtime : "+ endtime + " " +
-                        "scheduletitle : "+ scheduletitle + " " +
-                        "schedulememo : "+ schedulememo + " "
-                );
+//                Log.i("SQLITE_TIME_SCHE", "_id : " + _id + " " +
+//                        "scheduledate : " + scheduledate + " " +
+//                        "starttime : "+ starttime + " " +
+//                        "endtime : "+ endtime + " " +
+//                        "scheduletitle : "+ scheduletitle + " " +
+//                        "schedulememo : "+ schedulememo + " "
+//                );
                 // インスタンス生成
                 schedule = new Schedule(_id, scheduledate,  starttime, endtime, scheduletitle, schedulememo);
                 list.add(schedule);
@@ -289,19 +280,6 @@ public class TimeScheduleFragment extends Fragment {
         return view;
     }
 
-    @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-       // Log.i("Layout", "onViewCreatedが呼ばれました");
-        super.onViewCreated(view, savedInstanceState);
-    }
-
-    // onActivityCreated() メソッドは非推奨になりました。 onViewStateRestored に書いてください
-    @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-      //  Log.i("Layout", "非推奨のonActivityCreatedが呼ばれました");
-        super.onActivityCreated(savedInstanceState);
-    }
-
 
     /**
      *  onActivityCreated() メソッドは非推奨になりました。 onViewStateRestored に書いてください
@@ -312,7 +290,6 @@ public class TimeScheduleFragment extends Fragment {
     @Override
     public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
 
-     //   Log.i("Layout", "onViewStateRestoredが呼ばれました!!! 非推奨のonActivityCreatedの代わりにこれを使うこと");
         super.onViewStateRestored(savedInstanceState);
         Activity parentActivity = getActivity();  // このフラグメントの自分　が所属するアクティビティを取得する
 
@@ -329,7 +306,6 @@ public class TimeScheduleFragment extends Fragment {
 
     /**
      * アクセッサ  ゲッターメソッド
-     * TimeSucheduleListAdapterクラスの onCreateViewHolderメソッドの中の setOnClickListenerのところで使います
      * @return true: 大画面である <br /> false: 通常サイズ（スマホサイズ)である
      */
     public boolean is_isLayoutXLarge() {

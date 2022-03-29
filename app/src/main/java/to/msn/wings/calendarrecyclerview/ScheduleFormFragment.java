@@ -43,12 +43,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-/**
- * 新規登録の時と 編集の時にこのフラグメントでデータベースに接続する
- */
 public class ScheduleFormFragment extends Fragment {
-    // 大画面かどうかの判定フラグを 追加し、 onCreate()メソッドをオーバーライドして処理を記述
-    private boolean _isLayoutXLarge = true;  // 追加
+    // 大画面かどうかの判定フラグを 追加し、 onCreate()メソッドをオーバーライドして 大画面なのか調べて _isLayoutXLarge に代入する
+    private boolean _isLayoutXLarge = true;  // trueにしておく
 
     TextView _formTitle, _textViewHourError, _textViewMinutesError;
     Button _returnMonButton, _currentMonButton;
@@ -65,42 +62,37 @@ public class ScheduleFormFragment extends Fragment {
         super.onCreate(savedInstanceState);
         // 注意　getFragmentManager() 非推奨になりました
         FragmentManager manager = getParentFragmentManager();
-        // フラグメントマネージャーから、 他のフラグメントが取得できる TimeScheduleFragmentを取得する
+        // フラグメントマネージャーから、 所属しているアクティビティの上に乗ってるフラグメントが取得できる TimeScheduleFragmentを取得する
         TimeScheduleFragment timeScheduleFragment = (TimeScheduleFragment) manager.findFragmentById(R.id.timeScheduleFragment);
 
-        // ScheduleFormFragment自分自身と、　同じアクティビティ上に、 TimeScheduleFragment が乗っていたら 大画面
+        // ScheduleFormFragment自分自身と、　同じアクティビティ上に、 TimeScheduleFragment が乗っていたら 大画面   nullだったらスマホサイズ
         if (timeScheduleFragment == null) {
-            // 通常画面
+            // 通常(スマホサイズ)画面
             _isLayoutXLarge = false;
         }
-
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
         // TimeSheduleActivity (TimeSheduleFragment)　から  所属するアクティビティのScheduleFormActivityへ画面遷移してくる
         // このフラグメントが  所属するアクティビティのScheduleFormActivity の取得
         Activity parentActivity = getActivity();
         View view = inflater.inflate(R.layout.fragment_schedule_form, container, false);
 
-        // 追加 大画面だった時の処理
+        //  大画面だった時の処理と、スマホサイズの処理を分岐する
         Bundle extras;
 
         if (_isLayoutXLarge) {  // 大画面だった時には、同じアクティビティ上で、フラグメント間でのデータの引き渡しをする
             extras = getArguments() ;  // TimeScheduleフラグメントから自分自身のフラグメントへデータを受け取る
-        } else {
-
+        } else {  // スマホサイズの時
             //  所属するアクティビティから インテントを取得する
             Intent intent = parentActivity.getIntent();
             // インテントから、引き継ぎデータをまとめたものを取得
              extras = intent.getExtras();
-
         }
 
-
-// フラグMap  インスタンス生成
+        // フラグMap  インスタンス生成
         _buttonFlagMap = new HashMap<String, Boolean>();
 
         _saveButton = view.findViewById(R.id.saveButton);
@@ -134,10 +126,9 @@ public class ScheduleFormFragment extends Fragment {
         String endH = "";
         String endM = "";
 
-     //    if (!timeString.equals("")) {
         if (timeString != null) {
             // 編集の時  "[ 09:00 ~ 15:00 ]"  という形になっていますので 取り除きます
-        // String result = s.replace("[", "").replace("]", "").replace(" ", "").replace("~", "").replace(":", "");
+            // String result = s.replace("[", "").replace("]", "").replace(" ", "").replace("~", "").replace(":", "");
             // 注意  正規表現 角括弧は　バックスラッシュを2つ書くことで、対応します
             String replaced = timeString.replaceAll("[\\[\\]~ :]", "");  // "09001500"
              startH = replaced.substring(0, 2);  // "09"
@@ -212,7 +203,6 @@ public class ScheduleFormFragment extends Fragment {
         _deleteButton.setMinimumWidth(0); // ボタンの最小幅がデフォルトで64dipである  一旦0にする
         _deleteButton.setWidth(180);
 
-
         // Date型の getYear getMonth getDay　は　非推奨メソッドなので、SimpleDateFormatを使い、文字列として取得する
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy年M月");  // MM に　すると 01 02 03   M にすると 1  2  3
         String str = sdf.format(date[0]);  // ボタンに表示するための
@@ -254,7 +244,6 @@ public class ScheduleFormFragment extends Fragment {
             _buttonFlagMap.put("scheTitle", true );  // 編集では、最初は押せるようになってる
         }
 
-
         // 遷移してくる前に表示していた　カレンダーの年と月に戻るために、
         _returnMonButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -270,7 +259,6 @@ public class ScheduleFormFragment extends Fragment {
             }
         });
 
-
         //  現在(今月)のカレンダーの表示へ遷移する MainActivityに戻る  自分自身が所属するアクティビティを終了させます
         _currentMonButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -283,8 +271,7 @@ public class ScheduleFormFragment extends Fragment {
             }
         });
 
-
-        // イベントリスナー タイトルのEditTextに何か入力をしたら、保存ボタンが押せるフラグMapに 値をtrueで登録
+        // スケジュールタイトルのEditTextにイベントリスナーをつける  何か入力をしたら、保存ボタンが押せるフラグMapに 値をtrueで登録する
         _editTextScheTitle.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
@@ -298,18 +285,15 @@ public class ScheduleFormFragment extends Fragment {
                 if(!word.equals("")) {
                     _buttonFlagMap.put("scheTitle", true );  // ""空文字じゃなかったら 保存ボタンが押せる
                 }
-                // もし、Mapの値が全て trueならばボタンを押せるようにする　メソッド化する
+                // もし、保存ボタンが押せるか押せないか切り替えるメソッドを呼び出す  Mapの値が全て trueならばボタンを押せるようになってる
                 changeSaveButton(_buttonFlagMap);
             }
         });
 
-
-        // CalendarViewに日時を設定します。
-     //    _calendarView.setDate(DATE.getTime());  // 引数には long型
-        long setL = _calendarView.getDate();
+        long setL = _calendarView.getDate();  // 上で  _calendarView.setDate(DATE.getTime());　CalendarViewに日時を設定してるので
 
         java.sql.Date setDaySql = new java.sql.Date(setL);
-        // データベースへ登録するための フィールド 内部クラスで使うから final にしておく 初期値は、遷移してきた時に選択してあった日付にしておくので
+        //  内部クラスで使うから final にしておく 初期値は、遷移してきた時に選択してあった日付にしておくので
         final java.sql.Date[] sqlDateArray = {setDaySql};  // 配列の中身なら書き換え可能だから 配列にする
         // new 以降は　無名クラス 匿名クラスなので　　その中で使うなら　定数にするのでDATEを使う
         _calendarView.setOnDateChangeListener(new CalendarView.OnDateChangeListener() {  //  CalendarViewで日にちが選択された時に呼び出されるリスナークラス
@@ -324,15 +308,11 @@ public class ScheduleFormFragment extends Fragment {
                 java.util.Date utilDate = c.getTime();
                 java.sql.Date sqlDate = new java.sql.Date(utilDate.getTime());  // 本当は変換必要なかった java.util.Date　のままで良かったです
                 sqlDateArray[0] = sqlDate;
-                // Toast.makeText(view.getContext(), sqlDateArray[0].toString(), Toast.LENGTH_LONG).show();
+
             }
         });
 
-
-
-
-
-// データベースへ登録するための フィールド 内部クラスで使うから final にしておく
+        // データベースへ登録するための フィールド 内部クラスで使うから final にしておく
         // 開始時間を表す文字列の定数　インナークラスで使うから final で定数化しておく必要がある。また、配列にすると、要素を書き換えるようにできる
         final String[] _START_HOUR_STR_ARRAY = {""};
         // 終了時間を表す文字列の定数　インナークラスで使うから final で定数化しておく必要がある。また、配列にすると、要素を書き換えるようにできる
@@ -347,8 +327,8 @@ public class ScheduleFormFragment extends Fragment {
         _spinnerStartHour.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-             //   Toast.makeText(getActivity(), "データベースに登録する日付は " + sqlDateArray[0].toString(), Toast.LENGTH_SHORT).show();
-                String str = (String)adapterView.getItemAtPosition(i);  // 最初は一番上 "0" が選択された状態になってる
+
+                String str = (String)adapterView.getItemAtPosition(i);  // 新規の時 最初は一番上 "0" が選択された状態になってる
 
                 if ( _END_HOUR_STR_ARRAY[0].equals("")) {   // END_HOUR_STR_ARRAY[0] が""空文字じゃなければ　　Integer.parseIntします
                    // 何もしない
@@ -375,7 +355,7 @@ public class ScheduleFormFragment extends Fragment {
                     _buttonFlagMap.put("startMinutes", true ); // 押せる
                 }
                 _START_HOUR_STR_ARRAY[0] = (String) adapterView.getItemAtPosition(i);  // 選択されたアイテムを　親のアダプタービューから ポジションを指定して取得する
-             //   Toast.makeText(getActivity(), "あなたが選んだ開始時間は " + START_HOUR_STR_ARRAY[0] + " 時です", Toast.LENGTH_SHORT).show();
+
                 // ここでボタン変更するメソッドをよぶ
                 changeSaveButton(_buttonFlagMap);
             }
@@ -389,27 +369,12 @@ public class ScheduleFormFragment extends Fragment {
             }
         });
 
-// 終了時間にリスナーつける
-        // 終了時間を表す文字列の定数　インナークラスで使うから final で定数化しておく必要がある。また、配列にすると、要素を書き換えるようにできる
-        //  final String[] END_HOUR_STR_ARRAY = {""};
+        // 終了時間にリスナーつける
         _spinnerEndHour.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
 
-//                if ( i == 0) {
-//                    // ポジションが 0番目のアイテム(つまり、選択しない)を 選択している時には、下の、終了の分を 見えなくする View.INVISIBLEにする
-//                    // SpinnerはView.GONEにしてしまうとonItemSelectedイベントが発動しないので注意
-//                    _spinnerEndMinutes.setVisibility(View.INVISIBLE);  // 分を 入力させないため 場所はそのまま確保したままで 見えなくする
-//                    _spinnerEndMinutes.setSelection(0);  // 終了の時間が "選択しない”なので  終了の 分も "選択しない" にしておく
-//                } else {
-//                    _spinnerEndMinutes.setVisibility(View.VISIBLE);  // 見えるようにする
-//                    // 終了の分のアダプターから "選択しない" を削除しておき  終了の分の選択済みを "00"にしておく
-//                    adapterEM.remove("選択しない");
-//                    _spinnerEndMinutes.setSelection(0);  // "00" にしておく
-//                }
-             //   String select = (String)adapterView.getItemAtPosition(i);
                 // 入力チェック
-
                 if ( _START_HOUR_STR_ARRAY[0].equals("") || _START_MINUTES_STR_ARRAY[0].equals("") || _END_MINUTES_STR_ARRAY[0].equals("")) {
                     // 何もしない
                 } else if ( Integer.parseInt((String)adapterView.getItemAtPosition(i)) < Integer.parseInt(_START_HOUR_STR_ARRAY[0])) {
@@ -417,7 +382,7 @@ public class ScheduleFormFragment extends Fragment {
                     _textViewHourError.setText("開始時間と終了時間を確認してください");
                     // 押せない
                     _buttonFlagMap.put("endHour", false );
-                    // この下を追加しました！！
+
                 } else if (Integer.parseInt((String)adapterView.getItemAtPosition(i)) ==  Integer.parseInt(_START_HOUR_STR_ARRAY[0]) &&  (Integer.parseInt(_START_MINUTES_STR_ARRAY[0]) > Integer.parseInt(_END_MINUTES_STR_ARRAY[0]))){
                     _textViewHourError.setError("開始時間と終了時間を確認してください");
                     _textViewHourError.setText("開始時間と終了時間を確認してください");
@@ -428,12 +393,11 @@ public class ScheduleFormFragment extends Fragment {
                     _textViewHourError.setText("");
                     _buttonFlagMap.put("endHour", true );  // 押せる
                     _buttonFlagMap.put("startHour", true );  // 押せる
-                    // 追加
+
                     _textViewMinutesError.setError(null);
                     _textViewMinutesError.setText("");
                     _buttonFlagMap.put("endMinutes", true ); // 押せる
                     _buttonFlagMap.put("startMinutes", true ); // 押せる
-
                 }
                 _END_HOUR_STR_ARRAY[0] = (String) adapterView.getItemAtPosition(i);  // 選択されたアイテムを　親のアダプタービューから ポジションを指定して取得する
                 // ここでボタン変更するメソッドをよぶ
@@ -449,18 +413,11 @@ public class ScheduleFormFragment extends Fragment {
             }
         });
 
-
-        // 開始の分を表す文字列の定数　インナークラスで使うから final で定数化しておく必要がある。また、配列にすると、要素を書き換えるようにできる
-       // final String[] _START_MINUTES_STR_ARRAY = {""};
-        // 終了時間を表す文字列の定数　インナークラスで使うから final で定数化しておく必要がある。また、配列にすると、要素を書き換えるようにできる
-       //  final String[] _END_MINUTES_STR_ARRAY = {""};
-
         // 開始の　分にリスナーつける
         _spinnerStartMinutes.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 _START_MINUTES_STR_ARRAY[0] = (String) adapterView.getItemAtPosition(i);  // 選択されたアイテムを　親のアダプタービューから ポジションを指定して取得する
-             //   Toast.makeText(getActivity(), "あなたが選んだ開始 分は " + START_MINUTES_STR_ARRAY[0] + " 分です", Toast.LENGTH_SHORT).show();
 
                 if ( _END_MINUTES_STR_ARRAY[0].equals("") || _END_HOUR_STR_ARRAY[0].equals("") || _START_HOUR_STR_ARRAY[0].equals("")) {   // _END_MINUTES_STR_ARRAY[0] が""空文字じゃなければ　　Integer.parseIntします
                  //   何もしない
@@ -475,7 +432,7 @@ public class ScheduleFormFragment extends Fragment {
                     _buttonFlagMap.put("startMinutes", true ); //押せる
                     _buttonFlagMap.put("endMinutes", true ); //押せる
 
-                    _buttonFlagMap.put("startHour", true );
+                    _buttonFlagMap.put("startHour", true ); // 押せる
                     _buttonFlagMap.put("endHour", true );  // 押せる
                     _textViewHourError.setError(null);
                     _textViewHourError.setText("");
@@ -500,7 +457,6 @@ public class ScheduleFormFragment extends Fragment {
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                     // データベースに登録するため 情報を取得する
                 _END_MINUTES_STR_ARRAY[0] = (String) adapterView.getItemAtPosition(i);  // 選択されたアイテムを　親のアダプタービューから ポジションを指定して取得する
-               //  Toast.makeText(getActivity(), "あなたが選んだ終了 分 は " + END_MINUTES_STR_ARRAY[0] + " 分です", Toast.LENGTH_SHORT).show();
 
                 if ( _START_MINUTES_STR_ARRAY[0].equals("") || _END_HOUR_STR_ARRAY[0].equals("") || _START_HOUR_STR_ARRAY[0].equals("")) {
                     //   何もしない
@@ -538,15 +494,13 @@ public class ScheduleFormFragment extends Fragment {
             }
         });
 
-
-        // 保存ボタン
-
+        // 保存ボタンを押した時にリスナーをつける 新規作成と 編集の時 条件分岐する
         _saveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // _id　は　主キーで autoincrement をつけないけど自動採番するらしい insetの時に書かない 自動採番する
-                // SQLite3では、「CREATE TABLE」の際に「AUTO INCREMENT」を指定する必要はありません。つけない方がいいらしい
-                //もし主キーを連番のIDにしたい場合、INTEGERで「PRIMARY KEY」を指定するようにします。
+                // _id　は　主キーで もし主キーを連番のIDにしたい場合、INTEGERで「PRIMARY KEY」を指定するようにします
+                // そうすると　autoincrement をつけなくても自動採番する insetの時に _idを書かない 自動採番するので
+                // SQLite3では、主キー　_idカラムを　INTEGERで「PRIMARY KEY」を指定すれば「AUTO INCREMENT」を指定する必要はありません。つけない方がいいらしい
 
                 Date date = sqlDateArray[0];  // "2022-03-19"
                 String strDate = new SimpleDateFormat("yyyy-MM-dd").format(date); // String型 にしてデータベースへ登録する
@@ -555,7 +509,7 @@ public class ScheduleFormFragment extends Fragment {
                 String paddingStr = sh.format("%2s", _START_HOUR_STR_ARRAY[0]).replace(" ", "0");
                 String sm = _START_MINUTES_STR_ARRAY[0]; // "00" または　"30"　
                 String eh = _END_HOUR_STR_ARRAY[0]; //  "0" や　"1"
-                String paddingStr2 = sh.format("%2s", _END_HOUR_STR_ARRAY[0]).replace(" ", "0");
+                String paddingStr2 = eh.format("%2s", _END_HOUR_STR_ARRAY[0]).replace(" ", "0");
 
                 String em = _END_MINUTES_STR_ARRAY[0]; // "00" または　"30"
 
@@ -565,13 +519,10 @@ public class ScheduleFormFragment extends Fragment {
                  String etTitle = _editTextScheTitle.getText().toString();
                  String etMemo = _editTextScheMemo.getText().toString(); // 何も書いてないと ""空文字になってる
 
-                // データベースを取得する try-catch-resources構文 finallyを書かなくても必ず close()処理をしてくれます
-                // 使ったらすぐに helper close()すること 同じメソッド内ですぐに close()する onDestory()には書かないでください
                 TimeScheduleDatabaseHelper helper =  new TimeScheduleDatabaseHelper(parentActivity);
 
-                try (SQLiteDatabase db = helper.getWritableDatabase()) {  // dbはきちんとクローズ自動でしてくれます
-            Toast.makeText(parentActivity, "接続しました", Toast.LENGTH_SHORT).show();
-            // ここにデータベースの処理を書く
+                // データベースを取得する try-catch-resources構文 finallyを書かなくても必ず close()処理をしてくれます
+                try (SQLiteDatabase db = helper.getWritableDatabase()) {  // SQLiteDatabase db は try-catch-resources構文なので 自動でクローズをおこなってくれる
                     // もし、action が "add" なら INSERT  "edit"なら UPDATE します
                     if (ACTION.equals("add")) {  // 新規作成なら
                         String sqlInsert = "INSERT INTO timeschedule (scheduledate, starttime, endtime, scheduletitle, schedulememo) VALUES (?,?,?,?,?)";
@@ -585,7 +536,7 @@ public class ScheduleFormFragment extends Fragment {
 
                         stmt.executeInsert();
                     } else { // 編集なら
-                        // 　final 定数の ID　使う  ""では途中で改行しないように書く
+                        // 編集では 主キーが必要　final 定数の ID　使う  ""では途中で改行しないように書く
                         String sqlUpdate = "UPDATE timeschedule SET scheduledate = ?, starttime = ?, endtime = ?, scheduletitle = ?, schedulememo = ?  WHERE _id = ?";
 
                          SQLiteStatement stmt = db.compileStatement(sqlUpdate);
@@ -599,40 +550,32 @@ public class ScheduleFormFragment extends Fragment {
                         stmt.executeUpdateDelete();
                     }
                 }
-
-                helper.close();  // ヘルパーを解放する  ここで
+                helper.close();  // ヘルパーを解放する
 
                 if (ACTION.equals("add")) {  // 新規作成なら
                     Toast.makeText(getActivity(), "スケジュールを新規登録しました", Toast.LENGTH_LONG).show();
                 } else if (ACTION.equals("edit")) {
                     Toast.makeText(getActivity(), "スケジュールを編集しました", Toast.LENGTH_LONG).show();
                 }
-                // スケジュールを挿入した年月が、現在の年月なら MainActivityへ　それ以外の月ならMonthCalendarActivityへ遷移する "2022-03-19"
+                // 保存したスケジュールの年月が、現在の年月なら MainActivityへ　それ以外の月ならMonthCalendarActivityへ遷移する "2022-03-19"
                 int year = Integer.parseInt(strDate.substring(0, 4));
                 int month = Integer.parseInt(strDate.substring(5, 7));
-                // 現在を取得して
+                // 現在を取得して 比較する
                 LocalDate localdateToday = LocalDate.now();
                 Intent intent = null;
                 if (year == localdateToday.getYear() && month == localdateToday.getMonthValue()) {
-                    // これおかしいんじゃないかな 自分自身を終わらせるだけでいいんじゃないかな、でもそうするとデータは半円されない
+                    // 保存したスケジュールの年月が 現在と同じだったら、MainActivityへ遷移する
                     intent = new Intent(parentActivity, MainActivity.class);
-                    startActivity(intent);  // これ
+                    startActivity(intent);
                 } else {
+                    // 保存したスケジュールの年月が 現在と同じではない、MonthCalendarActivityへ遷移する
                     intent = new Intent(parentActivity, MonthCalendarActivity.class);
                     intent.putExtra("specifyDate", DATE);  //  Date型情報を渡します
-                    startActivity(intent);  // これ
+                    startActivity(intent);
                 }
-
-
                 Activity parentActivity = getActivity();
-
-
                 // 最後に 自分自身が所属するアクティビティを終了させます
-                // Activity parentActivity = getActivity();
-                Log.i("finish", "finishを呼びました");
                 parentActivity.finish();
-
-
             }
         });
 
@@ -642,13 +585,10 @@ public class ScheduleFormFragment extends Fragment {
             public void onClick(View view) {
                 Date date = sqlDateArray[0];  // "2022-03-19"
                 String strDate = new SimpleDateFormat("yyyy-MM-dd").format(date);
-                // ダイアログを表示させます DialogFragmentを継承したダイアログフラグメントクラスを作ったので
-                // ここで newして インスタンスを生成する
-
+                // ダイアログを表示させます DialogFragmentを継承したダイアログフラグメントクラスを作ったので newして インスタンスを生成
                 DeleteConfirmDialogFragment dialogFragment = new DeleteConfirmDialogFragment();
 
                 Bundle args = new Bundle();
-
 
                 args.putString("strDate", strDate);  // 日付もつける
                 // 　final 定数の ID　使う
@@ -656,27 +596,22 @@ public class ScheduleFormFragment extends Fragment {
                 args.putString("scheduleTitle", _editTextScheTitle.getText().toString());
                 dialogFragment.setArguments(args);
 
-//                dialogFragment.show(getSupportFragmentManager(), "DeleteConfirmDialogFragment");
                 Activity parentActivity = getActivity();
-
-
-
-              //   削除ボタン押すと  ダイアログフラグメント DeleteConfirmDialogFragment を表示するだけ
+              //   削除ボタン押すと  ダイアログフラグメント DeleteConfirmDialogFragment を表示
                 // Activityクラスではダメです FragmentActivityクラスにキャストをしてください。
                 FragmentActivity fragmentActivity = (FragmentActivity) parentActivity;
                 // 第二引数は任意だから、クラス名にしておいた ダイアログを識別するための 名前を付けている
                 dialogFragment.show(fragmentActivity.getSupportFragmentManager(), "DeleteConfirmDialogFragment");
             }
         });
-
-
         // 最後ビューをreturnする
         return view;
     }
 
-
-
-    // メソッドメンバ
+    /**
+     * メソッドメンバ  エラーがある限り、保存ボタンは押せないようにしてる
+     * @param map Map<String, Boolean> キー: 入力の項目 <br /> 値: true: エラーなし false: エラーあり
+     */
     public void changeSaveButton(Map<String, Boolean> map) {
         for (Boolean val : map.values()) {
             if (val == false) {
@@ -690,7 +625,11 @@ public class ScheduleFormFragment extends Fragment {
         }
     }
 
-
+    /**
+     * メソッドメンバ staticな静的メソッド(クラスメソッド) 同じものを探して、スピナーに選択済みにするため
+     * @param spinner
+     * @param item
+     */
     public static void setSelection(Spinner spinner, String item) {
         SpinnerAdapter adapter = spinner.getAdapter();
         int index = 0;
@@ -702,6 +641,4 @@ public class ScheduleFormFragment extends Fragment {
         }
         spinner.setSelection(index);
     }
-
-
 }

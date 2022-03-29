@@ -49,15 +49,15 @@ public class MonthCalendarFragment extends Fragment {
 
         Date prevButtonDate = null;
         Date nextButtonDate = null;
-        Date specifyDate = null;  // ScheduleFormから遷移してきた時 指定する月は現在の月ジャない時にだけここにくる
+        Date specifyDate = null;
         Bundle extras = intent.getExtras();
         if(extras != null) {
-            //  null かどうかのチェックが必要です どっちのボタンから遷移してきたのか  どっちかは nullになるので
-            prevButtonDate = (Date)intent.getSerializableExtra("prevButtonDate");  // nullが入ってるかもしれないです
-            //  null かどうかのチェックが必要です どっちのボタンから遷移してきたのか どっちかは nullになるので
-            nextButtonDate = (Date)intent.getSerializableExtra("nextButtonDate");  // nullが入ってるかもしれないです
+            //  null かどうかのチェックが必要です どっちのボタンから遷移してきたのか
+            prevButtonDate = (Date)intent.getSerializableExtra("prevButtonDate");  // nullが入ってる可能性
+            //  null かどうかのチェックが必要です どっちのボタンから遷移してきたのか
+            nextButtonDate = (Date)intent.getSerializableExtra("nextButtonDate");  // nullが入ってる可能性
             // null かどうかのチェックが必要です
-            specifyDate = (Date)intent.getSerializableExtra("specifyDate");
+            specifyDate = (Date)intent.getSerializableExtra("specifyDate"); // nullが入ってる可能性
         }
         _dateManager = new DateManager();
 
@@ -67,15 +67,15 @@ public class MonthCalendarFragment extends Fragment {
         SimpleDateFormat format = new SimpleDateFormat("yyyy年 MM月");
         // ここで条件分岐します
         String title = "";
-        if (prevButtonDate != null) {  //  null かどうかのチェックが必要です どっちのボタンから遷移してきたのか
+        if (prevButtonDate != null) {  //  null かどうかのチェックが必要
             title = format.format(prevButtonDate);
             dates = _dateManager.getDays(prevButtonDate);  // 引数ありのgetDays(Date date)　を呼び出す
 
-        } else if (nextButtonDate != null) {  //  null かどうかのチェックが必要です どっちのボタンから遷移してきたのか
+        } else if (nextButtonDate != null) {  //  null かどうかのチェックが必要
             title = format.format(nextButtonDate);
             dates = _dateManager.getDays(nextButtonDate); // 引数ありのgetDays(Date date)　を呼び出す
-            //  null かどうかのチェックが必要です どっちのボタンから遷移してきたのか  どっちかは nullになるので
-        } else if (specifyDate != null) {  // 指定の日付のカレンダーを表示するならば、指定の日付が現在の月ではないなら、このフラグメントで表示します
+            //  null かどうかのチェックが必要
+        } else if (specifyDate != null) {  // 指定の日付のカレンダーを表示するならば
             title = format.format(specifyDate);
             dates = _dateManager.getDays(specifyDate);  // 引数ありのgetDays(Date date)　を呼び出す
         }
@@ -87,7 +87,7 @@ public class MonthCalendarFragment extends Fragment {
         String firstDatestr = new SimpleDateFormat("yyyy-MM-dd").format(firstDate);
         String lastDatestr = new SimpleDateFormat("yyyy-MM-dd").format(lastDate);
 
-        // 今月分のカレンダー(１週目に表示した前の月や　最後の週に表示してある後ろの月　の分も含む)に表示するリスト
+        // 月のカレンダー(１週目に表示した前の月や　最後の週に表示してある後ろの月　の分も含む)に表示するリスト
         List<Schedule> list = new ArrayList<Schedule>();
 
         _helper = new TimeScheduleDatabaseHelper(parentActivity);  // _helper.close();をすること
