@@ -100,7 +100,7 @@ public class DeleteConfirmDialogFragment extends DialogFragment {
 
                     Toast.makeText(getActivity(),"削除しました", Toast.LENGTH_LONG).show();
                     // 削除したら、このフラグメントが所属するアクティビティを終了させる
-                    // strDate と同じ　年月の月カレンダーへいく
+                    // strDate と同じ　年月の月カレンダーへ遷移する
                     // スケジュールを挿入した年月が、現在の年月なら MainActivityへ　それ以外の月ならMonthCalendarActivityへ遷移する "2022-03-19"
                     Date date = null;
                     try {

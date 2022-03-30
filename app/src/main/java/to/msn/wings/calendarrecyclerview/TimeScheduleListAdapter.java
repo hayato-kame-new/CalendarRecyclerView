@@ -47,7 +47,7 @@ public class TimeScheduleListAdapter extends RecyclerView.Adapter<TimeScheduleLi
     @NonNull
     @Override
     public TimeScheduleListHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) { // parentは　RecyclerView
-            Log.i("Adapter", "onCreateViewHolderが呼ばれました");
+
         // v は、 CardViewのオブジェクト
         View v = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.time_schedule_list_item, parent, false);
@@ -145,13 +145,13 @@ public class TimeScheduleListAdapter extends RecyclerView.Adapter<TimeScheduleLi
     }
 
     /**
-     * ビューにデータを割り当てて リスト項目を生成
+     * ビューにデータを割り当てて リスト項目を生成  onCreateViewHolderの後に呼ばれます
      * @param holder
      * @param position
      */
     @Override
     public void onBindViewHolder(@NonNull TimeScheduleListHolder holder, int position) {
-        Log.i("Adapter", "onBindViewHolderが呼ばれました"); // onCreateViewHolderの後に呼ばれます
+
         // 日付け
         String dateText = this._data.get(position).getDate();
         holder.date.setText(dateText);
@@ -213,8 +213,6 @@ public class TimeScheduleListAdapter extends RecyclerView.Adapter<TimeScheduleLi
 
     @Override
     public int getItemCount() {
-        Log.i("Adapter", "getItemCount()が呼ばれました");
-        // return 0;
         return this._data.size();
     }
 
