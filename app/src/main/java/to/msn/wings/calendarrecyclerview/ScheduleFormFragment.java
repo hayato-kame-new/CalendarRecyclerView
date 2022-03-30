@@ -583,8 +583,14 @@ public class ScheduleFormFragment extends Fragment {
         _deleteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Date date = sqlDateArray[0];  // "2022-03-19"
-                String strDate = new SimpleDateFormat("yyyy-MM-dd").format(date);
+                // 定数 DATE を使う
+
+            //    Date date = sqlDateArray[0];  // "2022-03-19"
+            //     String strDate = new SimpleDateFormat("yyyy-MM-dd").format(date);
+
+                // 定数を使い かつ 変更 "yyyy/MM/dd" にしてみた
+                String strDate = new SimpleDateFormat("yyyy/MM/dd").format(DATE);
+
                 // ダイアログを表示させます DialogFragmentを継承したダイアログフラグメントクラスを作ったので newして インスタンスを生成
                 DeleteConfirmDialogFragment dialogFragment = new DeleteConfirmDialogFragment();
 

@@ -36,7 +36,7 @@ import java.util.List;
  * このフラグメントで、RecyclerViewを表示する
  */
 public class TimeScheduleFragment extends Fragment {
-    // 大画面かどうかの判定フラグ インスタンスフィールド onViewStateRestoredコールバックメソッドをオーバーライドします！！！
+    // 大画面かどうかの判定フラグ インスタンスフィールド onViewStateRestoredコールバックメソッドをオーバーライドする
     private boolean _isLayoutXLarge = true;  // ここでは 初期値は trueにしておく
 
     private TimeScheduleDatabaseHelper _helper;
@@ -95,28 +95,23 @@ public class TimeScheduleFragment extends Fragment {
 
         List<Schedule> list = new ArrayList<Schedule>();
 
-        _helper = new TimeScheduleDatabaseHelper(parentActivity);  // onDestroy()で helperを解放すること
-        //  データベースを取得する try-catch-resources構文 finallyを書かなくても必ず close()処理をしてくれます
-        try (SQLiteDatabase db = _helper.getWritableDatabase()) {  // dbはきちんとクローズ自動でしてくれます
-          //  Toast.makeText(parentActivity, "接続しました", Toast.LENGTH_SHORT).show();
-            // ここにデータベースの処理を書く SELECT文で取得する 今月分のだけを取得する   SELECT * FROM テーブル名 WHERE date >= '2011-08-20' AND date <= '2011-08-27'
-            //  SELECT * FROM テーブル名 WHERE date BETWEEN '2011-08-20' AND '2011-08-27'  開始時間の順番にして取得する
-            // scheduleDayText  DATE
+        _helper = new TimeScheduleDatabaseHelper(parentActivity);  // _helper.close();  して解放すること
+        //  データベースを取得する try-catch-resources構文なので finallyを書かなくても必ず 自動でclose()処理をしてくれる
+        try (SQLiteDatabase db = _helper.getWritableDatabase()) {  // SQLiteDatabase dbは きちんとクローズ自動でしてくれます
+            // SELECT文 指定の日のだけを 開始時間の順番にして取得する   SELECT * FROM テーブル名 WHERE scheduledate >= '2011-08-20' AND scheduledate < '2011-08-21' ORDER BY カラム名 ASC もしくは DESC
+            //  SELECT * FROM テーブル名 WHERE date BETWEEN '2011-08-20' AND '2011-08-27'          BETWEEN  AND でもいいが 1日だけ取得したい場合では使えない ANDは、その日を含んでしまうので
+            // scheduleDayText  DATE を使う
             // Date型の日付を加算するには、Calendarクラスに変換後、Calendarクラスのaddメソッドを使用します。
-            // Calendarクラスのインスタンスを生成
+            // Calendarクラスのインスタンスを生成  1日後を取得したいため
             Calendar cal = Calendar.getInstance();
             cal.setTime(DATE);
             cal.add(Calendar.DATE, 1);  // 1日後
+            // 1日後を文字列で取得する  "2000/09/09" ではダメなので "2000-09-09" の形にする
             String next = new SimpleDateFormat("yyyy-MM-dd").format(cal.getTime());
-            // "2000/09/09" じゃダメです "2000-09-09" の形にすること
+            // 指定の日を  フォーマットし直す  "2000/09/09" ではダメなので "2000-09-09" の形にする
             String dd = new SimpleDateFormat("yyyy-MM-dd").format(DATE);
-            // 注意、指定した日が1日だけでも、このように >= 　< 　を使って期間で指定をすること
-            // たとえば、2006/09/13のデータが欲しいときは
-
-            // Where scheduledate = '2006/09/13'
-            // でなく
-            // Where scheduledate >= '2006/09/13' And YMD < '2006/09/14'
-            // となります。
+            // 注意 指定した日が1日だけでも、このように >= 　< 　を使って期間で指定をする 2006/09/13のデータが欲しいとき Where scheduledate = '2006/09/13' ではなく
+            // Where scheduledate >= '2006/09/13' And scheduledate < '2006/09/14'
             String sqlSelect = "SELECT * FROM timeschedule WHERE scheduledate >= ? AND scheduledate < ? ORDER BY starttime ASC";
 
             String[] params = new String[]{dd, next};
@@ -149,13 +144,6 @@ public class TimeScheduleFragment extends Fragment {
                 scheduletitle = cursor.getString(index_scheduletitle);
                 schedulememo = cursor.getString(index_schedulememo);
 
-//                Log.i("SQLITE_TIME_SCHE", "_id : " + _id + " " +
-//                        "scheduledate : " + scheduledate + " " +
-//                        "starttime : "+ starttime + " " +
-//                        "endtime : "+ endtime + " " +
-//                        "scheduletitle : "+ scheduletitle + " " +
-//                        "schedulememo : "+ schedulememo + " "
-//                );
                 // インスタンス生成
                 schedule = new Schedule(_id, scheduledate,  starttime, endtime, scheduletitle, schedulememo);
                 list.add(schedule);
@@ -163,15 +151,8 @@ public class TimeScheduleFragment extends Fragment {
         }
         _helper.close();  // ヘルパーを解放する
 
-        // リスト取得できた リサイクラービューで このリストを日付が同じならば、セット指定く    2022-03-25 14:00 16:00 しごと かいもの
-//        for( Schedule schedule : list) {
-//            Log.i("LIST",
-//                    schedule.getScheduledate() + " "  + schedule.getStarttime() + " "  +
-//                            schedule.getEndtime() + " "  + schedule.getScheduletitle() + " "  + schedule.getSchedulememo());
-//        }
-
         /**
-         * 表示だけのテキストのリスト
+         * 表示だけのテキストのリスト データベースから取得したlistを使用
          */
         ArrayList<TimeScheduleListItem> data = new ArrayList<>();
         for (int i = 0; i < list.size(); i++) {
@@ -185,7 +166,7 @@ public class TimeScheduleFragment extends Fragment {
             item.setEndTime(schedule.getEndtime());
             item.setScheduleTitle(schedule.getScheduletitle());
             item.setScheduleMemo(schedule.getSchedulememo());
-            // 追加
+            // 主キーのデータを文字列にしてセット
             item.setId(schedule.get_id());  // これはアダプタで非表示にしています
             data.add(item);
         }
