@@ -23,6 +23,8 @@
         <entry key="app/src/main/res/layout/fragment_schedule_form.xml" value="0.165" />
         <entry key="app/src/main/res/layout/fragment_time_schedule.xml" value="0.25" />
         <entry key="app/src/main/res/layout/time_schedule_list_item.xml" value="0.25" />
+        <entry key="app/src/main/res/mipmap-anydpi-v26/my_icon3.xml" value="0.1265" />
+        <entry key="app/src/main/res/mipmap-anydpi-v26/my_icon3_round.xml" value="0.1265" />
       </map>
     </option>
   </component>

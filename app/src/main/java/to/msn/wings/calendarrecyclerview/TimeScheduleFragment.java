@@ -157,7 +157,8 @@ public class TimeScheduleFragment extends Fragment {
         ArrayList<TimeScheduleListItem> data = new ArrayList<>();
         for (int i = 0; i < list.size(); i++) {
             TimeScheduleListItem item = new TimeScheduleListItem();
-            item.setId(i + 1);  // 1から順に通し番号をふる
+            // これを変更
+          //   item.setId(i + 1);  // 1から順に通し番号をふる
             item.setDate(scheduleDayText);
 
             Schedule schedule = list.get(i);

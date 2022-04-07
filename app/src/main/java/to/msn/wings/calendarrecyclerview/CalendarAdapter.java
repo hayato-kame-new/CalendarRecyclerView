@@ -30,7 +30,7 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * CakendarCellviewHolder型　の　RecyclerView.Adapterアダプタを継承すること
+ * CakendarCellviewHolder型　の　RecyclerView.Adapterアダプタを継承する.
  */
 public class CalendarAdapter extends RecyclerView.Adapter<CalendarCellViewHolder> {
 
@@ -46,12 +46,10 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarCellViewHolder
     }
 
     /**
-     * レイアウトファイルをインフレートする
-     *  カードビューにリスナーをつけたい時にはこのonCreateViewHolderに書く
-     *  トースト表示ならこのメソッド内に書いてもいいが、
+     * レイアウトファイルをインフレートする.
      * @param parent RecycleView
      * @param viewType 0
-     * @return
+     * @return CalendarCellViewHolder
      */
     @NonNull
     @Override
