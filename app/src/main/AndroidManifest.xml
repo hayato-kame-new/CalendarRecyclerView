@@ -11,15 +11,23 @@
         android:theme="@style/Theme.CalendarRecyclerView">
         <activity
             android:name=".ScheduleFormActivity"
+            android:screenOrientation="portrait"
+            android:configChanges="keyboard|keyboardHidden|orientation"
             android:exported="false" />
         <activity
             android:name=".TimeScheduleActivity"
+            android:screenOrientation="portrait"
+            android:configChanges="keyboard|keyboardHidden|orientation"
             android:exported="false" />
         <activity
             android:name=".MonthCalendarActivity"
+            android:screenOrientation="portrait"
+            android:configChanges="keyboard|keyboardHidden|orientation"
             android:exported="false" />
         <activity
             android:name=".MainActivity"
+            android:screenOrientation="portrait"
+            android:configChanges="keyboard|keyboardHidden|orientation"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
